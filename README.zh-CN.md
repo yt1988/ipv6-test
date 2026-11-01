@@ -1,0 +1,69 @@
+# IPv6 测试
+
+[English](README.md) · **简体中文**
+
+你的网络支持 IPv6 吗？[IPv6 测试](https://ipv6.1ms.dog/zh-cn/)在浏览器里跑 6 项检测，显示你的 IPv4 和 IPv6 地址，并按 10 分制打分，思路参考 test-ipv6.com。
+
+**在线使用：** https://ipv6.1ms.dog/zh-cn/
+
+## 测什么
+
+| 测试 | 怎么测 | 说明什么 |
+|---|---|---|
+| **纯 IPv4 网站** | 只有 A 记录的主机 | IPv4 能不能通，出口地址是什么 |
+| **纯 IPv6 网站** | 只有 AAAA 记录的主机 | IPv6 能不能通；DNS 必须返回 AAAA |
+| **双栈网站** | 本站自己的 `/cdn-cgi/trace`（Cloudflare 上的站点都是双栈） | 浏览器选了哪个协议；超过 3 秒说明在等 IPv6 超时 |
+| **IPv6 大数据包** | 在新连接上向纯 IPv6 主机发 3.5 KB 的请求 | 满尺寸数据包双向都能过（请求本身，加上服务器的 TLS 证书）；路径 MTU 有问题时这项失败 |
+| **IPv6 地址直连** | `https://[2606:4700:4700::1111]/cdn-cgi/trace` | 不靠 DNS 能不能用 IPv6；纯 IPv6 网站失败而这项通过，就是 DNS 没给 AAAA |
+| **IPv4 地址直连** | `https://1.0.0.1/cdn-cgi/trace`、`https://223.5.5.5/` | 纯 IPv6 + NAT64 网络上这项会失败，而纯 IPv4 网站仍能通过 DNS64 打开 |
+
+每项测试同时问两三家服务（DNSPod、icanhazip、Cloudflare、Cloudflare Radar、ipify），取最先响应的那家：国内能连 DNSPod，国外连 icanhazip 和 Cloudflare，一家被墙或变慢不影响结果。第一次响应包含 DNS、TCP 和 TLS；之后在同一个连接上再请求三次，取最小值作为往返时间。
+
+### 分数
+
+| 分值 | 条件 |
+|---|---|
+| 4 | 纯 IPv6 网站能打开 |
+| 2 | IPv6 大数据包能通过 |
+| 2 | 双栈网站 3 秒内打开 |
+| 1 | IPv6 地址直连成功 |
+| 1 | 双栈网站上浏览器选了 IPv6 |
+| −1 | IPv6 首次响应超过 3 秒 |
+
+完全没有 IPv6 是 0 分。结论和问题列表（DNS 过滤 AAAA、MTU、6to4/Teredo 隧道、NAT64……）见 `src/probe.mjs` 的 `verdict()`。
+
+### 分享
+
+结果可以生成图片（canvas，在浏览器里画）和链接 `/r/<code>`。链接里只有各项是否通过、耗时和 IPv6 类型，不包含任何 IP 地址；国家/地区只在勾选后才写入。Worker 读取链接，把分数写进标题，聊天软件里的预览卡片能直接看到结论。
+
+## 文件
+
+```
+src/probe.mjs       测试项目、测试地址、在浏览器里怎么跑、打分和结论
+src/share.mjs       分享链接的编码
+src/app.js          页面脚本
+src/worker.js       分享链接 /r/<code>：把分数写进标题
+src/i18n/*.mjs      10 种语言
+scripts/build.mjs   生成 public/（页面、资源、CSP）
+scripts/assets.mjs  生成 public/og/*.png 预览图
+scripts/verify.mjs  核实每个测试地址：A/AAAA 记录、CORS、返回内容
+```
+
+## 运行和部署
+
+```bash
+npm install
+npm run build      # 生成 public/
+npm test           # public/ 是否最新、约定、文案、单元测试
+npm run verify     # 从当前网络核实每个测试地址
+npm run dev        # http://localhost:8797
+npx wrangler deploy
+```
+
+整站是 Cloudflare Worker 上的静态文件：文件直接返回，不运行脚本，这部分请求不计费。`src/worker.js` 只处理分享链接。`wrangler.toml` 不绑定域名：在 1ms.dog 上由公共外壳把 `ipv6.1ms.dog` 路由过来。自己部署时，在 Cloudflare 控制台给 Worker 绑定你的域名（必须经过 Cloudflare 代理，双栈测试读的是本站的 `/cdn-cgi/trace`），并用 `SITE_URL=https://你的域名 npm run build` 构建。
+
+CSP 的 `connect-src` 是 `https:` 而不是逐个列出主机：IPv6 地址直连要请求 `[2606:4700:4700::1111]` 这样的地址，CSP 没有写 IPv6 字面地址的语法。
+
+## 许可
+
+MIT

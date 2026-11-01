@@ -1,0 +1,15 @@
+# IPv6 Test · 1ms.dog
+
+> Free IPv6 test in the browser: is the visitor's network IPv6 ready? Six tests run from the visitor's own browser:
+> an IPv4-only and an IPv6-only host (A and AAAA records only), a dual-stack host (which protocol the browser picks,
+> and whether it waits for IPv6), large packets over IPv6 on a new connection (path MTU), and an IPv6 and an IPv4
+> address with no DNS (IPv6 without DNS; IPv6-only networks with NAT64). Shows the IPv4 and IPv6 addresses (with
+> ASN and country where the host reports them) and a score out of 10, after test-ipv6.com's idea: 4 points for
+> IPv6-only sites, 2 for large packets, 2 for dual-stack sites without delay, 1 for IPv6 without DNS, 1 when the
+> browser prefers IPv6, minus 1 when IPv6 is slow. Each test asks two or three providers at once (DNSPod,
+> icanhazip, Cloudflare, ipify) and takes the first answer. Nothing is sent to this site.
+
+- Page: https://ipv6.1ms.dog/ (also /zh-cn/, /zh-tw/, /ja/, /ko/, /es/, /fr/, /de/, /pt/, /ru/)
+- Test hosts: v4: ipv4.ddnspod.com, ipv4.icanhazip.com, ipv4-check-perf.radar.cloudflare.com; v6: ipv6.ddnspod.com, ipv6.icanhazip.com, ipv6-check-perf.radar.cloudflare.com; ds: ipv6.1ms.dog, icanhazip.com, api64.ipify.org; big: [2606:4700:4700::1001], api6.ipify.org; lit6: [2606:4700:4700::1111], [2606:4700:4700::64]; lit4: 1.0.0.1, 223.5.5.5
+- Source code: https://github.com/yt1988/ipv6-test
+

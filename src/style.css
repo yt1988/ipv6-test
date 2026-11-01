@@ -1,0 +1,138 @@
+/* page layout and components (tokens and top bar: base.css): the hero with the score, the verdict and the two
+   addresses, then one row per test. Everything keeps its size from the first paint; only the text inside changes. */
+h2 { font-size: 15px; font-weight: 700; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; font-weight: 500; white-space: nowrap; }
+.btn svg { width: 15px; height: 15px; }
+.btn.pri { background: var(--ink); color: var(--ink-fg); border-color: transparent; font-weight: 600; }
+.btn:disabled { opacity: .5; cursor: default; }
+.skl { display: inline-block; width: 220px; max-width: 80%; height: 16px; border-radius: 6px; background: var(--soft); vertical-align: middle; animation: blink 1.4s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: .45; } }
+.t1 { color: var(--t1); } .t2 { color: var(--t2); } .t3 { color: var(--t3); } .t4 { color: var(--t4); } .t5 { color: var(--t5); }
+code { font: 13px var(--f-num); background: var(--soft); border-radius: 5px; padding: 1px 6px; cursor: copy; overflow-wrap: anywhere; }
+code.copied { background: var(--ink-soft); color: var(--ink); }
+
+/* hero: the score on the left, what it means and the two addresses on the right */
+.hero { padding: 20px 22px 0; display: flex; flex-direction: column; gap: 18px; }
+.hero h1 { text-align: center; font-size: clamp(20px, 2.6vw, 26px); line-height: 1.25; letter-spacing: -.015em; font-weight: 700; }
+.sum { display: grid; grid-template-columns: 150px minmax(0, 500px); justify-content: center; gap: 32px; align-items: center; width: 100%; }
+.score { position: relative; width: 150px; height: 150px; display: grid; place-items: center; outline: none; cursor: help; border-radius: 50%; }
+.ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 9; }
+.ring-bg { stroke: var(--soft); }
+/* the arc is drawn by its dash, so it grows without a layout change */
+.ring-fg { stroke: currentColor; stroke-linecap: round; stroke-dasharray: 0 400; transition: stroke-dasharray .6s cubic-bezier(.2,.8,.2,1); }
+.score-n { display: flex; align-items: baseline; gap: 2px; margin-top: -10px; }
+.score-n b { font: 700 50px/1 var(--f-num); letter-spacing: -.04em; font-variant-numeric: tabular-nums; width: 2ch; text-align: center; }
+.score-n i { font: 500 18px var(--f-num); font-style: normal; color: var(--muted); }
+.score-k { position: absolute; bottom: 34px; left: 0; right: 0; text-align: center; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.score.wait .score-n b { color: var(--muted); animation: blink 1.2s ease-in-out infinite; }
+.sum-r { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding-top: 6px; }
+.verdict { font-size: clamp(20px, 2.4vw, 25px); font-weight: 750; letter-spacing: -.02em; line-height: 1.3; min-height: 1.3em; }
+/* problems: two lines reserved from the start */
+.probs { font-size: 13.5px; color: var(--muted); line-height: 1.55; height: 3.1em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.addrs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; margin-top: 6px; }
+.addr { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 10px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--line); }
+.addr-k { font: 600 12px var(--f-num); color: var(--muted); }
+.addr-ip { min-width: 0; font: 600 15px/1.5 var(--f-num); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.addr-ip code { font: inherit; background: none; padding: 0; }
+.addr-ip .no { font: 500 13.5px var(--f-ui); color: var(--muted); }
+.addr-m { grid-column: 2; font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.5em; }
+.addr-m b { font-weight: 600; font-family: var(--f-num); }
+.tag { display: inline-block; font: 600 10.5px/16px var(--f-ui); padding: 0 5px; border-radius: 4px; background: var(--soft); color: var(--muted); margin-right: 6px; vertical-align: 1px; }
+.tag.bad { background: var(--warn-soft); color: var(--warn); }
+.links { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 12.5px; min-height: 1.5em; }
+.links a { color: var(--muted); text-decoration: none; }
+.links a:hover { color: var(--ink); text-decoration: underline; }
+
+.bar { position: relative; display: flex; align-items: center; gap: 12px; margin: 0 -22px; padding: 11px 22px 13px; border-top: 1px solid var(--line); }
+.prog { position: absolute; left: 0; right: 0; top: -1px; height: 2px; overflow: hidden; }
+.prog i { display: block; height: 100%; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform .25s, opacity .4s .3s; }
+.prog.end i { opacity: 0; }
+.prog-t { flex: 1; min-width: 0; font: 12.5px var(--f-num); color: var(--muted); font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar .btn { flex: none; height: 30px; padding: 0 12px; font-size: 12.5px; }
+.bar .btn.sm { color: var(--muted); }
+.bar .btn.sm:hover:not(:disabled) { color: var(--fg); border-color: var(--ink); }
+
+/* the tests */
+.tests { padding: 18px 22px 10px; display: flex; flex-direction: column; gap: 8px; }
+.tests h2 { font-size: 16px; letter-spacing: -.01em; }
+.tl { list-style: none; margin: 0; padding: 0; }
+.tr { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; min-height: 58px; padding: 9px 0; border-top: 1px solid var(--line); }
+.st { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); color: var(--muted); }
+.st svg { width: 13px; height: 13px; stroke-width: 2; }
+.st .i-ok, .st .i-x, .st .i-warn { display: none; }
+.tr.ok .st { background: color-mix(in srgb, var(--t1) 16%, transparent); color: var(--t1); }
+.tr.ok .st .i-ok { display: block; }
+.tr.bad .st { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad); }
+.tr.bad .st .i-x { display: block; }
+.tr.warn .st { background: var(--warn-soft); color: var(--warn); }
+.tr.warn .st .i-warn { display: block; }
+.tr.wait .st { animation: blink 1.2s ease-in-out infinite; }
+.tn { display: flex; flex-direction: column; min-width: 0; }
+.tn b { font-weight: 600; font-size: 14px; }
+.tn span { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+.tv { display: flex; flex-direction: column; align-items: flex-end; text-align: right; gap: 1px; width: 190px; min-width: 0; }
+.tv b { font: 600 13.5px var(--f-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tv span { font-size: 12px; color: var(--muted); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.tr.bad .tv b { color: var(--bad); }
+.tr.warn .tv b { color: var(--warn); }
+.tr.wait .tv b { color: var(--muted); }
+.tip { position: fixed; z-index: 50; white-space: pre-line; max-width: min(340px, calc(100vw - 16px)); background: var(--fg); color: var(--bg); font: 500 12.5px/1.45 var(--f-ui); padding: 6px 10px; border-radius: 7px; pointer-events: none; opacity: 0; transition: opacity .12s; }
+.tip.on { opacity: 1; }
+
+/* dialogs (as in the other 1ms.dog tools) */
+.scrim { position: fixed; inset: 0; z-index: 40; background: #0006; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.dialog { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); max-width: 100%; max-height: calc(100vh - 32px); display: flex; flex-direction: column; box-shadow: 0 24px 64px var(--shadow); }
+.dlg-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 12px 12px 18px; border-bottom: 1px solid var(--line); }
+.dlg-h h2 { font-size: 16px; }
+.dialog.help { width: 860px; height: min(560px, calc(100vh - 32px)); }
+.help-b { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 0; flex: 1; }
+.help-nav { border-right: 1px solid var(--line); padding: 8px; overflow: auto; display: flex; flex-direction: column; gap: 2px; }
+.help-nav button { text-align: left; border: 0; background: none; padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--muted); line-height: 1.4; }
+.help-nav button:hover { background: var(--soft); color: var(--fg); }
+.help-nav button[aria-selected="true"] { background: color-mix(in srgb, var(--ink) 14%, transparent); color: var(--fg); font-weight: 600; }
+.help-c { padding: 18px 22px 24px; overflow: auto; }
+.help-c h3 { margin: 0 0 10px; font-size: 17px; line-height: 1.35; }
+.help-c p { font-size: 13.5px; line-height: 1.7; margin: 0 0 10px; }
+.help-pick { display: none; gap: 8px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.help-pick select { flex: 1; min-width: 0; height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--fg); font: 600 16px var(--f-ui); text-overflow: ellipsis; } /* 16px: iOS zooms into smaller fields */
+.help-pick .icon-btn:disabled { opacity: .35; cursor: default; }
+.note { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-top: 2px; }
+/* share: the image, the link, and what to do with them (as on the 1ms.dog home page) */
+.dialog.share { width: 640px; }
+.share-b { padding: 16px; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
+#shareImg { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); background: var(--soft); aspect-ratio: 1200 / 630; object-fit: contain; }
+.share-link { display: flex; gap: 8px; }
+.share-link input { flex: 1; min-width: 0; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--fg); font: 13px var(--f-num); outline: none; }
+.share-acts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.chk { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); margin-left: auto; cursor: pointer; }
+.chk:has(input:disabled) { opacity: .5; cursor: default; }
+/* a shared result: a banner above the hero, with the way back to one's own test */
+.shared { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 12px 10px 16px; border-radius: var(--r); background: var(--ink-soft); border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent); font-size: 13.5px; }
+.shared .btn { height: 32px; font-size: 13px; }
+
+@media (prefers-reduced-motion: reduce) { .skl, .tr.wait .st, .score.wait .score-n b { animation: none !important; } .ring-fg { transition: none; } }
+@media (max-width: 720px) {
+  .hero { padding: 16px 16px 0; gap: 14px; }
+  .bar { margin: 0 -16px; padding: 10px 16px 12px; }
+  .tests { padding: 16px 16px 8px; }
+  /* phones: the score above, centered; the rest under it */
+  .sum { grid-template-columns: minmax(0, 1fr); gap: 10px; justify-items: center; }
+  .sum-r { width: 100%; padding-top: 0; }
+  .verdict, .probs { text-align: center; }
+  .score { width: 132px; height: 132px; }
+  .score-n b { font-size: 44px; }
+  .score-k { bottom: 28px; }
+  .addr-ip { font-size: 13.5px; }
+  .tv { width: 118px; }
+  .dialog.help { height: calc(100vh - 32px); }
+  .help-b { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .help-nav { display: none; }
+  .help-b .help-pick { display: flex; }
+}
+.addr-m .q { color: var(--muted); margin-left: 10px; text-decoration: none; }
+.addr-m .q:hover { color: var(--ink); text-decoration: underline; }
+@media (max-width: 720px) {
+  /* a full IPv6 address doesn't fit on one line on a phone: two lines kept for it from the start */
+  .addr[data-a="6"] .addr-ip { white-space: normal; overflow-wrap: anywhere; min-height: 3em; }
+}

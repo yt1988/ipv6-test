@@ -1,0 +1,25 @@
+{
+  "name": "ipv6-test",
+  "private": true,
+  "type": "module",
+  "description": "IPv6 Test: is your network IPv6 ready? IPv6-only and dual-stack sites, large packets (MTU), DNS and NAT64, tested in your browser and scored out of 10",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/build.mjs --check && node --test \"test/*.test.mjs\"",
+    "verify": "node scripts/verify.mjs",
+    "assets": "node scripts/assets.mjs",
+    "dev": "wrangler dev --port 8797",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "esbuild": "0.25.10",
+    "qrcode-generator": "^2.0.4"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yt1988/ipv6-test"
+  },
+  "homepage": "https://ipv6.1ms.dog"
+}

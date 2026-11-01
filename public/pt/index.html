@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt" data-paths="{&quot;en&quot;:&quot;/&quot;,&quot;zh-CN&quot;:&quot;/zh-cn/&quot;,&quot;zh-TW&quot;:&quot;/zh-tw/&quot;,&quot;ja&quot;:&quot;/ja/&quot;,&quot;ko&quot;:&quot;/ko/&quot;,&quot;es&quot;:&quot;/es/&quot;,&quot;fr&quot;:&quot;/fr/&quot;,&quot;de&quot;:&quot;/de/&quot;,&quot;pt&quot;:&quot;/pt/&quot;,&quot;ru&quot;:&quot;/ru/&quot;}">
+<head>
+<meta charset="utf-8">
+<script>(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root"))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}if(l&&l!=="en")location.replace(P[l]+location.search+location.hash)})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Teste de IPv6: sua internet tem suporte a IPv6? Confira com nota de 0 a 10 · Teste de IPv6</title>
+<meta name="description" content="Teste de IPv6 grátis no navegador: sua rede está pronta para IPv6? Verifica sites só IPv6 e de pilha dupla, pacotes grandes (MTU), DNS e NAT64, mostra seus endereços IPv4 e IPv6 e dá uma nota de 0 a 10 para sua rede.">
+<meta name="keywords" content="teste IPv6, testar IPv6, tenho IPv6, minha internet tem IPv6, verificar IPv6, meu endereço IPv6, conectividade IPv6, test-ipv6">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="application-name" content="Teste de IPv6">
+<meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://ipv6.1ms.dog/pt/">
+<link rel="alternate" hreflang="en" href="https://ipv6.1ms.dog/">
+<link rel="alternate" hreflang="zh-CN" href="https://ipv6.1ms.dog/zh-cn/">
+<link rel="alternate" hreflang="zh-TW" href="https://ipv6.1ms.dog/zh-tw/">
+<link rel="alternate" hreflang="ja" href="https://ipv6.1ms.dog/ja/">
+<link rel="alternate" hreflang="ko" href="https://ipv6.1ms.dog/ko/">
+<link rel="alternate" hreflang="es" href="https://ipv6.1ms.dog/es/">
+<link rel="alternate" hreflang="fr" href="https://ipv6.1ms.dog/fr/">
+<link rel="alternate" hreflang="de" href="https://ipv6.1ms.dog/de/">
+<link rel="alternate" hreflang="pt" href="https://ipv6.1ms.dog/pt/">
+<link rel="alternate" hreflang="ru" href="https://ipv6.1ms.dog/ru/">
+<link rel="alternate" hreflang="x-default" href="https://ipv6.1ms.dog/">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="1ms.dog">
+<meta property="og:title" content="Teste de IPv6: sua internet tem suporte a IPv6? Confira com nota de 0 a 10 · Teste de IPv6">
+<meta property="og:description" content="Sites só IPv6 e de pilha dupla, MTU, DNS, NAT64: nota de 0 a 10">
+<meta property="og:url" content="https://ipv6.1ms.dog/pt/">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:image" content="https://ipv6.1ms.dog/og/pt.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Teste de IPv6: sua internet tem suporte a IPv6? Confira com nota de 0 a 10 · Teste de IPv6">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ipv6.1ms.dog/og/pt.png">
+<meta name="twitter:title" content="Teste de IPv6: sua internet tem suporte a IPv6? Confira com nota de 0 a 10 · Teste de IPv6">
+<meta name="twitter:description" content="Sites só IPv6 e de pilha dupla, MTU, DNS, NAT64: nota de 0 a 10">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Teste de IPv6 · 1ms.dog","url":"https://ipv6.1ms.dog/pt/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Teste de IPv6 grátis no navegador: sua rede está pronta para IPv6? Verifica sites só IPv6 e de pilha dupla, pacotes grandes (MTU), DNS e NAT64, mostra seus endereços IPv4 e IPv6 e dá uma nota de 0 a 10 para sua rede.","inLanguage":"pt","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"O que este teste verifica?","acceptedAnswer":{"@type":"Answer","text":"Seu navegador abre alguns pequenos endereços de teste, do mesmo jeito que abre qualquer site: Sites só IPv4 e só IPv6: se você chega a cada internet, e de qual endereço. Um site de pilha dupla (tem os dois): qual seu navegador escolhe e se ele espera o IPv6 antes de desistir. Pacotes grandes por IPv6: uma requisição grande o bastante para precisar de pacotes de tamanho máximo, numa conexão nova. Quando a MTU do caminho está quebrada, requisições pequenas funcionam e as grandes somem: páginas que ficam carregando para sempre. Endereços sem nome, um IPv6 e um IPv4: se o IPv6 funciona sem DNS, e se você está numa rede só IPv6 com NAT64. Cada teste pergunta a dois ou três provedores ao mesmo tempo (DNSPod, icanhazip, Cloudflare, ipify) e fica com a primeira resposta, então um provedor bloqueado ou lento não o faz falhar."}},{"@type":"Question","name":"Como a nota é calculada?","acceptedAnswer":{"@type":"Answer","text":"De 0 a 10, seguindo a ideia do test-ipv6.com de medir o quanto uma rede está pronta para IPv6: 4 pontos se sites só IPv6 funcionam, 2 se pacotes grandes passam por IPv6, 2 se sites de pilha dupla abrem sem esperar, 1 se o IPv6 funciona sem DNS, 1 se seu navegador escolhe IPv6. Um ponto a menos se o IPv6 leva mais de 3 segundos para responder. Sem IPv6, a nota é 0, mesmo que todos os sites continuem funcionando por IPv4. 10 significa que o IPv6 funciona em todo lugar e não deixa nada mais lento."}},{"@type":"Question","name":"Não tenho IPv6. Como consigo?","acceptedAnswer":{"@type":"Answer","text":"A maioria dos provedores já oferece IPv6; muitas vezes está apenas desligado. Na página de administração do roteador, procure IPv6 (ou WAN → IPv6) e escolha o modo do seu provedor, geralmente DHCPv6 ou \"nativo\", com delegação de prefixo ativada. Depois confira se a rede local distribui endereços IPv6 (SLAAC ou DHCPv6). Se o roteador não tem opção de IPv6 ou o provedor não oferece, pergunte a eles. No celular, os dados móveis costumam ter IPv6 mesmo quando o Wi-Fi não tem. Sem IPv6 todos os sites continuam funcionando por IPv4: nada está quebrado, você só fica sem os sites e apps que são só IPv6."}},{"@type":"Question","name":"O IPv6 funciona, mas sites só IPv6 falham. Por quê?","acceptedAnswer":{"@type":"Answer","text":"A conexão IPv6 está boa, mas seu DNS não devolve endereços IPv6 (registros AAAA), então o navegador nunca fica sabendo que o site tem um. Causas comuns: uma configuração do roteador que filtra registros AAAA, um servidor DNS que os descarta ou um proxy que responde ao DNS por conta própria. Desligue o filtro AAAA do roteador ou use um DNS público como 1.1.1.1 ou 8.8.8.8."}},{"@type":"Question","name":"O que é o teste de pacotes grandes (MTU)?","acceptedAnswer":{"@type":"Answer","text":"Os dados viajam em pacotes de até cerca de 1.500 bytes. Em alguns caminhos IPv6 (túneis, PPPoE, roteadores mal configurados) os pacotes cheios não cabem em algum trecho, e a mensagem que pede \"mande menores\" é bloqueada. Requisições pequenas funcionam, a conexão parece boa, mas páginas grandes, imagens ou downloads travam. O teste envia uma requisição de 3,5 KB a um host só IPv6 numa conexão nova, o que exige pacotes cheios nos dois sentidos. Se ele falha enquanto o teste IPv6 pequeno passa, diminua a MTU nas configurações IPv6 ou WAN do roteador (tente 1480 ou 1452 com PPPoE) ou fale com seu provedor."}},{"@type":"Question","name":"Por que meu navegador escolhe IPv4 se o IPv6 funciona?","acceptedAnswer":{"@type":"Answer","text":"Os navegadores tentam os dois e usam o que conecta primeiro (Happy Eyeballs). Se o IPv4 vence, o IPv6 demora mais para conectar na sua rede ou seu sistema prefere IPv4: o Windows faz isso com IPv6 por túnel (6to4, Teredo), e muitos proxies e apps de VPN só levam IPv4. Nada está quebrado; sites só IPv6 continuam abrindo."}},{"@type":"Question","name":"Uso proxy ou VPN. De quem é o resultado?","acceptedAnswer":{"@type":"Answer","text":"Principalmente do proxy. Com o proxy ligado, os sites de teste são acessados através dele, então os endereços e o suporte a IPv6 mostrados são os do servidor proxy, e um proxy que só leva IPv4 faz parecer que falta IPv6. Para testar sua própria rede, desligue o proxy (ou mande esses hosts direto) e teste de novo."}},{"@type":"Question","name":"O que é uma rede só IPv6 com NAT64?","acceptedAnswer":{"@type":"Answer","text":"Algumas redes móveis dão aos celulares apenas IPv6. Para ainda alcançar sites só IPv4, o DNS delas inventa um endereço IPv6 para esses sites (DNS64) e um gateway traduz (NAT64). Os sites abrem pelo nome, mas um endereço IPv4 digitado direto não é alcançável, e é isso que o teste percebe. É uma configuração normal e funciona para quase tudo."}},{"@type":"Question","name":"Meus dados são coletados?","acceptedAnswer":{"@type":"Answer","text":"Não. Os testes vão direto do seu navegador para os hosts de teste, que veem seu endereço como qualquer site. Este site não recebe resultados; um link compartilhado leva só a nota e os tempos, nunca seus endereços. O código é aberto, no GitHub."}}]}]}</script>
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/app.e8e551a99e.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <a class="brand" href="/pt/" aria-current="page">
+      <span class="logo"><img class="logo-light" src="/assets/logo-light.svg" width="90" height="36" alt="1ms.dog"><img class="logo-dark" src="/assets/logo-dark.svg" width="90" height="36" alt="1ms.dog"></span>
+      <span class="brand-name" data-i="app_name">Teste de IPv6</span>
+    </a>
+    <div class="top-acts">
+      <label class="sel"><span class="sr" data-i="lang_label">Idioma</span>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c2 2 2.8 4 2.8 6.5S10 12.5 8 14.5C6 12.5 5.2 10.5 5.2 8S6 3.5 8 1.5z"/></svg>
+        <select id="lang"><option value="en">English</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt" selected>Português</option><option value="ru">Русский</option></select>
+      </label>
+      <button class="icon-btn" id="helpBtn" type="button" aria-haspopup="dialog" aria-controls="help"><span class="sr" data-i="faq_h">Ajuda</span>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.5.2-.8.6-.8 1.1v.4M8 11.3v.1"/></svg>
+      </button>
+      <a class="icon-btn gh" href="https://github.com/yt1988/ipv6-test" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.4.7 0-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.4 7.4 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.6 3.9.3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg></a>
+      <button class="icon-btn" id="theme" type="button" aria-label="Tema">
+        <svg class="i-sys" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1.5"/><path d="M5.5 14h5M8 11.5V14"/></svg>
+        <svg class="i-light" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15M3 3l1.1 1.1M11.9 11.9 13 13M3 13l1.1-1.1M11.9 4.1 13 3"/></svg>
+        <svg class="i-dark" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.8A5.8 5.8 0 0 1 6.2 2.5a5.8 5.8 0 1 0 7.3 7.3z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="shared" id="shared" hidden><span id="sharedTxt"></span><button class="btn pri" id="testMine" type="button" data-i="test_mine">Testar minha rede</button></div>
+    <section class="hero card">
+      <h1>Sua rede tem suporte a IPv6?</h1>
+      <div class="sum">
+        <div class="score" id="scoreBox" data-why="De 0 a 10:
+4  sites só IPv6 funcionam
+2  pacotes grandes passam por IPv6
+2  sites de pilha dupla abrem sem esperar
+1  IPv6 funciona sem DNS
+1  seu navegador escolhe IPv6
+−1 se o IPv6 for lento (mais de 3 s)" tabindex="0">
+          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fg" id="ring" cx="60" cy="60" r="52"/></svg>
+          <span class="score-n"><b id="score">–</b><i>/10</i></span>
+          <span class="score-k" data-i="score_k">Nota IPv6</span>
+        </div>
+        <div class="sum-r">
+          <p class="verdict" id="verdict" data-i="v_wait">Testando…</p>
+          <p class="probs" id="probs">&nbsp;</p>
+          <div class="addrs">
+            <div class="addr" data-a="6"><span class="addr-k">IPv6</span><span class="addr-ip" id="ip6"><i class="skl"></i></span><span class="addr-m" id="m6">&nbsp;</span></div>
+            <div class="addr" data-a="4"><span class="addr-k">IPv4</span><span class="addr-ip" id="ip4"><i class="skl"></i></span><span class="addr-m" id="m4">&nbsp;</span></div>
+          </div>
+          <p class="links"><a id="egressLink" hidden target="_blank" rel="noopener"><span data-i="egress_link">Qual endereço cada site vê?</span> ↗</a></p>
+        </div>
+      </div>
+      <div class="bar">
+        <div class="prog" id="prog"><i></i></div>
+        <span class="prog-t" id="progTxt">&nbsp;</span>
+        <button class="btn sm" id="shareBtn" type="button" aria-haspopup="dialog" aria-controls="shareDlg" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share">Compartilhar</span></button>
+        <button class="btn pri" id="rerun" type="button" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v3h-3"/></svg><span data-i="rerun">Testar de novo</span></button>
+      </div>
+    </section>
+
+    <section class="tests card">
+      <h2 data-i="h_tests">Os testes</h2>
+      <ol class="tl" id="tl">
+        <li class="tr wait" data-t="v4"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Site só IPv4</b><span>Um site que só tem endereço IPv4</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
+        <li class="tr wait" data-t="v6"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Site só IPv6</b><span>Um site que só tem endereço IPv6: precisa de IPv6 e de um DNS que o devolva</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
+        <li class="tr wait" data-t="ds"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Site de pilha dupla</b><span>Um site com os dois: qual seu navegador escolhe</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
+        <li class="tr wait" data-t="big"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Pacotes grandes por IPv6</b><span>Pacotes de tamanho máximo nos dois sentidos; uma MTU quebrada trava as páginas</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
+        <li class="tr wait" data-t="lit6"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Endereço IPv6, sem DNS</b><span>Conecta direto a um endereço IPv6</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
+        <li class="tr wait" data-t="lit4"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Endereço IPv4, sem DNS</b><span>Conecta direto a um endereço IPv4</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
+      </ol>
+    </section>
+
+    <div data-ms-more></div>
+  </main>
+</div>
+<div class="scrim" id="shareDlg" hidden>
+  <div class="dialog share" role="dialog" aria-modal="true" aria-labelledby="shareT">
+    <div class="dlg-h"><h2 id="shareT" data-i="share_h">Compartilhe seu resultado</h2>
+      <button class="icon-btn" data-close type="button" aria-label="Fechar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
+    <div class="share-b">
+      <img id="shareImg" alt="" width="1200" height="630">
+      <div class="share-link"><input id="shareUrl" readonly aria-label="Link"><button class="btn pri" id="copyLink" type="button" data-i="copy_link">Copiar link</button></div>
+      <div class="share-acts">
+        <button class="btn" id="copyImg" type="button" data-i="copy_img">Copiar imagem</button>
+        <button class="btn" id="dlImg" type="button" data-i="dl_img">Baixar imagem</button>
+        <button class="btn" id="nativeShare" type="button" data-i="more_share" hidden>Mais opções</button>
+        <label class="chk"><input type="checkbox" id="shareCc"><span data-i="share_cc">Mostrar meu país</span></label>
+      </div>
+      <p class="note" data-i="share_note">A imagem e o link são criados aqui, no seu navegador; nada é enviado. Nenhum dos dois mostra seus endereços.</p>
+    </div>
+  </div>
+</div>
+<div class="scrim" id="help" hidden>
+  <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
+    <div class="dlg-h"><h2 id="helpT" data-i="faq_h">Ajuda</h2>
+      <button class="icon-btn" data-close type="button" aria-label="Fechar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
+    <div class="help-b">
+      <nav class="help-nav" id="helpNav" role="tablist"><button type="button" role="tab" data-hq="0" aria-selected="true">O que este teste verifica?</button><button type="button" role="tab" data-hq="1" aria-selected="false">Como a nota é calculada?</button><button type="button" role="tab" data-hq="2" aria-selected="false">Não tenho IPv6. Como consigo?</button><button type="button" role="tab" data-hq="3" aria-selected="false">O IPv6 funciona, mas sites só IPv6 falham. Por quê?</button><button type="button" role="tab" data-hq="4" aria-selected="false">O que é o teste de pacotes grandes (MTU)?</button><button type="button" role="tab" data-hq="5" aria-selected="false">Por que meu navegador escolhe IPv4 se o IPv6 funciona?</button><button type="button" role="tab" data-hq="6" aria-selected="false">Uso proxy ou VPN. De quem é o resultado?</button><button type="button" role="tab" data-hq="7" aria-selected="false">O que é uma rede só IPv6 com NAT64?</button><button type="button" role="tab" data-hq="8" aria-selected="false">Meus dados são coletados?</button></nav>
+      <div class="help-pick">
+        <button class="icon-btn" type="button" data-hstep="-1" aria-label="Anterior"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 4L6 8l4 4"/></svg></button>
+        <select id="helpSel" aria-labelledby="helpT"></select>
+        <button class="icon-btn" type="button" data-hstep="1" aria-label="Próximo"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg></button>
+      </div>
+      <div class="help-c" id="helpC"><article data-hqb="0"><h3>O que este teste verifica?</h3><p>Seu navegador abre alguns pequenos endereços de teste, do mesmo jeito que abre qualquer site:</p><p>Sites só IPv4 e só IPv6: se você chega a cada internet, e de qual endereço.</p><p>Um site de pilha dupla (tem os dois): qual seu navegador escolhe e se ele espera o IPv6 antes de desistir.</p><p>Pacotes grandes por IPv6: uma requisição grande o bastante para precisar de pacotes de tamanho máximo, numa conexão nova. Quando a MTU do caminho está quebrada, requisições pequenas funcionam e as grandes somem: páginas que ficam carregando para sempre.</p><p>Endereços sem nome, um IPv6 e um IPv4: se o IPv6 funciona sem DNS, e se você está numa rede só IPv6 com NAT64.</p><p>Cada teste pergunta a dois ou três provedores ao mesmo tempo (DNSPod, icanhazip, Cloudflare, ipify) e fica com a primeira resposta, então um provedor bloqueado ou lento não o faz falhar.</p></article><article data-hqb="1" hidden><h3>Como a nota é calculada?</h3><p>De 0 a 10, seguindo a ideia do test-ipv6.com de medir o quanto uma rede está pronta para IPv6: 4 pontos se sites só IPv6 funcionam, 2 se pacotes grandes passam por IPv6, 2 se sites de pilha dupla abrem sem esperar, 1 se o IPv6 funciona sem DNS, 1 se seu navegador escolhe IPv6. Um ponto a menos se o IPv6 leva mais de 3 segundos para responder. Sem IPv6, a nota é 0, mesmo que todos os sites continuem funcionando por IPv4.</p><p>10 significa que o IPv6 funciona em todo lugar e não deixa nada mais lento.</p></article><article data-hqb="2" hidden><h3>Não tenho IPv6. Como consigo?</h3><p>A maioria dos provedores já oferece IPv6; muitas vezes está apenas desligado. Na página de administração do roteador, procure IPv6 (ou WAN → IPv6) e escolha o modo do seu provedor, geralmente DHCPv6 ou &quot;nativo&quot;, com delegação de prefixo ativada. Depois confira se a rede local distribui endereços IPv6 (SLAAC ou DHCPv6).</p><p>Se o roteador não tem opção de IPv6 ou o provedor não oferece, pergunte a eles. No celular, os dados móveis costumam ter IPv6 mesmo quando o Wi-Fi não tem.</p><p>Sem IPv6 todos os sites continuam funcionando por IPv4: nada está quebrado, você só fica sem os sites e apps que são só IPv6.</p></article><article data-hqb="3" hidden><h3>O IPv6 funciona, mas sites só IPv6 falham. Por quê?</h3><p>A conexão IPv6 está boa, mas seu DNS não devolve endereços IPv6 (registros AAAA), então o navegador nunca fica sabendo que o site tem um. Causas comuns: uma configuração do roteador que filtra registros AAAA, um servidor DNS que os descarta ou um proxy que responde ao DNS por conta própria.</p><p>Desligue o filtro AAAA do roteador ou use um DNS público como 1.1.1.1 ou 8.8.8.8.</p></article><article data-hqb="4" hidden><h3>O que é o teste de pacotes grandes (MTU)?</h3><p>Os dados viajam em pacotes de até cerca de 1.500 bytes. Em alguns caminhos IPv6 (túneis, PPPoE, roteadores mal configurados) os pacotes cheios não cabem em algum trecho, e a mensagem que pede &quot;mande menores&quot; é bloqueada. Requisições pequenas funcionam, a conexão parece boa, mas páginas grandes, imagens ou downloads travam.</p><p>O teste envia uma requisição de 3,5 KB a um host só IPv6 numa conexão nova, o que exige pacotes cheios nos dois sentidos. Se ele falha enquanto o teste IPv6 pequeno passa, diminua a MTU nas configurações IPv6 ou WAN do roteador (tente 1480 ou 1452 com PPPoE) ou fale com seu provedor.</p></article><article data-hqb="5" hidden><h3>Por que meu navegador escolhe IPv4 se o IPv6 funciona?</h3><p>Os navegadores tentam os dois e usam o que conecta primeiro (Happy Eyeballs). Se o IPv4 vence, o IPv6 demora mais para conectar na sua rede ou seu sistema prefere IPv4: o Windows faz isso com IPv6 por túnel (6to4, Teredo), e muitos proxies e apps de VPN só levam IPv4. Nada está quebrado; sites só IPv6 continuam abrindo.</p></article><article data-hqb="6" hidden><h3>Uso proxy ou VPN. De quem é o resultado?</h3><p>Principalmente do proxy. Com o proxy ligado, os sites de teste são acessados através dele, então os endereços e o suporte a IPv6 mostrados são os do servidor proxy, e um proxy que só leva IPv4 faz parecer que falta IPv6. Para testar sua própria rede, desligue o proxy (ou mande esses hosts direto) e teste de novo.</p></article><article data-hqb="7" hidden><h3>O que é uma rede só IPv6 com NAT64?</h3><p>Algumas redes móveis dão aos celulares apenas IPv6. Para ainda alcançar sites só IPv4, o DNS delas inventa um endereço IPv6 para esses sites (DNS64) e um gateway traduz (NAT64). Os sites abrem pelo nome, mas um endereço IPv4 digitado direto não é alcançável, e é isso que o teste percebe. É uma configuração normal e funciona para quase tudo.</p></article><article data-hqb="8" hidden><h3>Meus dados são coletados?</h3><p>Não. Os testes vão direto do seu navegador para os hosts de teste, que veem seu endereço como qualquer site. Este site não recebe resultados; um link compartilhado leva só a nota e os tempos, nunca seus endereços. O código é aberto, no GitHub.</p></article></div>
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="data">{"lang":"pt","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"home":"/pt/"}</script>
+<script src="/assets/l.pt.39d6c0a06a.js"></script>
+<script src="/assets/app.ef16a5cb35.js"></script>
+</body>
+</html>
