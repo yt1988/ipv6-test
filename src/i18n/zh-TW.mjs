@@ -38,6 +38,8 @@ export default {
   k_native: "原生", k_6to4: "6to4 通道", k_teredo: "Teredo 通道",
   m_rtt: "往返 {ms} ms",
   ipqs_link: "查純淨度",
+  who_link: "IPv4 和 IPv6 的出口不在同一個網路：看看網站眼中的你",
+  speed_link: "IPv6 正常，再測一下速度",
   egress_link: "每個網站看到的是哪個 IP？",
 
   h_tests: "測試項目",

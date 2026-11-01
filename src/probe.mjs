@@ -131,6 +131,18 @@ export async function runTest(test, { signal, rtt = true } = {}) {
   }
 }
 
+// The network an address belongs to (ASN and country), from Cloudflare Radar's host for that family: the test's
+// winner is often DNSPod, which says only the address. null when Radar saw another address (a proxy splitting traffic)
+// or didn't answer.
+export async function network(fam, ip, signal) {
+  const h = TESTS.find(t => t.id === "v" + fam).hosts.find(x => x.read === "radar");
+  try {
+    const res = await fetch(h.url, { cache: "no-store", credentials: "omit", referrerPolicy: "no-referrer", signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(5000)]) : AbortSignal.timeout(5000) });
+    const n = res.ok ? readAnswer("radar", await res.text()) : null;
+    return n && n.ip === ip ? n : null;
+  } catch (e) { return null; }
+}
+
 // ---------- the score ----------
 
 // What the score counts, out of 10 (test-ipv6.com's idea: how ready this network is for IPv6-only sites, and whether

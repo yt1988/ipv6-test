@@ -38,6 +38,8 @@ export default {
   k_native: "ネイティブ", k_6to4: "6to4 トンネル", k_teredo: "Teredo トンネル",
   m_rtt: "往復 {ms} ms",
   ipqs_link: "クリーンか確認",
+  who_link: "IPv4 と IPv6 の出口が別のネットワーク：サイトから見たあなたを確認",
+  speed_link: "IPv6 は正常、速度もテスト",
   egress_link: "各サイトにはどの IP が見えている？",
 
   h_tests: "テスト項目",

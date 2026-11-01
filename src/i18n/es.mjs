@@ -38,6 +38,8 @@ export default {
   k_native: "Nativa", k_6to4: "Túnel 6to4", k_teredo: "Túnel Teredo",
   m_rtt: "{ms} ms de ida y vuelta",
   ipqs_link: "¿Está limpia?",
+  who_link: "IPv4 e IPv6 salen por redes distintas: mira qué ven los sitios",
+  speed_link: "IPv6 funciona: mide también tu velocidad",
   egress_link: "¿Qué dirección ve cada sitio?",
 
   h_tests: "Las pruebas",

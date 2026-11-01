@@ -1,7 +1,7 @@
 // IPv6 Test page. Every test's row is in the HTML from the start; the tests (src/probe.mjs) run at once and fill
 // their rows as they answer, and the hero follows: the score and the verdict so far, the two addresses as soon as
 // they are known. Strings: window.L1MS.
-import { TESTS, IDS, SLOW, runTest, verdict, kind6, tierOf } from "./probe.mjs";
+import { TESTS, IDS, SLOW, runTest, network, verdict, kind6, tierOf } from "./probe.mjs";
 import { encode as encodeShare, decode as decodeShare, sharePath } from "./share.mjs";
 
 (function () {
@@ -69,8 +69,17 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
 
   /* ---------- other 1ms.dog tools, with the addresses found here (on 1ms.dog only: the shell's <meta>) ---------- */
   const tool = n => { const m = document.querySelector(`meta[name="${n}"]`); return m ? m.content.replace(/\/+$/, "") + D.home : null; };
-  const IPQS = tool("ipqs"), EGRESS = tool("egress");
+  const IPQS = tool("ipqs"), EGRESS = tool("egress"), ASN = tool("asn"), WHO = tool("who"), SPEED = tool("speed");
   if (EGRESS) { $("#egressLink").href = EGRESS; $("#egressLink").hidden = false; }
+  if (WHO) $("#whoLink").href = WHO;
+  if (SPEED) $("#speedLink").href = SPEED;
+  // Under the addresses, once the test is over: Who Are You when IPv4 and IPv6 leave from different networks (often a
+  // proxy or VPN that carries only one of them, so the other leaks), the speed test when IPv6 works
+  function links(final) {
+    const v4 = R.v4, v6 = R.v6, split = !SHOWN && v4 && v6 && v4.ok && v6.ok && v4.asn && v6.asn && v4.asn !== v6.asn;
+    $("#whoLink").hidden = !(WHO && final && split);
+    $("#speedLink").hidden = !(SPEED && final && v6 && v6.ok && !split);
+  }
 
   /* ---------- numbers ---------- */
   const fmtMs = ms => ms < 10 ? ms.toFixed(1) : String(Math.round(ms));
@@ -116,7 +125,8 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     if (x && x.ok) {
       const k = fam === 6 ? x.kind || kind6(x.ip) : "";
       const tag = k ? `<span class="tag${k === "native" ? "" : " bad"}">${esc(t("k_" + k))}</span>` : "";
-      if (x.asn) bits.push("AS" + x.asn);
+      // its network on ASN Lookup
+      if (x.asn) bits.push(ASN ? `<a class="q0" href="${esc(ASN + "AS" + x.asn)}" target="_blank" rel="noopener">AS${x.asn}</a>` : "AS" + x.asn);
       if (x.cc) bits.push(esc(country(x.cc)));
       if (x.rtt != null) bits.push(esc(t("m_rtt", { ms: fmtMs(x.rtt) })));
       // how clean the address is, on IP Quality Test
@@ -160,10 +170,15 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     R = {}; SHOWN = false; LAST = null; done = 0; t0 = performance.now();
     $("#shareBtn").disabled = true; $("#rerun").disabled = true; $("#prog").classList.remove("end");
     $("#verdict").textContent = t("v_wait"); $("#verdict").className = "verdict"; $("#probs").innerHTML = "&nbsp;";
-    IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(false); progress();
+    IDS.forEach(fillRow); fillAddr(6); fillAddr(4); links(false); hero(false); progress();
     await Promise.all(TESTS.map(async test => {
       const x = await runTest(test, { signal: ctl.signal });
       if (ctl.signal.aborted) return;
+      if ((test.id === "v4" || test.id === "v6") && x.ok && !x.asn) {
+        const n = await network(test.fam, x.ip, ctl.signal);
+        if (ctl.signal.aborted) return;
+        if (n) { x.asn = n.asn; x.cc = x.cc || n.cc; }
+      }
       R[test.id] = x;
       if (test.id === "ds" && x.ok && x.cc) CC = x.cc;
       if (!CC && x.ok && x.cc) CC = x.cc;
@@ -174,7 +189,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     }));
     if (ctl.signal.aborted) return;
     RUN = null;
-    hero(true);
+    hero(true); links(true);
     $("#prog").classList.add("end");
     $("#progTxt").textContent = t("done", { s: ((performance.now() - t0) / 1000).toFixed(1) });
     $("#rerun").disabled = false;
@@ -186,7 +201,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   // Opening /r/<code> shows that result as the test would have drawn it, and doesn't test until the visitor asks
   function showShared(S) {
     R = S.r; SHOWN = true;
-    IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(true);
+    IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(true); links(true);
     $("#sharedTxt").textContent = t("shared_on", { where: S.cc ? t("shared_where", { where: country(S.cc) }) : "", date: new Date(S.ts).toLocaleString(D.lang, { dateStyle: "medium", timeStyle: "short" }) });
     $("#shared").hidden = false;
     $("#prog").classList.add("end"); $("#progTxt").innerHTML = "&nbsp;";

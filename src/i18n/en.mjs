@@ -39,6 +39,8 @@ export default {
   k_native: "Native", k_6to4: "6to4 tunnel", k_teredo: "Teredo tunnel",
   m_rtt: "{ms} ms round trip",
   ipqs_link: "Is it clean?",
+  who_link: "IPv4 and IPv6 leave from different networks: see what sites see",
+  speed_link: "IPv6 works: test your speed too",
   egress_link: "Which address does each site see?",
 
   h_tests: "The tests",
