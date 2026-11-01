@@ -68,6 +68,8 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   });
 
   /* ---------- other 1ms.dog tools, with the addresses found here (on 1ms.dog only: the shell's <meta>) ---------- */
+  // every link to another tool ends with the external-link mark (1ms-shell docs/tool-contract.md, section 4)
+  const EXT = '<svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
   const tool = n => { const m = document.querySelector(`meta[name="${n}"]`); return m ? m.content.replace(/\/+$/, "") + D.home : null; };
   const IPQS = tool("ipqs"), EGRESS = tool("egress"), ASN = tool("asn"), WHO = tool("who"), SPEED = tool("speed");
   if (EGRESS) { $("#egressLink").href = EGRESS; $("#egressLink").hidden = false; }
@@ -126,11 +128,11 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       const k = fam === 6 ? x.kind || kind6(x.ip) : "";
       const tag = k ? `<span class="tag${k === "native" ? "" : " bad"}">${esc(t("k_" + k))}</span>` : "";
       // its network on ASN Lookup
-      if (x.asn) bits.push(ASN ? `<a class="q0" href="${esc(ASN + "AS" + x.asn)}" target="_blank" rel="noopener">AS${x.asn}</a>` : "AS" + x.asn);
+      if (x.asn) bits.push(ASN ? `<a class="q0" href="${esc(ASN + "AS" + x.asn)}" target="_blank" rel="noopener">AS${x.asn}${EXT}</a>` : "AS" + x.asn);
       if (x.cc) bits.push(esc(country(x.cc)));
       if (x.rtt != null) bits.push(esc(t("m_rtt", { ms: fmtMs(x.rtt) })));
       // how clean the address is, on IP Quality Test
-      const q = IPQS && !SHOWN && x.ip ? ` <a class="q" href="${esc(IPQS + "?ip=" + encodeURIComponent(x.ip))}" target="_blank" rel="noopener">${esc(t("ipqs_link"))} ↗</a>` : "";
+      const q = IPQS && !SHOWN && x.ip ? ` <a class="q" href="${esc(IPQS + "?ip=" + encodeURIComponent(x.ip))}" target="_blank" rel="noopener">${esc(t("ipqs_link"))}${EXT}</a>` : "";
       m.innerHTML = (tag + bits.join(" · ") + q) || "&nbsp;";
     } else m.innerHTML = "&nbsp;";
   }

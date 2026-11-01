@@ -140,3 +140,6 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
 .addr-m .q0:hover { color: var(--ink); }
 /* the links that matter for this result stand out from the standing one */
 .links #whoLink, .links #speedLink { color: var(--ink); font-weight: 600; }
+/* links to the other tools: text, then the external-link mark */
+.links a, .addr-m .q, .addr-m .q0 { display: inline-flex; align-items: center; gap: 3px; }
+svg.ext[viewBox] { width: .95em; height: .95em; flex: none; }
