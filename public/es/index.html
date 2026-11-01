@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="Sitios solo IPv6 y de doble pila, MTU, DNS, NAT64: nota sobre 10">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Test de IPv6 · 1ms.dog","url":"https://ipv6.1ms.dog/es/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Test de IPv6 gratis en el navegador: ¿tu red está preparada para IPv6? Comprueba sitios solo IPv6 y de doble pila, paquetes grandes (MTU), DNS y NAT64, muestra tus direcciones IPv4 e IPv6 y puntúa tu red sobre 10.","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Qué comprueba este test?","acceptedAnswer":{"@type":"Answer","text":"Tu navegador abre unas pequeñas direcciones de prueba, igual que abre cualquier sitio: Sitios solo IPv4 y solo IPv6: si llegas a cada internet, y desde qué dirección. Un sitio de doble pila (tiene ambas): cuál elige tu navegador y si espera a IPv6 antes de rendirse. Paquetes grandes por IPv6: una petición lo bastante grande para necesitar paquetes de tamaño completo, en una conexión nueva. Si la MTU del camino está rota, las peticiones pequeñas funcionan y las grandes desaparecen: páginas que se quedan cargando. Direcciones sin nombre, una IPv6 y una IPv4: si IPv6 funciona sin DNS, y si estás en una red solo IPv6 con NAT64. Cada prueba pregunta a dos o tres proveedores a la vez (DNSPod, icanhazip, Cloudflare, ipify) y toma la primera respuesta, así que un proveedor bloqueado o lento no la hace fallar."}},{"@type":"Question","name":"¿Cómo se calcula la nota?","acceptedAnswer":{"@type":"Answer","text":"Sobre 10, siguiendo la idea de test-ipv6.com de medir cuán preparada está una red para IPv6: 4 puntos si los sitios solo IPv6 funcionan, 2 si los paquetes grandes pasan por IPv6, 2 si los sitios de doble pila abren sin esperar, 1 si IPv6 funciona sin DNS, 1 si tu navegador elige IPv6. Un punto menos si IPv6 tarda más de 3 segundos en responder. Sin IPv6, la nota es 0, aunque todos los sitios sigan funcionando por IPv4. Un 10 significa que IPv6 funciona en todas partes y no ralentiza nada."}},{"@type":"Question","name":"No tengo IPv6. ¿Cómo lo consigo?","acceptedAnswer":{"@type":"Answer","text":"La mayoría de los proveedores ya ofrecen IPv6; muchas veces solo está desactivado. En la página de administración del router, busca IPv6 (o WAN → IPv6) y elige el modo de tu proveedor, normalmente DHCPv6 o «nativo», con delegación de prefijo activada. Luego comprueba que la red local reparte direcciones IPv6 (SLAAC o DHCPv6). Si el router no tiene ajuste de IPv6 o el proveedor no lo ofrece, pregúntales. En el móvil, los datos suelen tener IPv6 aunque el Wi-Fi no. Sin IPv6 todos los sitios siguen funcionando por IPv4: no hay nada roto, solo te pierdes los sitios y apps que son solo IPv6."}},{"@type":"Question","name":"IPv6 funciona pero los sitios solo IPv6 fallan. ¿Por qué?","acceptedAnswer":{"@type":"Answer","text":"La conexión IPv6 está bien, pero tu DNS no devuelve direcciones IPv6 (registros AAAA), así que el navegador nunca sabe que el sitio tiene una. Causas habituales: un ajuste del router que filtra los registros AAAA, un servidor DNS que los descarta o un proxy que responde al DNS por su cuenta. Desactiva el filtro AAAA del router o usa un DNS público como 1.1.1.1 u 8.8.8.8."}},{"@type":"Question","name":"¿Qué es la prueba de paquetes grandes (MTU)?","acceptedAnswer":{"@type":"Answer","text":"Los datos viajan en paquetes de hasta unos 1.500 bytes. En algunos caminos IPv6 (túneles, PPPoE, routers mal configurados) los paquetes completos no caben en algún enlace, y el mensaje que pide «envía más pequeños» está bloqueado. Las peticiones pequeñas funcionan, así que la conexión parece bien, pero las páginas grandes, imágenes o descargas se quedan colgadas. La prueba envía una petición de 3,5 KB a un host solo IPv6 en una conexión nueva, lo que exige paquetes completos en ambos sentidos. Si falla mientras la prueba IPv6 pequeña pasa, baja la MTU en los ajustes IPv6 o WAN del router (prueba 1480 o 1452 con PPPoE) o consulta a tu proveedor."}},{"@type":"Question","name":"¿Por qué mi navegador elige IPv4 si IPv6 funciona?","acceptedAnswer":{"@type":"Answer","text":"Los navegadores prueban ambos y usan el que conecta antes (Happy Eyeballs). Si gana IPv4, IPv6 tarda más en conectar en tu red o tu sistema prefiere IPv4: Windows lo hace con IPv6 por túnel (6to4, Teredo), y muchos proxies y apps de VPN solo llevan IPv4. No hay nada roto; los sitios solo IPv6 siguen abriendo."}},{"@type":"Question","name":"Uso un proxy o VPN. ¿De quién es el resultado?","acceptedAnswer":{"@type":"Answer","text":"Sobre todo del proxy. Con el proxy activo, los sitios de prueba se alcanzan a través de él, así que las direcciones y el soporte IPv6 mostrados son los del servidor proxy, y un proxy que solo lleva IPv4 hace parecer que no tienes IPv6. Para probar tu propia red, desactiva el proxy (o envía estos hosts en directo) y vuelve a probar."}},{"@type":"Question","name":"¿Qué es una red solo IPv6 con NAT64?","acceptedAnswer":{"@type":"Answer","text":"Algunas redes móviles dan a los teléfonos solo IPv6. Para que aún lleguen a sitios solo IPv4, su DNS inventa una dirección IPv6 para esos sitios (DNS64) y una pasarela traduce (NAT64). Los sitios abren por su nombre, pero una dirección IPv4 escrita directamente no se alcanza, y eso es lo que detecta la prueba. Es una configuración normal y funciona para casi todo."}},{"@type":"Question","name":"¿Se recogen mis datos?","acceptedAnswer":{"@type":"Answer","text":"No. Las pruebas van directamente de tu navegador a los hosts de prueba, que ven tu dirección como cualquier sitio. Este sitio no recibe resultados; un enlace compartido lleva solo la nota y los tiempos, nunca tus direcciones. El código es abierto y está en GitHub."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.0b2071280b.css">
+<link rel="stylesheet" href="/assets/app.2cb4aea2f2.css">
 </head>
 <body>
 <div class="app">
@@ -96,7 +96,7 @@
       <div class="bar">
         <div class="prog" id="prog"><i></i></div>
         <span class="prog-t" id="progTxt">&nbsp;</span>
-        <button class="btn sm" id="shareBtn" type="button" aria-haspopup="dialog" aria-controls="shareDlg" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share">Compartir</span></button>
+        <button class="btn sm" id="shareBtn" type="button" aria-haspopup="dialog" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share">Compartir</span></button>
         <button class="btn pri" id="rerun" type="button" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v3h-3"/></svg><span data-i="rerun">Repetir</span></button>
       </div>
     </section>
@@ -116,23 +116,6 @@
     <div data-ms-more></div>
   </main>
 </div>
-<div class="scrim" id="shareDlg" hidden>
-  <div class="dialog share" role="dialog" aria-modal="true" aria-labelledby="shareT">
-    <div class="dlg-h"><h2 id="shareT" data-i="share_h">Comparte tu resultado</h2>
-      <button class="icon-btn" data-close type="button" aria-label="Cerrar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-    <div class="share-b">
-      <img id="shareImg" alt="" width="1200" height="630">
-      <div class="share-link"><input id="shareUrl" readonly aria-label="Enlace"><button class="btn pri" id="copyLink" type="button" data-i="copy_link">Copiar enlace</button></div>
-      <div class="share-acts">
-        <button class="btn" id="copyImg" type="button" data-i="copy_img">Copiar imagen</button>
-        <button class="btn" id="dlImg" type="button" data-i="dl_img">Descargar imagen</button>
-        <button class="btn" id="nativeShare" type="button" data-i="more_share" hidden>Más opciones</button>
-        <label class="chk"><input type="checkbox" id="shareCc"><span data-i="share_cc">Mostrar mi país</span></label>
-      </div>
-      <p class="note" data-i="share_note">La imagen y el enlace se crean aquí, en tu navegador; no se sube nada. Ninguno muestra tus direcciones.</p>
-    </div>
-  </div>
-</div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
     <div class="dlg-h"><h2 id="helpT" data-i="faq_h">Ayuda</h2>
@@ -150,7 +133,7 @@
 </div>
 
 <script type="application/json" id="data">{"lang":"es","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"home":"/es/"}</script>
-<script src="/assets/l.es.9901754a7f.js"></script>
-<script src="/assets/app.e6a70a6818.js"></script>
+<script src="/assets/l.es.f761e344e5.js"></script>
+<script src="/assets/app.46f608abc3.js"></script>
 </body>
 </html>

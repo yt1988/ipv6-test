@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="Reine IPv6- und Dual-Stack-Seiten, MTU, DNS, NAT64: bis zu 10 Punkte">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"IPv6-Test · 1ms.dog","url":"https://ipv6.1ms.dog/de/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Kostenloser IPv6-Test im Browser: Ist Ihr Netz IPv6-fähig? Prüft reine IPv6- und Dual-Stack-Seiten, große Pakete (MTU), DNS und NAT64, zeigt Ihre IPv4- und IPv6-Adresse und bewertet Ihr Netz mit bis zu 10 Punkten.","inLanguage":"de","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Was prüft dieser Test?","acceptedAnswer":{"@type":"Answer","text":"Ihr Browser öffnet ein paar kleine Testadressen, so wie er jede Website öffnet: Reine IPv4- und reine IPv6-Seiten: Erreichen Sie das jeweilige Internet, und mit welcher Adresse. Eine Dual-Stack-Seite (sie hat beides): welche Ihr Browser wählt und ob er erst auf IPv6 wartet, bevor er aufgibt. Große Pakete über IPv6: eine Anfrage, die groß genug für Pakete voller Größe ist, auf einer neuen Verbindung. Ist die Pfad-MTU kaputt, gehen kleine Anfragen durch und große verschwinden: Seiten, die endlos laden. Adressen ohne Namen, eine IPv6 und eine IPv4: Funktioniert IPv6 ohne DNS, und sind Sie in einem reinen IPv6-Netz mit NAT64. Jeder Test fragt zwei oder drei Anbieter gleichzeitig (DNSPod, icanhazip, Cloudflare, ipify) und nimmt die erste Antwort, sodass ein blockierter oder langsamer Anbieter ihn nicht scheitern lässt."}},{"@type":"Question","name":"Wie werden die Punkte berechnet?","acceptedAnswer":{"@type":"Answer","text":"Von 10, nach der Idee von test-ipv6.com, wie bereit ein Netz für IPv6 ist: 4 Punkte, wenn reine IPv6-Seiten funktionieren, 2, wenn große Pakete über IPv6 durchkommen, 2, wenn Dual-Stack-Seiten ohne Warten öffnen, 1, wenn IPv6 ohne DNS funktioniert, 1, wenn Ihr Browser IPv6 wählt. Ein Punkt Abzug, wenn IPv6 länger als 3 Sekunden zum Antworten braucht. Ohne IPv6 gibt es 0 Punkte, auch wenn alle Seiten weiter über IPv4 funktionieren. 10 heißt: IPv6 funktioniert überall und bremst nichts aus."}},{"@type":"Question","name":"Ich habe kein IPv6. Wie bekomme ich es?","acceptedAnswer":{"@type":"Answer","text":"Die meisten Anbieter bieten IPv6 an; oft ist es nur ausgeschaltet. Suchen Sie in der Oberfläche Ihres Routers (bei der FRITZ!Box unter Internet → Zugangsdaten → IPv6) die IPv6-Einstellung und wählen Sie den Modus Ihres Anbieters, meist native IPv6 bzw. DHCPv6 mit Präfix-Delegation. Prüfen Sie dann, dass das Heimnetz IPv6-Adressen verteilt (SLAAC oder DHCPv6). Hat der Router keine IPv6-Einstellung oder bietet der Anbieter es nicht an, fragen Sie nach. Mobile Daten am Handy haben oft IPv6, auch wenn das WLAN keins hat. Ohne IPv6 funktionieren alle Seiten über IPv4: Nichts ist kaputt, Ihnen entgehen nur reine IPv6-Seiten und -Apps."}},{"@type":"Question","name":"IPv6 geht, aber reine IPv6-Seiten nicht. Warum?","acceptedAnswer":{"@type":"Answer","text":"Dann ist die IPv6-Verbindung in Ordnung, aber Ihr DNS liefert keine IPv6-Adressen (AAAA-Einträge), sodass der Browser nie erfährt, dass die Seite eine hat. Häufige Ursachen: eine Router-Einstellung, die AAAA-Einträge filtert, ein DNS-Server, der sie verwirft, oder ein Proxy, der DNS selbst beantwortet. Schalten Sie den AAAA-Filter im Router ab oder nutzen Sie einen öffentlichen DNS wie 1.1.1.1 oder 8.8.8.8."}},{"@type":"Question","name":"Was ist der Test mit großen Paketen (MTU)?","acceptedAnswer":{"@type":"Answer","text":"Daten reisen in Paketen von bis zu etwa 1.500 Byte. Auf manchen IPv6-Pfaden (Tunnel, PPPoE, falsch eingestellte Router) sind volle Pakete für eine Strecke zu groß, und die Nachricht „kleinere schicken“ wird blockiert. Kleine Anfragen funktionieren, die Verbindung wirkt gut, aber große Seiten, Bilder oder Downloads hängen. Der Test schickt eine 3,5-KB-Anfrage an einen reinen IPv6-Host auf einer neuen Verbindung, was volle Pakete in beide Richtungen braucht. Scheitert er, während der kleine IPv6-Test besteht, senken Sie die MTU in den IPv6- oder WAN-Einstellungen des Routers (bei PPPoE 1480 oder 1452 probieren) oder fragen Ihren Anbieter."}},{"@type":"Question","name":"Warum wählt mein Browser IPv4, obwohl IPv6 geht?","acceptedAnswer":{"@type":"Answer","text":"Browser probieren beides und nehmen, was zuerst verbindet (Happy Eyeballs). Gewinnt IPv4, verbindet IPv6 in Ihrem Netz langsamer, oder Ihr System bevorzugt IPv4: Windows tut das bei getunneltem IPv6 (6to4, Teredo), und viele Proxys und VPN-Apps transportieren nur IPv4. Kaputt ist nichts; reine IPv6-Seiten öffnen weiterhin."}},{"@type":"Question","name":"Ich nutze einen Proxy oder VPN. Wessen Ergebnis ist das?","acceptedAnswer":{"@type":"Answer","text":"Größtenteils das des Proxys. Mit eingeschaltetem Proxy werden die Testseiten über ihn erreicht, die angezeigten Adressen und die IPv6-Unterstützung sind also die des Proxyservers, und ein Proxy, der nur IPv4 transportiert, lässt IPv6 fehlend aussehen. Um Ihr eigenes Netz zu testen, schalten Sie den Proxy ab (oder leiten diese Hosts direkt) und testen erneut."}},{"@type":"Question","name":"Was ist ein reines IPv6-Netz mit NAT64?","acceptedAnswer":{"@type":"Answer","text":"Manche Mobilfunknetze geben Handys nur IPv6. Damit sie trotzdem reine IPv4-Seiten erreichen, erfindet ihr DNS für diese Seiten eine IPv6-Adresse (DNS64), und ein Gateway übersetzt (NAT64). Seiten öffnen über ihren Namen, eine direkt eingegebene IPv4-Adresse ist aber nicht erreichbar – genau das erkennt der Test. Das ist ein übliches Setup und funktioniert für fast alles."}},{"@type":"Question","name":"Werden meine Daten gesammelt?","acceptedAnswer":{"@type":"Answer","text":"Nein. Die Tests gehen direkt von Ihrem Browser an die Testhosts, die Ihre Adresse sehen wie jede Website. Diese Seite erhält keine Ergebnisse; ein geteilter Link enthält nur die Punkte und die Zeiten, nie Ihre Adressen. Der Code ist Open Source auf GitHub."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.0b2071280b.css">
+<link rel="stylesheet" href="/assets/app.2cb4aea2f2.css">
 </head>
 <body>
 <div class="app">
@@ -96,7 +96,7 @@
       <div class="bar">
         <div class="prog" id="prog"><i></i></div>
         <span class="prog-t" id="progTxt">&nbsp;</span>
-        <button class="btn sm" id="shareBtn" type="button" aria-haspopup="dialog" aria-controls="shareDlg" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share">Teilen</span></button>
+        <button class="btn sm" id="shareBtn" type="button" aria-haspopup="dialog" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share">Teilen</span></button>
         <button class="btn pri" id="rerun" type="button" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v3h-3"/></svg><span data-i="rerun">Erneut testen</span></button>
       </div>
     </section>
@@ -116,23 +116,6 @@
     <div data-ms-more></div>
   </main>
 </div>
-<div class="scrim" id="shareDlg" hidden>
-  <div class="dialog share" role="dialog" aria-modal="true" aria-labelledby="shareT">
-    <div class="dlg-h"><h2 id="shareT" data-i="share_h">Ergebnis teilen</h2>
-      <button class="icon-btn" data-close type="button" aria-label="Schließen"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-    <div class="share-b">
-      <img id="shareImg" alt="" width="1200" height="630">
-      <div class="share-link"><input id="shareUrl" readonly aria-label="Link"><button class="btn pri" id="copyLink" type="button" data-i="copy_link">Link kopieren</button></div>
-      <div class="share-acts">
-        <button class="btn" id="copyImg" type="button" data-i="copy_img">Bild kopieren</button>
-        <button class="btn" id="dlImg" type="button" data-i="dl_img">Bild herunterladen</button>
-        <button class="btn" id="nativeShare" type="button" data-i="more_share" hidden>Weitere Optionen</button>
-        <label class="chk"><input type="checkbox" id="shareCc"><span data-i="share_cc">Mein Land zeigen</span></label>
-      </div>
-      <p class="note" data-i="share_note">Bild und Link entstehen hier in Ihrem Browser; nichts wird hochgeladen. Keines von beiden zeigt Ihre Adressen.</p>
-    </div>
-  </div>
-</div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
     <div class="dlg-h"><h2 id="helpT" data-i="faq_h">Hilfe</h2>
@@ -150,7 +133,7 @@
 </div>
 
 <script type="application/json" id="data">{"lang":"de","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"home":"/de/"}</script>
-<script src="/assets/l.de.4dfaf9c0a3.js"></script>
-<script src="/assets/app.e6a70a6818.js"></script>
+<script src="/assets/l.de.5e5d0a7b71.js"></script>
+<script src="/assets/app.46f608abc3.js"></script>
 </body>
 </html>

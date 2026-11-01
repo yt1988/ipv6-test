@@ -211,86 +211,31 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     LAST = S; $("#shareBtn").disabled = false;
   }
 
-  /* ---------- share: a link that carries the result, an image drawn here, the system share sheet ---------- */
-  const shareLink = () => location.origin + D.home + "r/" + encodeShare({ ...LAST, cc: $("#shareCc").checked ? LAST.cc : "" });
-  let shortFor = null;
-  async function shortLink(long) {
-    const meta = document.querySelector('meta[name="shortener"]');          // present on 1ms.dog; absent when self-hosted
-    if (!meta) return long;
-    if (shortFor && shortFor[0] === long) return shortFor[1];
-    try {
-      const r = await fetch(meta.content, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url: long }), signal: AbortSignal.timeout(5000) });
-      const j = await r.json(); if (j.url) { shortFor = [long, j.url]; return j.url; }
-    } catch (e) {}
-    return long;
-  }
-  let shareBlob = null, shareRun = 0;
-  async function prepareShare() {
-    const run = ++shareRun, long = shareLink();
-    $("#shareUrl").value = long; $("#shareImg").removeAttribute("src"); shareBlob = null;
-    loadQR().catch(() => {});
-    const url = await shortLink(long);
-    if (run !== shareRun) return;
-    $("#shareUrl").value = url;
-    // the QR code carries the short link; a long one would be too dense to scan, so then it points at the page
-    const c = await drawCard(url.length <= 300 ? url : location.origin + D.home).catch(() => null);
-    if (!c || run !== shareRun) return;
-    $("#shareImg").src = c.toDataURL("image/png"); c.toBlob(b => { shareBlob = b; }, "image/png");
-  }
-  $("#shareBtn").onclick = () => {
+  /* ---------- share: the 1ms.dog share dialog (1ms-shell assets/share/, copied verbatim to /assets/share/) ---------- */
+  $("#shareBtn").onclick = async () => {
     if (!LAST) return;
-    $("#shareCc").disabled = !LAST.cc;
-    if (!LAST.cc) $("#shareCc").checked = false;
-    $("#nativeShare").hidden = !navigator.share;
-    openDlg("shareDlg");
-    prepareShare();
-  };
-  $("#shareCc").onchange = prepareShare;
-  let qrP = null;
-  const loadQR = () => qrP ||= new Promise((res, rej) => {
-    const el = document.createElement("script"); el.src = QR_JS;
-    el.onload = () => res(self.QR1MS); el.onerror = () => { qrP = null; rej(); };
-    document.head.appendChild(el);
-  });
-  const flash = (btn, k) => { const o = btn.textContent; btn.textContent = t(k); setTimeout(() => { btn.textContent = o; }, 1500); };
-  $("#copyLink").onclick = async e => { try { await navigator.clipboard.writeText($("#shareUrl").value); flash(e.target, "copied"); } catch (x) { $("#shareUrl").select(); } };
-  $("#copyImg").onclick = async e => { try { await navigator.clipboard.write([new ClipboardItem({ "image/png": shareBlob })]); flash(e.target, "copied"); } catch (x) {} };
-  $("#dlImg").onclick = () => { const a = document.createElement("a"); a.href = $("#shareImg").src; a.download = "ipv6-test.png"; a.click(); };
-  $("#nativeShare").onclick = async () => {
-    const text = t("share_text", { s: verdict(LAST.r).score });
-    const file = shareBlob && new File([shareBlob], "ipv6-test.png", { type: "image/png" });
-    try { await navigator.share(file && navigator.canShare && navigator.canShare({ files: [file] }) ? { text, url: $("#shareUrl").value, files: [file] } : { text, url: $("#shareUrl").value }); } catch (e) {}
+    const S = LAST, res = verdict(S.r);
+    const { share } = await import("/assets/share/share.js");
+    share({
+      lang: D.lang, name: t("app_name"), file: "ipv6-test",
+      show: ["country"], never: ["ip"], canShow: !!S.cc,
+      link: show => location.origin + D.home + "r/" + encodeShare({ ...S, cc: show ? S.cc : "" }),
+      home: location.origin + D.home,
+      text: () => t("share_text", { s: res.score }),
+      height: 630, draw: (x, kit) => drawCard(x, kit, S, res),
+      foot: show => [t("card_sub"), show && S.cc && country(S.cc)],
+      ts: S.ts,
+    }).open();
   };
 
-  // The card: brand, the score in its ring, the verdict, every test with its mark, a QR code for the link; in the
-  // page's own theme. No address; the country only when the visitor ticked it.
-  const img = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
-  function clip(x, s, w) { if (x.measureText(s).width <= w) return s; while (s && x.measureText(s + "…").width > w) s = s.slice(0, -1); return s + "…"; }
-  function roundRect(x, a, b, w, h, r) { x.beginPath(); x.moveTo(a + r, b); x.arcTo(a + w, b, a + w, b + h, r); x.arcTo(a + w, b + h, a, b + h, r); x.arcTo(a, b + h, a, b, r); x.arcTo(a, b, a + w, b, r); x.closePath(); }
-  async function drawCard(link) {
-    const W = 1200, H = 630, P = 56, cc = $("#shareCc").checked ? LAST.cc : "";
-    const F = "Geist, 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans', 'Malgun Gothic', sans-serif", M = "'Geist Mono', Consolas, monospace";
-    const css = getComputedStyle(document.documentElement), v = n => css.getPropertyValue("--" + n).trim(), dark = css.colorScheme === "dark";
-    const C = { bg: v("bg"), panel: v("panel"), line: v("line"), fg: v("fg"), muted: v("muted"), soft: v("soft"), bad: v("bad"), warn: v("warn"), t1: v("t1"), t2: v("t2"), t3: v("t3"), t4: v("t4"), t5: v("t5") };
-    const c = document.createElement("canvas"); c.width = W; c.height = H;
-    const x = c.getContext("2d");
-    x.fillStyle = C.bg; x.fillRect(0, 0, W, H);
-    const res = verdict(LAST.r), col = C[tierOf(res.score)];
-    const logo = await img(dark ? "/assets/logo-dark.svg" : "/assets/logo-light.svg");
-    x.drawImage(logo, P, 40, 150, 60);
+  // The middle of the card: the score in its ring, the verdict, every test with its mark; never an address
+  function drawCard(x, kit, S, res) {
+    const { W, P, F, M, v, clip } = kit;
+    const C = { fg: v("fg"), muted: v("muted"), soft: v("soft"), bad: v("bad"), warn: v("warn"), t1: v("t1"), t2: v("t2"), t3: v("t3"), t4: v("t4"), t5: v("t5") };
+    const col = C[tierOf(res.score)];
     x.textBaseline = "alphabetic";
-    x.fillStyle = C.muted; x.font = `600 24px ${F}`; x.fillText(t("app_name") + "  ·  " + location.host, P + 170, 80);
-    // the QR code, top right
-    const QS = 150;
-    const qr = link && await loadQR().then(Q => { const q = Q(0, "M"); q.addData(link); q.make(); return q; }).catch(() => null);
-    if (qr) {
-      const n = qr.getModuleCount(), s = (QS - 16) / n, qx = W - P - QS, qy = 36;
-      x.fillStyle = "#fff"; roundRect(x, qx, qy, QS, QS, 12); x.fill();
-      x.fillStyle = "#111";
-      for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (qr.isDark(i, j)) x.fillRect(qx + 8 + j * s, qy + 8 + i * s, s + .3, s + .3);
-    }
     // the score in its ring, and the verdict beside it
-    const cx = P + 110, cy = 300, rr = 96;
+    const cx = P + 110, cy = 376, rr = 96;
     x.lineWidth = 16; x.lineCap = "round";
     x.strokeStyle = C.soft; x.beginPath(); x.arc(cx, cy, rr, 0, Math.PI * 2); x.stroke();
     if (res.score) { x.strokeStyle = col; x.beginPath(); x.arc(cx, cy, rr, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * res.score / 10); x.stroke(); }
@@ -299,24 +244,17 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     x.fillStyle = C.muted; x.font = `500 24px ${M}`; x.fillText("/ 10", cx, cy + 54);
     x.textAlign = "left";
     const tx = P + 260, tw = W - P - tx;
-    x.fillStyle = C.muted; x.font = `600 24px ${F}`; x.fillText(t("score_k"), tx, 228);
-    x.fillStyle = C.fg; x.font = `750 44px ${F}`; x.fillText(clip(x, t(res.head), tw), tx, 284);
+    x.fillStyle = C.muted; x.font = `600 24px ${F}`; x.fillText(t("score_k"), tx, kit.top + 100);
+    x.fillStyle = C.fg; x.font = `750 44px ${F}`; x.fillText(clip(x, t(res.head), tw), tx, kit.top + 156);
     // the tests in two columns, each with its mark
-    x.font = `500 23px ${F}`;
     TESTS.forEach((test, i) => {
-      const r = LAST.r[test.id], col2 = i % 2, row = Math.floor(i / 2), ax = tx + col2 * (tw / 2), ay = 336 + row * 44;
-      const ok = r && r.ok, warn = ok && (r.ms > SLOW || (test.id === "ds" && r.fam === 4 && LAST.r.v6 && LAST.r.v6.ok));
+      const r = S.r[test.id], col2 = i % 2, row = Math.floor(i / 2), ax = tx + col2 * (tw / 2), ay = kit.top + 208 + row * 44;
+      const ok = r && r.ok, warn = ok && (r.ms > SLOW || (test.id === "ds" && r.fam === 4 && S.r.v6 && S.r.v6.ok));
       x.fillStyle = ok ? (warn ? C.warn : C.t1) : C.bad;
       x.font = `700 23px ${F}`; x.fillText(ok ? (warn ? "!" : "✓") : "✕", ax, ay);
       x.fillStyle = C.fg; x.font = `500 23px ${F}`;
       x.fillText(clip(x, t("t_" + test.id) + (test.id === "ds" && ok ? " · IPv" + r.fam : ""), tw / 2 - 44), ax + 32, ay);
     });
-    // what was tested, when, and where (only if ticked)
-    x.fillStyle = C.line; x.fillRect(P, H - 82, W - P * 2, 2);
-    x.fillStyle = C.muted; x.font = `400 20px ${F}`;
-    const foot = [t("card_sub"), new Date(LAST.ts).toLocaleDateString(D.lang), cc && country(cc)].filter(Boolean).join("  ·  ");
-    x.fillText(clip(x, foot, W - P * 2), P, H - 40);
-    return c;
   }
 
   $("#rerun").onclick = start;
