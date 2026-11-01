@@ -37,6 +37,7 @@ export default {
   none6: "IPv6 アドレスなし", none4: "IPv4 アドレスなし",
   k_native: "ネイティブ", k_6to4: "6to4 トンネル", k_teredo: "Teredo トンネル",
   m_rtt: "往復 {ms} ms",
+  asn_t: "この AS を調べる",
   ipqs_link: "クリーンか確認",
   who_link: "IPv4 と IPv6 の出口が別のネットワーク：サイトから見たあなたを確認",
   speed_link: "IPv6 は正常、速度もテスト",

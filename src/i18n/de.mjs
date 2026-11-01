@@ -37,6 +37,7 @@ export default {
   none6: "Keine IPv6-Adresse", none4: "Keine IPv4-Adresse",
   k_native: "Nativ", k_6to4: "6to4-Tunnel", k_teredo: "Teredo-Tunnel",
   m_rtt: "{ms} ms Umlaufzeit",
+  asn_t: "Dieses AS nachschlagen",
   ipqs_link: "Ist sie sauber?",
   who_link: "IPv4 und IPv6 gehen über verschiedene Netze raus: sehen Sie, was Websites sehen",
   speed_link: "IPv6 funktioniert: testen Sie auch Ihr Tempo",

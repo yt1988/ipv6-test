@@ -37,6 +37,7 @@ export default {
   none6: "沒有 IPv6 位址", none4: "沒有 IPv4 位址",
   k_native: "原生", k_6to4: "6to4 通道", k_teredo: "Teredo 通道",
   m_rtt: "往返 {ms} ms",
+  asn_t: "查詢這個 AS",
   ipqs_link: "查純淨度",
   who_link: "IPv4 和 IPv6 的出口不在同一個網路：看看網站眼中的你",
   speed_link: "IPv6 正常，再測一下速度",

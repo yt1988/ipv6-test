@@ -37,6 +37,7 @@ export default {
   none6: "IPv6 주소 없음", none4: "IPv4 주소 없음",
   k_native: "네이티브", k_6to4: "6to4 터널", k_teredo: "Teredo 터널",
   m_rtt: "왕복 {ms} ms",
+  asn_t: "이 AS 조회",
   ipqs_link: "깨끗한지 확인",
   who_link: "IPv4와 IPv6의 출구가 서로 다른 네트워크: 사이트가 보는 나 확인",
   speed_link: "IPv6 정상, 속도도 테스트",

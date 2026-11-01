@@ -136,10 +136,10 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
   /* a full IPv6 address doesn't fit on one line on a phone: two lines kept for it from the start */
   .addr[data-a="6"] .addr-ip { white-space: normal; overflow-wrap: anywhere; min-height: 3em; }
 }
-.addr-m .q0 { color: inherit; text-decoration: none; border-bottom: 1px dotted currentColor; }
+.addr-m .q0 { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
 .addr-m .q0:hover { color: var(--ink); }
 /* the links that matter for this result stand out from the standing one */
 .links #whoLink, .links #speedLink { color: var(--ink); font-weight: 600; }
 /* links to the other tools: text, then the external-link mark */
-.links a, .addr-m .q, .addr-m .q0 { display: inline-flex; align-items: center; gap: 3px; }
+.links a, .addr-m .q { display: inline-flex; align-items: center; gap: 3px; }
 svg.ext[viewBox] { width: .95em; height: .95em; flex: none; }

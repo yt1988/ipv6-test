@@ -127,8 +127,8 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     if (x && x.ok) {
       const k = fam === 6 ? x.kind || kind6(x.ip) : "";
       const tag = k ? `<span class="tag${k === "native" ? "" : " bad"}">${esc(t("k_" + k))}</span>` : "";
-      // its network on ASN Lookup
-      if (x.asn) bits.push(ASN ? `<a class="q0" href="${esc(ASN + "AS" + x.asn)}" target="_blank" rel="noopener">AS${x.asn}${EXT}</a>` : "AS" + x.asn);
+      // its network on ASN Lookup: a value made into a link, so a dotted underline and a title, not the external-link mark
+      if (x.asn) bits.push(ASN ? `<a class="q0" href="${esc(ASN + "AS" + x.asn)}" title="${esc(t("asn_t"))}" target="_blank" rel="noopener">AS${x.asn}</a>` : "AS" + x.asn);
       if (x.cc) bits.push(esc(country(x.cc)));
       if (x.rtt != null) bits.push(esc(t("m_rtt", { ms: fmtMs(x.rtt) })));
       // how clean the address is, on IP Quality Test
