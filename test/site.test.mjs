@@ -51,9 +51,9 @@ test("the slow-IPv6 page is its own page: title, canonical, h1 and the article",
     assert.equal(one(h, /<link rel="canonical" href="(.*?)">/), SITE + "/" + dir, lang + ": canonical");
     for (const [l, s] of LANGS) assert.ok(h.includes(`hreflang="${l}" href="${SITE}/${s ? s + "/" : ""}ipv6-slow/"`), lang + ": alternate " + l);
     assert.equal((h.match(/<h1>/g) || []).length, 1, lang + ": one h1");
-    assert.match(h, /<article class="art card"><h2>/, lang + ": the article");
+    assert.match(h, /<article class="art card" id="why"><h2>/, lang + ": the article, with the anchor the test links to");
     assert.ok(!h.includes(`class="cmp-more"`), lang + ": no link to itself");
-    assert.ok(home.includes(`<p class="cmp-more"><a href="/${dir}">`), lang + ": the test links to it");
+    assert.ok(home.includes(`<p class="cmp-more"><a href="/${dir}#why">`), lang + ": the test links to it");
     assert.equal((h.match(/<div class="cr wait" data-p="/g) || []).length, 4, lang + ": every comparison row");
   }
 });
