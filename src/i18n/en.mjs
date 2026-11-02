@@ -26,6 +26,7 @@ export default {
   ok_all: "Every test passed: IPv6-only sites open, and IPv6 slows nothing down.",
   ok_v4: "Sites work over IPv4. To get IPv6, turn it on in your router (WAN or IPv6 settings) or ask your provider.",
   off_hint: "Check your connection, or a firewall or extension that blocks these sites, then test again.",
+  e_blocked: "None of the test sites could be reached: an ad blocker (uBlock, AdGuard…) or a firewall may be stopping them.",
   p_nodns: "Your DNS doesn't return IPv6 addresses (the router may filter AAAA records).",
   p_mtu: "Large packets get lost over IPv6 (MTU): some sites hang.",
   p_slowds: "Sites with both IPv4 and IPv6 open slowly: your browser waits for IPv6 first.",

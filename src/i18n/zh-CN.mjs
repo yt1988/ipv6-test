@@ -25,6 +25,7 @@ export default {
   ok_all: "全部通过：纯 IPv6 网站能打开，IPv6 也不会拖慢上网。",
   ok_v4: "网站照常通过 IPv4 访问。想用 IPv6，可以在路由器里打开（WAN 或 IPv6 设置），或者找运营商开通。",
   off_hint: "检查网络连接，或者是否有防火墙、浏览器扩展拦截了这些站点，然后重新测试。",
+  e_blocked: "所有测试站点都连不上：可能被广告拦截扩展（uBlock、AdGuard 等）或防火墙拦下了。",
   p_nodns: "DNS 不返回 IPv6 地址（路由器可能开了「过滤 AAAA 记录」）。",
   p_mtu: "IPv6 大数据包会丢（MTU 问题），部分网站会卡住。",
   p_slowds: "同时有 IPv4 和 IPv6 的网站打开慢：浏览器先等 IPv6 超时。",

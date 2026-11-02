@@ -93,6 +93,15 @@ export const ORIGINS = [...new Set([...TESTS, ...SIDES].flatMap(t => t.hosts.map
 
 export const famOf = ip => /^\d{1,3}(\.\d{1,3}){3}$/.test(ip || "") ? 4 : /^[0-9a-f:.]+$/i.test(ip || "") && ip.includes(":") ? 6 : 0;
 
+// the same address however it is written (IPv6: case, leading zeros, ::)
+const fullIp = ip => {
+  ip = String(ip || "").toLowerCase();
+  if (!ip.includes(":")) return ip;
+  const [l, r = ""] = ip.split("::"), a = l ? l.split(":") : [], b = r ? r.split(":") : [];
+  return [...a, ...Array(Math.max(0, 8 - a.length - b.length)).fill("0"), ...b].map(x => x.replace(/^0+(?=.)/, "")).join(":");
+};
+export const sameIp = (a, b) => !!famOf(a) && fullIp(a) === fullIp(b);
+
 // the address out of an answer body
 export function readAnswer(read, body) {
   if (read === "any") return {};

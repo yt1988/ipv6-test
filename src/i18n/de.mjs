@@ -25,6 +25,7 @@ export default {
   ok_all: "Alles bestanden: Reine IPv6-Seiten öffnen, und IPv6 bremst nichts aus.",
   ok_v4: "Seiten funktionieren über IPv4. Für IPv6 schalten Sie es im Router ein (Einstellungen für Internet/WAN oder IPv6) oder fragen Ihren Anbieter.",
   off_hint: "Prüfen Sie die Verbindung oder eine Firewall bzw. Erweiterung, die diese Seiten blockiert, und testen Sie erneut.",
+  e_blocked: "Keine der Testseiten war erreichbar: Ein Werbeblocker (uBlock, AdGuard …) oder eine Firewall blockiert sie vielleicht.",
   p_nodns: "Ihr DNS liefert keine IPv6-Adressen (der Router filtert evtl. AAAA-Einträge).",
   p_mtu: "Große Pakete gehen über IPv6 verloren (MTU): manche Seiten hängen.",
   p_slowds: "Seiten mit IPv4 und IPv6 öffnen langsam: Der Browser wartet zuerst auf IPv6.",

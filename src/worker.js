@@ -1,7 +1,8 @@
 // The IPv6 Test Worker. Files in ./public are served before it runs, so it only sees paths that are not files:
 //   /r/<code>, /<lang>/r/<code>   a shared result: that language's page with the score and the verdict in its title
 //                         (what chat apps show as the link's preview), not indexed; the page itself reads the code and
-//                         shows the result (src/share.mjs)
+//                         shows the result (src/share.mjs); a code it can not read (garbled, cut short, a format it
+//                         does not know) is a 404, so search engines drop the dead link
 //   anything else         a bare 404; 1ms-shell puts the shared 1ms.dog 404 page in front of it
 
 import { IDS, SIDES, verdict, compare } from "./probe.mjs";
@@ -27,8 +28,8 @@ export default {
     const url = new URL(req.url);
     if (req.method !== "GET" && req.method !== "HEAD") return new Response("Method not allowed\n", { status: 405 });
 
-    const sp = sharePath(url.pathname);
-    if (sp && sp.slug in STR && env.ASSETS) return shared(req, env, url, sp);
+    const sp = sharePath(url.pathname), r = sp && sp.slug in STR && decode(sp.code, KNOWN);
+    if (r && env.ASSETS) return shared(req, env, url, sp, r);
 
     return new Response(req.method === "HEAD" ? null : "Not found\n", {
       status: 404,
@@ -38,11 +39,9 @@ export default {
 };
 
 // A shared result: the language's page as it is, with the title, description and their Open Graph and Twitter copies
-// giving the score. A code this page can't read goes to the language's page instead.
-async function shared(req, env, url, { slug, code }) {
+// giving the score. r: the result the code holds.
+async function shared(req, env, url, { slug }, r) {
   const home = "/" + (slug ? slug + "/" : "");
-  const r = decode(code, KNOWN);
-  if (!r) return Response.redirect(new URL(home, url).toString(), 302);
   const S = STR[slug], v = verdict(r.r);
   const title = fill(S.share_title, { s: v.score, verdict: S[v.head] });
   // IPv4 against IPv6 leads the description when the link has it (links from before it do not)

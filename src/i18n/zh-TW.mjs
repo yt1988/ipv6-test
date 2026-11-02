@@ -25,6 +25,7 @@ export default {
   ok_all: "全部通過：純 IPv6 網站能開啟，IPv6 也不會拖慢上網。",
   ok_v4: "網站照常透過 IPv4 存取。想用 IPv6，可以在路由器裡開啟（WAN 或 IPv6 設定），或請電信業者開通。",
   off_hint: "檢查網路連線，或是否有防火牆、瀏覽器擴充功能擋下了這些站點，然後重新測試。",
+  e_blocked: "所有測試站點都連不上：可能被廣告攔截擴充功能（uBlock、AdGuard 等）或防火牆擋下了。",
   p_nodns: "DNS 不回傳 IPv6 位址（路由器可能開了「過濾 AAAA 紀錄」）。",
   p_mtu: "IPv6 大封包會遺失（MTU 問題），部分網站會卡住。",
   p_slowds: "同時有 IPv4 與 IPv6 的網站開得慢：瀏覽器先等 IPv6 逾時。",

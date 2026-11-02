@@ -1,7 +1,7 @@
 // Reading the answers, the score and the verdict, and shared links.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { TESTS, IDS, readAnswer, kind6, famOf, score, verdict, compare, PAIRS, SIDES, SLOW } from "../src/probe.mjs";
+import { TESTS, IDS, readAnswer, kind6, famOf, sameIp, score, verdict, compare, PAIRS, SIDES, SLOW } from "../src/probe.mjs";
 import { encode, decode, sharePath } from "../src/share.mjs";
 
 const ok = (fam, ms = 50, extra = {}) => ({ ok: true, fam, ms, rtt: ms / 2, ip: fam === 6 ? "2408:8207::1" : fam === 4 ? "114.254.73.157" : "", ...extra });
@@ -15,6 +15,13 @@ test("answers are read the way each host writes them", () => {
   assert.deepEqual(readAnswer("radar", '{"asn":4808,"country":"CN","ip_address":"114.254.73.157"}'), { ip: "114.254.73.157", asn: 4808, cc: "CN" });
   assert.equal(readAnswer("radar", "nope"), null);
   assert.equal(famOf("1.2.3.4"), 4); assert.equal(famOf("::1"), 6); assert.equal(famOf("x"), 0);
+});
+
+test("the same address however it is written", () => {
+  assert.ok(sameIp("2001:DB8::1", "2001:0db8:0:0:0:0:0:0001"));
+  assert.ok(sameIp("1.2.3.4", "1.2.3.4"));
+  assert.ok(!sameIp("2001:db8::1", "2001:db8::2"));
+  assert.ok(!sameIp("", ""));
 });
 
 test("IPv6 kinds", () => {

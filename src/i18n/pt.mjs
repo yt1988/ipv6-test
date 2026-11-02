@@ -25,6 +25,7 @@ export default {
   ok_all: "Tudo certo: sites só IPv6 abrem e o IPv6 não deixa nada mais lento.",
   ok_v4: "Os sites funcionam por IPv4. Para ter IPv6, ative no roteador (configurações WAN ou IPv6) ou peça ao seu provedor.",
   off_hint: "Verifique sua conexão, ou um firewall ou extensão que bloqueie esses sites, e teste de novo.",
+  e_blocked: "Nenhum site de teste pôde ser alcançado: um bloqueador de anúncios (uBlock, AdGuard…) ou um firewall pode estar barrando-os.",
   p_nodns: "Seu DNS não devolve endereços IPv6 (o roteador pode estar filtrando registros AAAA).",
   p_mtu: "Pacotes grandes se perdem no IPv6 (MTU): alguns sites travam.",
   p_slowds: "Sites com IPv4 e IPv6 abrem devagar: o navegador espera o IPv6 primeiro.",

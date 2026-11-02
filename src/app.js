@@ -1,7 +1,7 @@
 // IPv6 Test page. Every test's row is in the HTML from the start; the tests (src/probe.mjs) run at once and fill
 // their rows as they answer, and the hero follows: the score and the verdict so far, the two addresses as soon as
 // they are known. IPv4 against IPv6 runs alongside, one row per network. Strings: window.L1MS.
-import { TESTS, IDS, SIDES, PAIRS, SLOW, runTest, network, verdict, compare, kind6, tierOf } from "./probe.mjs";
+import { TESTS, IDS, SIDES, PAIRS, SLOW, runTest, network, sameIp, verdict, compare, kind6, tierOf } from "./probe.mjs";
 import { encode as encodeShare, decode as decodeShare, sharePath } from "./share.mjs";
 
 (function () {
@@ -206,6 +206,21 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   // where the visitor is (Cloudflare's own trace on this site), for the share card when they tick "show my country"
   let CC = "";
 
+  // Who this connection is, from the shell (1ms-shell /_ms/me: what Cloudflare knows of it, asked of no one else): the
+  // network and country of whichever address the page came over, so Radar is asked only for the other one. null on a
+  // copy without the shell (a 404) or when it fails.
+  const me = () => fetch("/_ms/me", { cache: "no-store", credentials: "omit" }).then(r => r.ok ? r.json() : null).catch(() => null);
+
+  // Inside the checkup, every outside host failing means the test couldn't run (an ad blocker stops them all at once, or
+  // a firewall): it says so as soon as the last one fails, and sends no result after. This site's own trace doesn't count.
+  const OUTSIDE = [...TESTS.filter(x => x.id !== "ds"), ...SIDES].map(x => x.id);
+  let FAILED = false;
+  function blocked() {
+    if (!CHECK || FAILED || !OUTSIDE.every(id => { const x = R[id] || C[id]; return x && !x.ok; })) return;
+    FAILED = true;
+    post({ type: "error", text: t("e_blocked") });
+  }
+
   /* ---------- the test ---------- */
   let RUN = null, LAST = null;
   async function start() {
@@ -213,7 +228,8 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     if (!$("#shared").hidden) { $("#shared").hidden = true; history.replaceState(null, "", D.paths[D.lang]); }
     if (RUN) RUN.abort();
     const ctl = RUN = new AbortController();
-    R = {}; C = {}; SHOWN = false; LAST = null; done = 0; t0 = performance.now();
+    R = {}; C = {}; SHOWN = false; LAST = null; FAILED = false; done = 0; t0 = performance.now();
+    const ME = me();
     $("#shareBtn").disabled = true; $("#rerun").disabled = true; $("#prog").classList.remove("end");
     $("#verdict").textContent = t("v_wait"); $("#verdict").className = "verdict"; $("#probs").innerHTML = "&nbsp;";
     IDS.forEach(fillRow); fillAddr(6); fillAddr(4); links(false); hero(false); fillCmp(); progress();
@@ -222,20 +238,21 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       const x = await runTest(side, { signal: ctl.signal });
       if (ctl.signal.aborted) return;
       C[side.id] = x;
-      done++; progress(); fillCmp();
+      done++; progress(); fillCmp(); blocked();
     });
     await Promise.all([...sides, ...TESTS.map(async test => {
       const x = await runTest(test, { signal: ctl.signal });
       if (ctl.signal.aborted) return;
       if ((test.id === "v4" || test.id === "v6") && x.ok && !x.asn) {
-        const n = await network(test.fam, x.ip, ctl.signal);
+        const m = await ME;
+        const n = m && m.asn && sameIp(m.ip, x.ip) ? { asn: m.asn, cc: m.country || "" } : await network(test.fam, x.ip, ctl.signal);
         if (ctl.signal.aborted) return;
         if (n) { x.asn = n.asn; x.cc = x.cc || n.cc; }
       }
       R[test.id] = x;
       if (test.id === "ds" && x.ok && x.cc) CC = x.cc;
       if (!CC && x.ok && x.cc) CC = x.cc;
-      done++; progress();
+      done++; progress(); blocked();
       IDS.forEach(fillRow);
       if (test.id === "v4" || test.id === "v6") { fillAddr(test.fam); }
       hero(false);
@@ -248,7 +265,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     $("#rerun").disabled = false;
     LAST = { ts: Date.now(), cc: CC, r: { ...R, ...C } };
     $("#shareBtn").disabled = false;
-    if (CHECK) post(checkupResult(LAST));
+    if (CHECK && !FAILED) post(checkupResult(LAST));
   }
 
   // The result for the checkup's report: the hero's verdict, a few numbers, the problems worst first, and the facts its

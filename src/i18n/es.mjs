@@ -25,6 +25,7 @@ export default {
   ok_all: "Todo correcto: los sitios solo IPv6 abren e IPv6 no ralentiza nada.",
   ok_v4: "Los sitios funcionan por IPv4. Para tener IPv6, actívalo en el router (ajustes WAN o IPv6) o pídeselo a tu proveedor.",
   off_hint: "Revisa tu conexión, o un cortafuegos o extensión que bloquee estos sitios, y vuelve a probar.",
+  e_blocked: "No se pudo llegar a ningún sitio de prueba: puede que un bloqueador de anuncios (uBlock, AdGuard…) o un cortafuegos los esté bloqueando.",
   p_nodns: "Tu DNS no devuelve direcciones IPv6 (el router puede filtrar los registros AAAA).",
   p_mtu: "Los paquetes grandes se pierden por IPv6 (MTU): algunos sitios se quedan colgados.",
   p_slowds: "Los sitios con IPv4 e IPv6 abren lentos: tu navegador espera primero a IPv6.",
