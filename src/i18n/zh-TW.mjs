@@ -58,9 +58,6 @@ export default {
   r_from: "由 {host} 回應",
 
   share: "分享",
-  test_mine: "測我的網路",
-  shared_on: "別人分享的結果 {where}· {date}",
-  shared_where: "來自{where} ",
   share_text: "我的網路 IPv6 分數 {s}/10，你的呢？",
   share_title: "IPv6 分數 {s}/10：{verdict} · IPv6 測試",
   share_desc: "一個網路的 IPv6 測試結果：純 IPv6 與雙堆疊網站、大封包、DNS。幾秒鐘測測你的網路。",

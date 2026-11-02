@@ -58,9 +58,6 @@ export default {
   r_from: "Ответил {host}",
 
   share: "Поделиться",
-  test_mine: "Проверить мою сеть",
-  shared_on: "Результат, которым поделились {where}· {date}",
-  shared_where: "из {where} ",
   share_text: "Оценка IPv6 моей сети: {s}/10. А у вас?",
   share_title: "Оценка IPv6 {s}/10: {verdict} · Тест IPv6",
   share_desc: "Тест IPv6 одной сети: сайты только с IPv6 и с двумя стеками, большие пакеты, DNS. Проверьте свою за несколько секунд.",

@@ -222,15 +222,16 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   }
 
   /* ---------- the test ---------- */
-  let RUN = null, LAST = null;
+  let RUN = null, LAST = null, RECV = null;
   async function start() {
-    // a shared result gives way to the visitor's own test, on the language's page
-    if (!$("#shared").hidden) { $("#shared").hidden = true; history.replaceState(null, "", D.paths[D.lang]); }
+    // a shared result gives way to the visitor's own test, on the language's page; this tool has no compare mode,
+    // so the banner goes with it rather than sit above a result that is now the visitor's own
+    if (RECV) { RECV.then(r => r && r.remove()); RECV = null; history.replaceState(null, "", D.paths[D.lang]); }
     if (RUN) RUN.abort();
     const ctl = RUN = new AbortController();
     R = {}; C = {}; SHOWN = false; LAST = null; FAILED = false; done = 0; t0 = performance.now();
     const ME = me();
-    $("#shareBtn").disabled = true; $("#rerun").disabled = true; $("#prog").classList.remove("end");
+    $("#shareBtn").hidden = true; $("#rerun").disabled = true; $("#prog").classList.remove("end");
     $("#verdict").textContent = t("v_wait"); $("#verdict").className = "verdict"; $("#probs").innerHTML = "&nbsp;";
     IDS.forEach(fillRow); fillAddr(6); fillAddr(4); links(false); hero(false); fillCmp(); progress();
     // each network's two sides at the same moment, so they meet the same conditions
@@ -264,7 +265,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     $("#progTxt").textContent = t("done", { s: ((performance.now() - t0) / 1000).toFixed(1) });
     $("#rerun").disabled = false;
     LAST = { ts: Date.now(), cc: CC, r: { ...R, ...C } };
-    $("#shareBtn").disabled = false;
+    $("#shareBtn").hidden = false;
     if (CHECK && !FAILED) post(checkupResult(LAST));
   }
 
@@ -304,11 +305,11 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     C = Object.fromEntries(SIDES.filter(x => x.id in S.r).map(x => [x.id, S.r[x.id]]));
     SHOWN = true;
     IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(true); links(true); fillCmp();
-    $("#sharedTxt").textContent = t("shared_on", { where: S.cc ? t("shared_where", { where: country(S.cc) }) : "", date: new Date(S.ts).toLocaleString(D.lang, { dateStyle: "medium", timeStyle: "short" }) });
-    $("#shared").hidden = false;
+    // the shared banner (1ms-shell assets/share/): whose result this is, and the visitor's own test
+    RECV = import("/assets/share/share.js").then(m => m.received({ lang: D.lang, ts: S.ts, at: $(".hero"), test: start })).catch(() => null);
     $("#prog").classList.add("end"); $("#progTxt").innerHTML = "&nbsp;";
     $("#rerun").disabled = false;
-    LAST = S; $("#shareBtn").disabled = false;
+    LAST = S; $("#shareBtn").hidden = false;
   }
 
   /* ---------- share: the 1ms.dog share dialog (1ms-shell assets/share/, copied verbatim to /assets/share/) ---------- */
@@ -367,7 +368,6 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   }
 
   $("#rerun").onclick = start;
-  $("#testMine").onclick = start;
   const SP = sharePath(location.pathname), SHARED = SP && decodeShare(SP.code, new Set([...IDS, ...SIDES.map(x => x.id)]));
   // the checkup sizes its frame to the page
   if (CHECK && window.ResizeObserver) {

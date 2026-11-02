@@ -59,9 +59,6 @@ export default {
   r_from: "Answered by {host}",
 
   share: "Share",
-  test_mine: "Test my network",
-  shared_on: "A result shared {where}· {date}",
-  shared_where: "from {where} ",
   share_text: "My network's IPv6 score: {s}/10. What's yours?",
   share_title: "IPv6 score {s}/10: {verdict} · IPv6 Test",
   share_desc: "An IPv6 test of one network: IPv6-only and dual-stack sites, large packets, DNS. Test yours in a few seconds.",

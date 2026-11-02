@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="IPv4 und IPv6 nebeneinander gemessen, und warum IPv6 langsam sein kann">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"IPv6-Test · 1ms.dog","url":"https://ipv6.1ms.dog/de/ipv6-slow/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Vergleiche IPv4 und IPv6 an deinem Anschluss: dieselben Netze gleichzeitig über beide gemessen. Sieh, ob IPv6 langsamer ist, warum (Routing, MTU, Tunnel, Router) und wie du es behebst, ohne IPv6 abzuschalten.","inLanguage":"de","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Ist IPv6 langsamer als IPv4?","acceptedAnswer":{"@type":"Answer","text":"Nicht von sich aus. IPv6-Header sind etwas größer, was keinen messbaren Unterschied macht. Anders ist die Route: Dein Anbieter führt IPv6 vielleicht über weniger oder längere Leitungen, ist über IPv6 mit weniger Netzen verbunden oder schickt es durch einen Tunnel. Darum ist IPv6 in einem Netz schneller (kein NAT, neuere Leitungen) und in einem anderen deutlich langsamer. Der Vergleich oben zeigt, was bei dir zutrifft."}},{"@type":"Question","name":"Warum ist IPv6 langsam oder ruckelt?","acceptedAnswer":{"@type":"Answer","text":"Die üblichen Ursachen, die häufigsten zuerst: Längere Routen: Viele Anbieter führen IPv6 ins Ausland oder zu anderen Netzen über weniger Austauschpunkte als IPv4, das kostet Dutzende Millisekunden. Aus Festlandchina nimmt internationales IPv6 oft einen Umweg. Eine kaputte MTU: Volle IPv6-Pakete gehen auf einer Strecke verloren (PPPoE, Tunnel), kleine Anfragen klappen, große Seiten hängen. Der Test mit großen Paketen oben prüft das. Tunnel: 6to4 und Teredo leiten IPv6 über weit entfernte Relays. Der Router: alte Firmware, eine IPv6-Firewall, die Antworten verwirft, oder ein Router, der IPv6-Adressen verteilt, obwohl seine eigene Leitung keins hat. Ein Proxy oder VPN, das nur IPv4 trägt, während IPv6 direkt rausgeht."}},{"@type":"Question","name":"Wie behebe ich langsames IPv6?","acceptedAnswer":{"@type":"Answer","text":"Teste zu einer anderen Tageszeit: Ein Unterschied nur abends ist Überlastung bei deinem Anbieter. Scheitert der Test mit großen Paketen, senke die MTU in den WAN- oder IPv6-Einstellungen des Routers (bei PPPoE 1480 oder 1452). Aktualisiere und starte Router oder Modem neu. Ist IPv6 immer viel langsamer, schick die Zahlen oben an deinen Anbieter: Das Routing muss er beheben. Bis dahin wechseln Browser schon zu IPv4, wenn IPv6 langsam verbindet (Happy Eyeballs), also funktionieren die meisten Seiten weiter."}},{"@type":"Question","name":"Soll ich IPv6 abschalten?","acceptedAnswer":{"@type":"Answer","text":"Meist nicht. Abschalten macht reine IPv6-Seiten und manche Apps und Spiele unbrauchbar, und Microsoft unterstützt Windows mit deaktiviertem IPv6 nicht. Ist IPv6 wirklich schlechter, lass lieber IPv4 bevorzugen und behalte IPv6 für das, was es braucht: Unter Windows setze den Registry-Wert DisabledComponents auf 0x20 (Microsofts „IPv4 gegenüber IPv6 bevorzugen“); unter Linux entferne in /etc/gai.conf das Kommentarzeichen vor „precedence ::ffff:0:0/96 100“."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.c26a9d59fc.css">
+<link rel="stylesheet" href="/assets/app.243b110e24.css">
 </head>
 <body>
 <div class="app">
@@ -68,7 +68,6 @@
   </header>
 
   <main>
-    <div class="shared" id="shared" hidden><span id="sharedTxt"></span><button class="btn pri" id="testMine" type="button" data-i="test_mine">Mein Netz testen</button></div>
     <section class="hero card">
       <h1>Ist IPv6 in deinem Netz langsamer als IPv4?</h1>
       <p class="intro">Der Test unten misst dieselben Netze gleichzeitig über IPv4 und über IPv6. Ein Unterschied liegt also am Weg, den dein Anbieter jedem gibt, nicht am Server. Unter den Ergebnissen: warum IPv6 oft langsamer ist und was hilft.</p>
@@ -85,7 +84,7 @@
           <span class="score-k" data-i="score_k">IPv6-Punkte</span>
         </div>
         <div class="sum-r">
-          <p class="verdict" id="verdict" data-i="v_wait">Test läuft…</p>
+          <div class="vrow"><p class="verdict" id="verdict" data-i="v_wait">Test läuft…</p><button class="btn out" id="shareBtn" type="button" aria-haspopup="dialog" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share">Teilen</span></button></div>
           <p class="probs" id="probs">&nbsp;</p>
           <div class="addrs">
             <div class="addr" data-a="6"><span class="addr-k">IPv6</span><span class="addr-ip" id="ip6"><i class="skl"></i></span><span class="addr-m" id="m6">&nbsp;</span></div>
@@ -97,7 +96,6 @@
       <div class="bar">
         <div class="prog" id="prog"><i></i></div>
         <span class="prog-t" id="progTxt">&nbsp;</span>
-        <button class="btn sm" id="shareBtn" type="button" aria-haspopup="dialog" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share">Teilen</span></button>
         <button class="btn pri" id="rerun" type="button" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v3h-3"/></svg><span data-i="rerun">Erneut testen</span></button>
       </div>
     </section>
@@ -150,7 +148,7 @@
 </div>
 
 <script type="application/json" id="data">{"lang":"de","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/de/"}</script>
-<script src="/assets/l.de.66950ef6bf.js"></script>
-<script src="/assets/app.1954292c69.js"></script>
+<script src="/assets/l.de.7149d2ebe4.js"></script>
+<script src="/assets/app.86bdcd4a8d.js"></script>
 </body>
 </html>

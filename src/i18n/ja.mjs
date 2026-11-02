@@ -58,9 +58,6 @@ export default {
   r_from: "{host} が応答",
 
   share: "共有",
-  test_mine: "自分の回線をテスト",
-  shared_on: "共有された結果 {where}· {date}",
-  shared_where: "{where}から ",
   share_text: "私の回線の IPv6 スコアは {s}/10。あなたは？",
   share_title: "IPv6 スコア {s}/10：{verdict} · IPv6 テスト",
   share_desc: "あるネットワークの IPv6 テスト結果：IPv6 専用とデュアルスタックのサイト、大きなパケット、DNS。あなたの回線も数秒でテスト。",

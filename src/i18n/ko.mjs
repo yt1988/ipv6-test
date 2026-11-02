@@ -58,9 +58,6 @@ export default {
   r_from: "응답: {host}",
 
   share: "공유",
-  test_mine: "내 네트워크 테스트",
-  shared_on: "공유된 결과 {where}· {date}",
-  shared_where: "{where}에서 ",
   share_text: "내 네트워크의 IPv6 점수는 {s}/10. 당신은?",
   share_title: "IPv6 점수 {s}/10: {verdict} · IPv6 테스트",
   share_desc: "한 네트워크의 IPv6 테스트 결과: IPv6 전용·듀얼 스택 사이트, 큰 패킷, DNS. 몇 초면 내 네트워크도 확인할 수 있습니다.",

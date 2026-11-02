@@ -58,9 +58,6 @@ export default {
   r_from: "由 {host} 响应",
 
   share: "分享",
-  test_mine: "测我的网络",
-  shared_on: "别人分享的结果 {where}· {date}",
-  shared_where: "来自{where} ",
   share_text: "我的网络 IPv6 得分 {s}/10，你的呢？",
   share_title: "IPv6 得分 {s}/10：{verdict} · IPv6 测试",
   share_desc: "一个网络的 IPv6 测试结果：纯 IPv6 和双栈网站、大数据包、DNS。几秒钟测测你的网络。",

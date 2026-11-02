@@ -27,6 +27,11 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
 .score-k { position: absolute; bottom: 34px; left: 0; right: 0; text-align: center; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 .score.wait .score-n b { color: var(--muted); animation: blink 1.2s ease-in-out infinite; }
 .sum-r { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding-top: 6px; }
+/* the verdict, and the share button right beside it once there is a result */
+.vrow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; }
+.vrow .verdict { min-width: 0; }
+.btn.out { height: 32px; padding: 0 12px; font-size: 13px; font-weight: 600; color: var(--ink); border-color: var(--ink); background: none; }
+.btn.out:hover { background: var(--ink-soft); }
 .verdict { font-size: clamp(20px, 2.4vw, 25px); font-weight: 750; letter-spacing: -.02em; line-height: 1.3; min-height: 1.3em; }
 /* problems: two lines reserved from the start */
 .probs { font-size: 13.5px; color: var(--muted); line-height: 1.55; height: 3.1em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
@@ -97,9 +102,6 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
 .help-pick { display: none; gap: 8px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); }
 .help-pick select { flex: 1; min-width: 0; height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--fg); font: 600 16px var(--f-ui); text-overflow: ellipsis; } /* 16px: iOS zooms into smaller fields */
 .help-pick .icon-btn:disabled { opacity: .35; cursor: default; }
-/* a shared result: a banner above the hero, with the way back to one's own test */
-.shared { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 12px 10px 16px; border-radius: var(--r); background: var(--ink-soft); border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent); font-size: 13.5px; }
-.shared .btn { height: 32px; font-size: 13px; }
 
 @media (prefers-reduced-motion: reduce) { .skl, .tr.wait .st, .score.wait .score-n b { animation: none !important; } .ring-fg { transition: none; } }
 @media (max-width: 720px) {
@@ -110,6 +112,7 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
   .sum { grid-template-columns: minmax(0, 1fr); gap: 10px; justify-items: center; }
   .sum-r { width: 100%; padding-top: 0; }
   .verdict, .probs { text-align: center; }
+  .vrow { justify-content: center; }
   .score { width: 132px; height: 132px; }
   .score-n b { font-size: 44px; }
   .score-k { bottom: 28px; }
@@ -189,7 +192,7 @@ svg.ext[viewBox] { width: .95em; height: .95em; flex: none; }
 html[data-ms-embed] { scrollbar-gutter: auto; }
 [data-ms-embed] .app { padding-block: 0; padding-inline: 0; gap: 0; }
 [data-ms-embed] main { gap: 12px; }
-[data-ms-embed] .top, [data-ms-embed] .shared, [data-ms-embed] .hero h1, [data-ms-embed] .intro, [data-ms-embed] .links,
+[data-ms-embed] .top, [data-ms-embed] .hero h1, [data-ms-embed] .intro, [data-ms-embed] .links,
 [data-ms-embed] #shareBtn, [data-ms-embed] #rerun, [data-ms-embed] .cmp-sub, [data-ms-embed] .cmp-more, [data-ms-embed] .art,
 [data-ms-embed] .scrim, [data-ms-embed] footer { display: none !important; }
 [data-ms-embed] .hero { padding-top: 16px; gap: 12px; }
