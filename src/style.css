@@ -133,3 +133,46 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
 /* links to the other tools: text, then the external-link mark */
 .links a, .addr-m .q { display: inline-flex; align-items: center; gap: 3px; }
 svg.ext[viewBox] { width: .95em; height: .95em; flex: none; }
+
+/* IPv4 against IPv6: one row per network, each side's round trip with a bar, and the difference */
+.cmp { padding: 18px 22px 14px; display: flex; flex-direction: column; gap: 8px; }
+.cmp-h { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 12px; }
+.cmp-h h2 { font-size: 16px; letter-spacing: -.01em; }
+.cmp-sub { font-size: 12.5px; color: var(--muted); }
+.cmp-v { display: flex; flex-direction: column; gap: 2px; min-height: 44px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+.cmp-v b { font-size: 15px; font-weight: 650; color: var(--fg); }
+.cmp-v b.t1 { color: var(--t1); } .cmp-v b.warn { color: var(--warn); } .cmp-v b.bad { color: var(--bad); }
+.cr { display: grid; grid-template-columns: minmax(0, 1fr) 160px 160px 96px; gap: 14px; align-items: center; min-height: 46px; border-top: 1px solid var(--line); }
+.cr.ch { min-height: 28px; border-top: 0; font-size: 12px; color: var(--muted); }
+.cr.ch span:not(:first-child) { text-align: right; }
+.cn { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; min-width: 0; }
+.cv b, .cd b { font: 600 13.5px var(--f-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cb { display: block; width: 100%; height: 4px; border-radius: 2px; background: var(--soft); overflow: hidden; }
+.cb i { display: block; height: 100%; background: var(--muted); transform: scaleX(0); transform-origin: left; transition: transform .3s; }
+.cv[data-f="6"] .cb i { background: var(--ink); }
+.cd { text-align: right; }
+.cr.wait b, .cd.same b { color: var(--muted); }
+.cv.bad b { color: var(--bad); font-family: var(--f-ui); font-size: 12.5px; }
+.cd.fast b { color: var(--t1); } .cd.slow b { color: var(--warn); } .cd.much b { color: var(--bad); }
+.cmp-more { font-size: 12.5px; padding-top: 2px; }
+.cmp-more a { color: var(--ink); text-decoration: none; font-weight: 600; }
+.cmp-more a:hover { text-decoration: underline; }
+
+/* the slow-IPv6 page: what the test is for, under the h1; and the article under the results */
+.intro { text-align: center; max-width: 720px; margin: -8px auto 0; font-size: 14px; line-height: 1.65; color: var(--muted); }
+.art { padding: 22px 22px 14px; }
+.art h2 { font-size: 17px; letter-spacing: -.01em; margin: 22px 0 8px; }
+.art h2:first-child { margin-top: 0; }
+.art p, .art li { font-size: 14px; line-height: 1.75; margin: 0 0 10px; }
+.art ul { margin: 0 0 10px; padding-left: 20px; }
+.art li { margin-bottom: 6px; }
+@media (max-width: 720px) {
+  .cmp { padding: 16px 16px 12px; }
+  .cmp-v { min-height: 64px; }
+  .cr { grid-template-columns: minmax(0, 1fr) 70px 70px 62px; gap: 8px; }
+  .cn { font-size: 13px; }
+  .cv b, .cd b { font-size: 12.5px; }
+  .art { padding: 18px 16px 10px; }
+  .intro { font-size: 13.5px; }
+}

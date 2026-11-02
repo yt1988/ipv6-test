@@ -4,7 +4,7 @@
 //                         shows the result (src/share.mjs)
 //   anything else         a bare 404; 1ms-shell puts the shared 1ms.dog 404 page in front of it
 
-import { IDS, verdict } from "./probe.mjs";
+import { IDS, SIDES, verdict, compare } from "./probe.mjs";
 import { decode, sharePath } from "./share.mjs";
 import en from "./i18n/en.mjs";
 import zhCN from "./i18n/zh-CN.mjs";
@@ -19,7 +19,7 @@ import ru from "./i18n/ru.mjs";
 
 // each language's strings by its folder ("" is English, at the root)
 const STR = { "": en, "zh-cn": zhCN, "zh-tw": zhTW, ja, ko, es, fr, de, pt, ru };
-const KNOWN = new Set(IDS);
+const KNOWN = new Set([...IDS, ...SIDES.map(x => x.id)]);
 const fill = (s, v) => s.replace(/\{(\w+)\}/g, (m, k) => k in v ? v[k] : m);
 
 export default {
@@ -45,7 +45,9 @@ async function shared(req, env, url, { slug, code }) {
   if (!r) return Response.redirect(new URL(home, url).toString(), 302);
   const S = STR[slug], v = verdict(r.r);
   const title = fill(S.share_title, { s: v.score, verdict: S[v.head] });
-  const desc = S.share_desc;
+  // IPv4 against IPv6 leads the description when the link has it (links from before it do not)
+  const c = compare(r.r), ms = c.n ? (Math.abs(c.diff) < 10 ? Math.abs(c.diff).toFixed(1) : String(Math.round(Math.abs(c.diff)))) : "";
+  const desc = SIDES.some(x => x.id in r.r) ? fill(S[c.key], { ms }) + " · " + S.share_desc : S.share_desc;
   const page = await env.ASSETS.fetch(new Request(new URL(home, url), { headers: req.headers }));
   if (!page.ok) return page;
   const attr = (val, name = "content") => ({ element: e => e.setAttribute(name, val) });

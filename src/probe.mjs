@@ -55,8 +55,31 @@ export const TESTS = [
 ];
 export const IDS = TESTS.map(t => t.id);
 
+// IPv4 against IPv6: the same network asked over each, at the same time, so a difference is the path and not the
+// server. Every pair has an IPv4-only and an IPv6-only way in (an address, or a name with only A or only AAAA). Each
+// side is a test of its own (id + 4 or 6), so it is timed and shared like the others.
+//   cf  Cloudflare's resolver      gg  Google Public DNS (doesn't answer in mainland China)
+//   ak  Akamai's edge              dp  Tencent DNSPod (answers best in mainland China)
+// read "any": a CORS answer whose body doesn't matter; warm: time the round trip of a no-cors host too
+export const PAIRS = [
+  { id: "cf", name: "Cloudflare",
+    4: { url: "https://1.0.0.1/cdn-cgi/trace", read: "trace" },
+    // not ::1001: the large-packet test needs its own new connection there
+    6: { url: "https://[2606:4700:4700::1111]/cdn-cgi/trace", read: "trace" } },
+  { id: "gg", name: "Google",
+    4: { url: "https://8.8.8.8/resolve?name=ipv6.1ms.dog&type=A", read: "any" },
+    6: { url: "https://[2001:4860:4860::8888]/resolve?name=ipv6.1ms.dog&type=A", read: "any" } },
+  { id: "ak", name: "Akamai",
+    4: { url: "https://ipv4.whatismyip.akamai.com/", read: null, warm: true },
+    6: { url: "https://ipv6.whatismyip.akamai.com/", read: null, warm: true } },
+  { id: "dp", name: "DNSPod",
+    4: { url: "https://ipv4.ddnspod.com/", read: "text" },
+    6: { url: "https://ipv6.ddnspod.com/", read: "text" } },
+];
+export const SIDES = PAIRS.flatMap(p => [4, 6].map(fam => ({ id: p.id + fam, fam, pair: p.id, hosts: [p[fam]] })));
+
 // every host a test asks, for the CSP and the docs (IPv6 literals can't be named in a CSP: see the build)
-export const ORIGINS = [...new Set(TESTS.flatMap(t => t.hosts.map(h => h.url)).filter(u => u.startsWith("https://")).map(u => new URL(u).origin))];
+export const ORIGINS = [...new Set([...TESTS, ...SIDES].flatMap(t => t.hosts.map(h => h.url)).filter(u => u.startsWith("https://")).map(u => new URL(u).origin))];
 
 // ---------- addresses ----------
 
@@ -64,6 +87,7 @@ export const famOf = ip => /^\d{1,3}(\.\d{1,3}){3}$/.test(ip || "") ? 4 : /^[0-9
 
 // the address out of an answer body
 export function readAnswer(read, body) {
+  if (read === "any") return {};
   if (read === "text") { const ip = String(body).trim(); return famOf(ip) ? { ip } : null; }
   if (read === "trace") {
     const kv = Object.fromEntries(String(body).split("\n").map(l => l.split("=")).filter(p => p.length === 2));
@@ -114,8 +138,8 @@ export async function runTest(test, { signal, rtt = true } = {}) {
     const won = await Promise.any(test.hosts.map(h => ask(h, ctl.signal).then(r => ({ h, r }))));
     clearTimeout(timer);
     ctl.abort();   // the others lose
-    const { h, r } = won, out = { ok: true, ms: r.ms, host: new URL(h.url, location.href).host, ip: r.ip || "", fam: famOf(r.ip), asn: r.asn || 0, cc: r.cc || "" };
-    if (rtt && h.read) {
+    const { h, r } = won, out = { ok: true, ms: r.ms, host: new URL(h.url, location.href).host, ip: r.ip || "", fam: famOf(r.ip) || test.fam, asn: r.asn || 0, cc: r.cc || "" };
+    if (rtt && (h.read || h.warm)) {
       const times = [];
       for (let i = 0; i < 3 && !(signal && signal.aborted); i++) {
         try { times.push((await ask(h, signal)).ms); } catch (e) { break; }
@@ -192,6 +216,28 @@ export function verdict(r) {
   }
   if (!ok("v4") && ok("lit4")) probs.push("p_v4dns");
   return { score: s, head, probs };
+}
+
+// ---------- IPv4 against IPv6 ----------
+
+// What the pairs say: the middle of the differences in round trip (IPv6 minus IPv4) over the pairs that answered both
+// ways. Round trips only: some of these hosts are asked by the tests above too, and the browser may reuse a connection
+// between them, so the first answer may or may not include connecting. key: c_same, c_6fast, c_6slow, c_6much (much
+// slower: the path is long, or crowded), c_no6 (no IPv6 to compare), c_none (no pair answered both ways).
+// r: { [side id]: result }
+export const SAME = 10;   // ms, or 15 % of the IPv4 time when that is more: below it, the two are the same
+export function compare(r) {
+  const both = PAIRS.map(p => [r[p.id + 4], r[p.id + 6]]).filter(([a, b]) => a && a.ok && b && b.ok && a.rtt != null && b.rtt != null);
+  const mid = xs => { const s = [...xs].sort((a, b) => a - b), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; };
+  if (!both.length) {
+    const any6 = PAIRS.some(p => r[p.id + 6] && r[p.id + 6].ok);
+    return { key: any6 ? "c_none" : "c_no6", n: 0 };
+  }
+  const v4 = mid(both.map(([a]) => a.rtt)), v6 = mid(both.map(([, b]) => b.rtt));
+  const diff = mid(both.map(([a, b]) => b.rtt - a.rtt));
+  const same = Math.max(SAME, v4 * .15);
+  const key = Math.abs(diff) <= same ? "c_same" : diff < 0 ? "c_6fast" : diff > Math.max(50, v4 * .5) ? "c_6much" : "c_6slow";
+  return { key, n: both.length, v4, v6, diff };
 }
 
 // the tier a score is drawn in: t1 green … t5 red, as the other 1ms.dog tools draw times

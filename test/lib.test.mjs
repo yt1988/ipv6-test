@@ -1,7 +1,7 @@
 // Reading the answers, the score and the verdict, and shared links.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { TESTS, IDS, readAnswer, kind6, famOf, score, verdict, SLOW } from "../src/probe.mjs";
+import { TESTS, IDS, readAnswer, kind6, famOf, score, verdict, compare, PAIRS, SIDES, SLOW } from "../src/probe.mjs";
 import { encode, decode, sharePath } from "../src/share.mjs";
 
 const ok = (fam, ms = 50, extra = {}) => ({ ok: true, fam, ms, rtt: ms / 2, ip: fam === 6 ? "2408:8207::1" : fam === 4 ? "114.254.73.157" : "", ...extra });
@@ -75,4 +75,19 @@ test("a shared result survives the link, without the addresses", () => {
   assert.deepEqual(sharePath("/zh-cn/r/" + code), { slug: "zh-cn", code });
   assert.deepEqual(sharePath("/r/" + code), { slug: "", code });
   assert.equal(sharePath("/zh-cn/"), null);
+});
+
+test("IPv4 against IPv6: the middle difference over the networks that answered both ways", () => {
+  const side = (rtt) => ({ ok: true, ms: rtt * 3, rtt });
+  const r = (pairs) => Object.fromEntries(pairs.flatMap(([id, a, b]) => [[id + 4, a == null ? no : side(a)], [id + 6, b == null ? no : side(b)]]));
+  assert.equal(compare(r([["cf", 20, 22], ["gg", 30, 33], ["ak", 25, 24], ["dp", 10, 11]])).key, "c_same");
+  const slow = compare(r([["cf", 20, 60], ["gg", 30, 70], ["ak", 25, 65], ["dp", 10, null]]));
+  assert.equal(slow.key, "c_6slow"); assert.equal(slow.n, 3); assert.equal(slow.diff, 40);
+  assert.equal(compare(r([["cf", 20, 120], ["gg", 30, 130]])).key, "c_6much");
+  assert.equal(compare(r([["cf", 60, 20], ["gg", 70, 30]])).key, "c_6fast");
+  assert.equal(compare(r([["cf", 20, null], ["gg", 30, null]])).key, "c_no6");
+  assert.equal(compare(r([["cf", null, 20], ["gg", 30, null]])).key, "c_none");
+  assert.equal(compare({}).key, "c_no6");
+  for (const p of PAIRS) for (const fam of [4, 6]) assert.ok(SIDES.some(x => x.id === p.id + fam && x.fam === fam), p.id + fam);
+  assert.ok(!SIDES.some(x => IDS.includes(x.id)), "side ids are not test ids");
 });

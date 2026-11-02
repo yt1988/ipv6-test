@@ -36,7 +36,24 @@ test("every language page keeps the shell contract", async () => {
   }
 });
 
-test("the sitemap lists every language", async () => {
+test("the sitemap lists every page in every language", async () => {
   const sm = await readFile(new URL("../public/sitemap.xml", import.meta.url), "utf8");
-  assert.equal((sm.match(/<loc>/g) || []).length, LANGS.length);
+  assert.equal((sm.match(/<loc>/g) || []).length, LANGS.length * 2);
+  for (const [, slug] of LANGS) assert.ok(sm.includes(`<loc>${SITE}/${slug ? slug + "/" : ""}ipv6-slow/</loc>`), slug + ": slow page");
+});
+
+test("the slow-IPv6 page is its own page: title, canonical, h1 and the article", async () => {
+  for (const [lang, slug] of LANGS) {
+    const h = await page((slug ? slug + "/" : "") + "ipv6-slow");
+    const home = await page(slug);
+    const dir = (slug ? slug + "/" : "") + "ipv6-slow/";
+    assert.notEqual(one(h, /<title>(.*?)<\/title>/), one(home, /<title>(.*?)<\/title>/), lang + ": own title");
+    assert.equal(one(h, /<link rel="canonical" href="(.*?)">/), SITE + "/" + dir, lang + ": canonical");
+    for (const [l, s] of LANGS) assert.ok(h.includes(`hreflang="${l}" href="${SITE}/${s ? s + "/" : ""}ipv6-slow/"`), lang + ": alternate " + l);
+    assert.equal((h.match(/<h1>/g) || []).length, 1, lang + ": one h1");
+    assert.match(h, /<article class="art card"><h2>/, lang + ": the article");
+    assert.ok(!h.includes(`class="cmp-more"`), lang + ": no link to itself");
+    assert.ok(home.includes(`<p class="cmp-more"><a href="/${dir}">`), lang + ": the test links to it");
+    assert.equal((h.match(/<div class="cr wait" data-p="/g) || []).length, 4, lang + ": every comparison row");
+  }
 });

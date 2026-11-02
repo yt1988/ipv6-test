@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Builds the static site in public/ from src/:
 //   index.html, <lang>/index.html                the page per language, every test's row drawn in it
+//   ipv6-slow/index.html, <lang>/ipv6-slow/…     the same test as a page on slow IPv6: its own title and h1, and
+//                                                an article under the results (why IPv6 is slow, what to do)
 //   assets/app.<hash>.js, assets/app.<hash>.css  the page's code and styles, shared by every language
 //   assets/l.<lang>.<hash>.js                    the strings the browser code needs, per language
 //   assets/share/                                the 1ms.dog share dialog, copied verbatim from 1ms-shell; not built here
@@ -13,7 +15,7 @@ import { mkdir, readFile, readdir, writeFile, rm } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { build as bundle, transform } from "esbuild";
-import { TESTS } from "../src/probe.mjs";
+import { TESTS, PAIRS } from "../src/probe.mjs";
 
 const SITE = (process.env.SITE_URL || "https://ipv6.1ms.dog").replace(/\/+$/, "");
 const pub = new URL("../public/", import.meta.url), src = new URL("../src/", import.meta.url);
@@ -21,9 +23,10 @@ const pub = new URL("../public/", import.meta.url), src = new URL("../src/", imp
 export const LANGS = [["en", "", "en_US"], ["zh-CN", "zh-cn", "zh_CN"], ["zh-TW", "zh-tw", "zh_TW"], ["ja", "ja", "ja_JP"], ["ko", "ko", "ko_KR"],
   ["es", "es", "es_ES"], ["fr", "fr", "fr_FR"], ["de", "de", "de_DE"], ["pt", "pt", "pt_BR"], ["ru", "ru", "ru_RU"]];
 
-// Runs before first paint: apply the saved theme. On the English root, send visitors to their language's page
-// (a saved choice first, then the browser languages); crawlers and English readers stay.
-const PREPAINT = `(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root"))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}if(l&&l!=="en")location.replace(P[l]+location.search+location.hash)})();`;
+// Runs before first paint: apply the saved theme. On an English page, send visitors to their language's (a saved
+// choice first, then the browser languages), and a shared result /r/<code> to /<lang>/r/<code>; crawlers and English
+// readers stay.
+const PREPAINT = `(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root"))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}var p=location.pathname,t=p===P.en?"":p.indexOf("/r/")===0?p.slice(1):null;if(l&&l!=="en"&&t!==null)location.replace(P[l]+t+location.search+location.hash)})();`;
 
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const hash = s => createHash("sha256").update(s).digest("hex").slice(0, 10);
@@ -37,9 +40,17 @@ async function loadI18n() {
 }
 
 // Strings only the build uses (the page already shows them); everything else goes to the browser
-const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "docs", "lang_label", "faq_h", "h_tests", "share_desc", "share_title"]);
+const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "docs", "lang_label", "faq_h", "h_tests", "share_desc", "share_title",
+  "cmp_sub", "c_net", "c_dif", "slow_link", "slow_title", "slow_desc", "slow_kw", "slow_h1", "slow_og", "slow_intro", "slow_art"]);
 
-const pathOf = slug => "/" + (slug ? slug + "/" : "");
+// The pages every language has: the test, and the test as an answer to "is IPv6 slower than IPv4?"
+//   dir: the folder under the language's; title, desc, kw, og, h1: their strings; art: the article under the results
+const PAGES = [
+  { id: "home", dir: "", title: "seo_title", desc: "seo_desc", kw: "seo_kw", og: "og_sub", h1: "h1" },
+  { id: "slow", dir: "ipv6-slow/", title: "slow_title", desc: "slow_desc", kw: "slow_kw", og: "slow_og", h1: "slow_h1", intro: "slow_intro", art: "slow_art" },
+];
+
+const pathOf = (slug, dir = "") => "/" + (slug ? slug + "/" : "") + dir;
 
 // one row per test, drawn before any answer: a mark, what it tests, and where its result goes
 const MARKS = '<svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>' +
@@ -47,6 +58,28 @@ const MARKS = '<svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d=
   '<svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg>';
 const rowsHTML = T => TESTS.map(x =>
   `        <li class="tr wait" data-t="${x.id}"><span class="st">${MARKS}</span><span class="tn"><b>${esc(T("t_" + x.id))}</b><span>${esc(T("d_" + x.id))}</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>`).join("\n");
+
+// IPv4 against IPv6: one row per network, both sides and the difference waiting
+const BAR = '<i class="cb"><i></i></i>';
+const pairsHTML = () => PAIRS.map(p =>
+  `        <div class="cr wait" data-p="${p.id}"><span class="cn">${esc(p.name)}</span><span class="cv" data-f="4"><b>…</b>${BAR}</span><span class="cv" data-f="6"><b>…</b>${BAR}</span><span class="cd"><b>…</b></span></div>`).join("\n");
+
+// An article section: paragraphs, and a list where a paragraph ends with a colon (each item's lead, up to its own colon,
+// in bold)
+function sectionHTML([h, body]) {
+  const ps = body.split(/\n+/), out = [];
+  for (let i = 0; i < ps.length; i++) {
+    if (/[:：]$/.test(ps[i]) && i < ps.length - 1) {
+      out.push(`<p>${esc(ps[i])}</p><ul>` + ps.slice(i + 1).map(li => {
+        const m = /^(.+?[:：])\s*(.+)$/.exec(li);
+        return `<li>${m && m[1].length < 40 ? `<b>${esc(m[1])}</b>${m[1].endsWith("：") ? "" : " "}${esc(m[2])}` : esc(li)}</li>`;
+      }).join("") + "</ul>");
+      break;
+    }
+    out.push(`<p>${esc(ps[i])}</p>`);
+  }
+  return `<h2>${esc(h)}</h2>${out.join("")}`;
+}
 
 export async function build({ check = false } = {}) {
   const I = await loadI18n(), en = I.en;
@@ -70,57 +103,65 @@ export async function build({ check = false } = {}) {
     files["assets/" + sName] = sjs;
     const docs = T("docs").map(([q, a]) => ({ q, h: a.split(/\n+/).map(p => `<p>${esc(p)}</p>`).join(""), t: a.replace(/\n+/g, " ") }));
 
-    const url = SITE + pathOf(slug), title = T("seo_title"), desc = T("seo_desc");
-    const alts = langs.map(([l, sl]) => `<link rel="alternate" hreflang="${l}" href="${SITE + pathOf(sl)}">`).join("\n") + `\n<link rel="alternate" hreflang="x-default" href="${SITE}/">`;
-    const graph = [
-      { "@type": "WebApplication", name: T("app_name") + " · 1ms.dog", url, applicationCategory: "UtilitiesApplication", operatingSystem: "Any",
-        browserRequirements: "Requires JavaScript", description: desc, inLanguage: lang, isAccessibleForFree: true,
-        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
-      { "@type": "FAQPage", mainEntity: docs.map(x => ({ "@type": "Question", name: x.q, acceptedAnswer: { "@type": "Answer", text: x.t } })) },
-    ];
-    const head = [
-      `<title>${esc(title)}</title>`,
-      `<meta name="description" content="${esc(desc)}">`,
-      `<meta name="keywords" content="${esc(T("seo_kw"))}">`,
-      ...(lang === "zh-CN" ? [`<meta http-equiv="Cache-Control" content="no-transform">`, `<meta http-equiv="Cache-Control" content="no-siteapp">`, `<meta name="applicable-device" content="pc,mobile">`] : []),
-      `<meta name="robots" content="index, follow, max-image-preview:large">`,
-      `<meta name="application-name" content="${esc(T("app_name"))}">`,
-      `<meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">`,
-      `<meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">`,
-      `<link rel="canonical" href="${url}">`, alts,
-      `<link rel="icon" href="/favicon.ico" sizes="any">`, `<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">`,
-      `<meta property="og:type" content="website">`, `<meta property="og:site_name" content="1ms.dog">`,
-      `<meta property="og:title" content="${esc(title)}">`, `<meta property="og:description" content="${esc(T("og_sub"))}">`, `<meta property="og:url" content="${url}">`,
-      `<meta property="og:locale" content="${locale}">`,
-      `<meta property="og:image" content="${SITE}/og/${lang.toLowerCase()}.png">`, `<meta property="og:image:width" content="1200">`, `<meta property="og:image:height" content="630">`,
-      `<meta property="og:image:alt" content="${esc(title)}">`,
-      `<meta name="twitter:card" content="summary_large_image">`, `<meta name="twitter:image" content="${SITE}/og/${lang.toLowerCase()}.png">`,
-      `<meta name="twitter:title" content="${esc(title)}">`, `<meta name="twitter:description" content="${esc(T("og_sub"))}">`,
-      `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c")}</script>`,
-    ].join("\n");
+    for (const pg of PAGES) {
+      const at = sl => pathOf(sl, pg.dir), url = SITE + at(slug), title = T(pg.title), desc = T(pg.desc);
+      // the slow page answers its own questions; the test's page, the help's
+      const faq = pg.art ? T(pg.art).map(([q, a]) => ({ q, t: a.replace(/\n+/g, " ") })) : docs;
+      const alts = langs.map(([l, sl]) => `<link rel="alternate" hreflang="${l}" href="${SITE + at(sl)}">`).join("\n") + `\n<link rel="alternate" hreflang="x-default" href="${SITE + at("")}">`;
+      const graph = [
+        { "@type": "WebApplication", name: T("app_name") + " · 1ms.dog", url, applicationCategory: "UtilitiesApplication", operatingSystem: "Any",
+          browserRequirements: "Requires JavaScript", description: desc, inLanguage: lang, isAccessibleForFree: true,
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
+        { "@type": "FAQPage", mainEntity: faq.map(x => ({ "@type": "Question", name: x.q, acceptedAnswer: { "@type": "Answer", text: x.t } })) },
+      ];
+      const head = [
+        `<title>${esc(title)}</title>`,
+        `<meta name="description" content="${esc(desc)}">`,
+        `<meta name="keywords" content="${esc(T(pg.kw))}">`,
+        ...(lang === "zh-CN" ? [`<meta http-equiv="Cache-Control" content="no-transform">`, `<meta http-equiv="Cache-Control" content="no-siteapp">`, `<meta name="applicable-device" content="pc,mobile">`] : []),
+        `<meta name="robots" content="index, follow, max-image-preview:large">`,
+        `<meta name="application-name" content="${esc(T("app_name"))}">`,
+        `<meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">`,
+        `<meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">`,
+        `<link rel="canonical" href="${url}">`, alts,
+        `<link rel="icon" href="/favicon.ico" sizes="any">`, `<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">`,
+        `<meta property="og:type" content="website">`, `<meta property="og:site_name" content="1ms.dog">`,
+        `<meta property="og:title" content="${esc(title)}">`, `<meta property="og:description" content="${esc(T(pg.og))}">`, `<meta property="og:url" content="${url}">`,
+        `<meta property="og:locale" content="${locale}">`,
+        `<meta property="og:image" content="${SITE}/og/${lang.toLowerCase()}.png">`, `<meta property="og:image:width" content="1200">`, `<meta property="og:image:height" content="630">`,
+        `<meta property="og:image:alt" content="${esc(title)}">`,
+        `<meta name="twitter:card" content="summary_large_image">`, `<meta name="twitter:image" content="${SITE}/og/${lang.toLowerCase()}.png">`,
+        `<meta name="twitter:title" content="${esc(title)}">`, `<meta name="twitter:description" content="${esc(T(pg.og))}">`,
+        `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c")}</script>`,
+      ].join("\n");
 
-    const helpNav = docs.map((x, i) => `<button type="button" role="tab" data-hq="${i}" aria-selected="${i === 0}">${esc(x.q)}</button>`).join("");
-    const helpC = docs.map((x, i) => `<article data-hqb="${i}"${i ? " hidden" : ""}><h3>${esc(x.q)}</h3>${x.h}</article>`).join("");
-    const langOpts = langs.map(([l]) => `<option value="${l}"${l === lang ? " selected" : ""}>${esc(I[l].name)}</option>`).join("");
-    const paths = Object.fromEntries(langs.map(([l, sl]) => [l, pathOf(sl)]));
+      const helpNav = docs.map((x, i) => `<button type="button" role="tab" data-hq="${i}" aria-selected="${i === 0}">${esc(x.q)}</button>`).join("");
+      const helpC = docs.map((x, i) => `<article data-hqb="${i}"${i ? " hidden" : ""}><h3>${esc(x.q)}</h3>${x.h}</article>`).join("");
+      const langOpts = langs.map(([l]) => `<option value="${l}"${l === lang ? " selected" : ""}>${esc(I[l].name)}</option>`).join("");
+      const paths = Object.fromEntries(langs.map(([l, sl]) => [l, at(sl)]));
 
-    const html = tpl
-      .replace(/(<(\w+)\b[^>]*\sdata-i="(\w+)"[^>]*>)([^<]*)(<\/\2>)/g, (m, open, tag, k, inner, close) => open + esc(T(k)) + close)
-      .replace(/\{\{a:(\w+)\}\}/g, (m, k) => esc(T(k)))   // translated attribute values (aria-label, tooltips)
-      .replace("{{lang}}", lang).replace("{{pathsAttr}}", esc(JSON.stringify(paths))).replace("{{rootAttr}}", slug ? "" : " data-root")
-      .replace("{{prepaint}}", PREPAINT).replace("{{head}}", head).replace("{{css}}", cssName).replace("{{js}}", jsName).replace("{{strings}}", sName)
-      .split("{{homeHref}}").join(pathOf(slug)).replace("{{langOpts}}", langOpts).replace("{{h1}}", esc(T("h1")))
-      .replace("{{rows}}", rowsHTML(T))
-      .replace("{{helpNav}}", helpNav).replace("{{helpC}}", helpC)
-      .replace("{{data}}", JSON.stringify({ lang, paths, home: pathOf(slug) }).replace(/</g, "\\u003c"));
-    if (/\{\{[\w:]+\}\}/.test(html)) throw new Error("unfilled placeholder in " + pathOf(slug) + ": " + /\{\{[\w:]+\}\}/.exec(html)[0]);
-    files[pathOf(slug).slice(1) + "index.html"] = html;
+      const html = tpl
+        .replace(/(<(\w+)\b[^>]*\sdata-i="(\w+)"[^>]*>)([^<]*)(<\/\2>)/g, (m, open, tag, k, inner, close) => open + esc(T(k)) + close)
+        .replace(/\{\{a:(\w+)\}\}/g, (m, k) => esc(T(k)))   // translated attribute values (aria-label, tooltips)
+        .replace("{{lang}}", lang).replace("{{pathsAttr}}", esc(JSON.stringify(paths))).replace("{{rootAttr}}", slug ? "" : " data-root")
+        .replace("{{prepaint}}", PREPAINT).replace("{{head}}", head).replace("{{css}}", cssName).replace("{{js}}", jsName).replace("{{strings}}", sName)
+        .replace(pg.dir ? ` aria-current="page"` : "{{none}}", "").split("{{homeHref}}").join(pathOf(slug)).replace("{{langOpts}}", langOpts).replace("{{h1}}", esc(T(pg.h1)))
+        .replace("{{intro}}", pg.intro ? `<p class="intro">${esc(T(pg.intro))}</p>` : "")
+        .replace("{{pairs}}", pairsHTML())
+        .replace("{{slowMore}}", pg.id === "slow" ? "" : `<p class="cmp-more"><a href="${pathOf(slug, "ipv6-slow/")}">${esc(T("slow_link"))}</a></p>`)
+        .replace("{{article}}", pg.art ? `<article class="art card">${T(pg.art).map(sectionHTML).join("")}</article>` : "")
+        .replace("{{rows}}", rowsHTML(T))
+        .replace("{{helpNav}}", helpNav).replace("{{helpC}}", helpC)
+        .replace("{{data}}", JSON.stringify({ lang, paths, home: pathOf(slug) }).replace(/</g, "\\u003c"));
+      if (/\{\{[\w:]+\}\}/.test(html)) throw new Error("unfilled placeholder in " + at(slug) + ": " + /\{\{[\w:]+\}\}/.exec(html)[0]);
+      files[at(slug).slice(1) + "index.html"] = html;
+    }
   }
 
   files["sitemap.xml"] = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
-    langs.map(([, s]) => `  <url>\n    <loc>${SITE + pathOf(s)}</loc>\n` +
-      langs.map(([l, s2]) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE + pathOf(s2)}"/>`).join("\n") +
-      `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/"/>\n  </url>`).join("\n") + "\n</urlset>\n";
+    PAGES.flatMap(pg => langs.map(([, s]) => `  <url>\n    <loc>${SITE + pathOf(s, pg.dir)}</loc>\n` +
+      langs.map(([l, s2]) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE + pathOf(s2, pg.dir)}"/>`).join("\n") +
+      `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE + pathOf("", pg.dir)}"/>\n  </url>`)).join("\n") + "\n</urlset>\n";
   files["robots.txt"] = `User-agent: *\nAllow: /\nDisallow: /r/\n\nSitemap: ${SITE}/sitemap.xml\n`;
   files["llms.txt"] = `# ${en.app_name} · 1ms.dog
 
@@ -134,6 +175,9 @@ export async function build({ check = false } = {}) {
 > icanhazip, Cloudflare, ipify) and takes the first answer. Nothing is sent to this site.
 
 - Page: ${SITE}/ (also ${langs.slice(1).map(([, s]) => "/" + s + "/").join(", ")})
+- IPv4 against IPv6: the same four networks (${PAIRS.map(p => p.name).join(", ")}) asked over each at once, round trips
+  compared; as a page on slow IPv6, with why it happens and what to do: ${SITE}/ipv6-slow/
+- Comparison hosts: ${PAIRS.map(p => `${p.id}: ${new URL(p[4].url).host} / ${new URL(p[6].url).host}`).join("; ")}
 - Test hosts: ${TESTS.map(x => `${x.id}: ${x.hosts.map(h => new URL(h.url, SITE).host).join(", ")}`).join("; ")}
 - Source code: https://github.com/yt1988/ipv6-test
 

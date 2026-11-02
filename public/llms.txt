@@ -10,6 +10,9 @@
 > icanhazip, Cloudflare, ipify) and takes the first answer. Nothing is sent to this site.
 
 - Page: https://ipv6.1ms.dog/ (also /zh-cn/, /zh-tw/, /ja/, /ko/, /es/, /fr/, /de/, /pt/, /ru/)
+- IPv4 against IPv6: the same four networks (Cloudflare, Google, Akamai, DNSPod) asked over each at once, round trips
+  compared; as a page on slow IPv6, with why it happens and what to do: https://ipv6.1ms.dog/ipv6-slow/
+- Comparison hosts: cf: 1.0.0.1 / [2606:4700:4700::1111]; gg: 8.8.8.8 / [2001:4860:4860::8888]; ak: ipv4.whatismyip.akamai.com / ipv6.whatismyip.akamai.com; dp: ipv4.ddnspod.com / ipv6.ddnspod.com
 - Test hosts: v4: ipv4.ddnspod.com, ipv4.icanhazip.com, ipv4-check-perf.radar.cloudflare.com; v6: ipv6.ddnspod.com, ipv6.icanhazip.com, ipv6-check-perf.radar.cloudflare.com; ds: ipv6.1ms.dog, icanhazip.com, api64.ipify.org; big: [2606:4700:4700::1001], api6.ipify.org; lit6: [2606:4700:4700::1111], [2606:4700:4700::64]; lit4: 1.0.0.1, 223.5.5.5
 - Source code: https://github.com/yt1988/ipv6-test
 

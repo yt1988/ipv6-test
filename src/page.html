@@ -36,6 +36,7 @@
     <div class="shared" id="shared" hidden><span id="sharedTxt"></span><button class="btn pri" id="testMine" type="button" data-i="test_mine"></button></div>
     <section class="hero card">
       <h1>{{h1}}</h1>
+      {{intro}}
       <div class="sum">
         <div class="score" id="scoreBox" data-why="{{a:score_tip}}" tabindex="0">
           <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fg" id="ring" cx="60" cy="60" r="52"/></svg>
@@ -60,6 +61,16 @@
       </div>
     </section>
 
+    <section class="cmp card" aria-labelledby="cmpT">
+      <div class="cmp-h"><h2 id="cmpT" data-i="h_cmp"></h2><span class="cmp-sub" data-i="cmp_sub"></span></div>
+      <p class="cmp-v"><b id="cmpHead" data-i="c_wait"></b><span id="cmpHint">&nbsp;</span></p>
+      <div class="ct">
+        <div class="cr ch"><span data-i="c_net"></span><span>IPv4</span><span>IPv6</span><span data-i="c_dif"></span></div>
+{{pairs}}
+      </div>
+      {{slowMore}}
+    </section>
+
     <section class="tests card">
       <h2 data-i="h_tests"></h2>
       <ol class="tl" id="tl">
@@ -67,6 +78,7 @@
       </ol>
     </section>
 
+    {{article}}
     <div data-ms-more></div>
   </main>
 </div>

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Checks every test host in src/probe.mjs from where it runs: a test only means something if its hosts are what it
 // says they are.
-//   - IPv4-only hosts have A records and no AAAA, IPv6-only ones the reverse, dual-stack ones both
+//   - IPv4-only hosts have A records and no AAAA, IPv6-only ones the reverse, dual-stack ones both (the IPv4 against
+//     IPv6 pairs too)
 //   - hosts the page reads answer with Access-Control-Allow-Origin and a body it can read
 //   - no-cors hosts answer at all
 // Records are looked up over DNS over HTTPS (AliDNS, then Google), so a local proxy's fake-ip DNS doesn't skew them.
@@ -10,7 +11,7 @@
 // Usage: node scripts/verify.mjs      exit 1 when a host fails
 import { request } from "node:https";
 import { checkServerIdentity } from "node:tls";
-import { TESTS, readAnswer } from "../src/probe.mjs";
+import { TESTS, SIDES, readAnswer } from "../src/probe.mjs";
 
 const full6 = ip => { const [a, b = ""] = ip.split("::"), l = a ? a.split(":") : [], r = b ? b.split(":") : []; return [...l, ...Array(8 - l.length - r.length).fill("0"), ...r].map(x => x.replace(/^0+(?=.)/, "")).join(":"); };
 const check = (host, cert) => host.includes(":")
@@ -37,7 +38,7 @@ async function records(host, type) {
 let bad = 0;
 const say = (okay, what, why = "") => { if (!okay) bad++; console.log(`${okay ? "ok  " : "FAIL"} ${what}${why ? "  " + why : ""}`); };
 
-for (const t of TESTS) {
+for (const t of [...TESTS, ...SIDES]) {
   for (const h of t.hosts) {
     if (h.url.startsWith("/")) { console.log(`skip ${t.id} ${h.url} (this site's own)`); continue; }
     const host = new URL(h.url).hostname, literal = host.startsWith("[") || /^\d+\.\d+\.\d+\.\d+$/.test(host);
@@ -51,7 +52,7 @@ for (const t of TESTS) {
       const res = await get(h.url, { origin: "https://ipv6.1ms.dog" });
       if (!h.read) { say(res.status > 0, what, `answers ${res.status} (no-cors)`); continue; }
       const cors = res.headers["access-control-allow-origin"], got = res.status === 200 && readAnswer(h.read, res.body);
-      say(!!(cors && got), what, !cors ? "no CORS header" : !got ? `unreadable (${res.status})` : got.ip);
+      say(!!(cors && got), what, !cors ? "no CORS header" : !got ? `unreadable (${res.status})` : got.ip || "answers " + res.status);
     } catch (e) {
       say(false, what, e.code || e.message);
     }

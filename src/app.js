@@ -1,7 +1,7 @@
 // IPv6 Test page. Every test's row is in the HTML from the start; the tests (src/probe.mjs) run at once and fill
 // their rows as they answer, and the hero follows: the score and the verdict so far, the two addresses as soon as
-// they are known. Strings: window.L1MS.
-import { TESTS, IDS, SLOW, runTest, network, verdict, kind6, tierOf } from "./probe.mjs";
+// they are known. IPv4 against IPv6 runs alongside, one row per network. Strings: window.L1MS.
+import { TESTS, IDS, SIDES, PAIRS, SLOW, runTest, network, verdict, compare, kind6, tierOf } from "./probe.mjs";
 import { encode as encodeShare, decode as decodeShare, sharePath } from "./share.mjs";
 
 (function () {
@@ -91,6 +91,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   /* ---------- the rows and the hero ---------- */
   const ROW = Object.fromEntries($$(".tr[data-t]").map(r => [r.dataset.t, r]));
   let R = {};          // results so far, by test id
+  let C = {};          // IPv4 against IPv6 so far, by side id (cf4, cf6, …)
   let SHOWN = false;   // showing a shared result: no addresses
 
   // a row: its state (ok, warn, bad, waiting) and its value; v6 tests only warn when there is no IPv6 at all
@@ -153,7 +154,36 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     $("#probs").title = p;
   }
 
-  let total = TESTS.length, done = 0, t0 = 0;
+  // IPv4 against IPv6: each network's two round trips with bars on one scale, the difference, and once every side is
+  // in, what they say together
+  const CROW = Object.fromEntries($$(".cr[data-p]").map(r => [r.dataset.p, r]));
+  const DIF = { c_same: "same", c_6fast: "fast", c_6slow: "slow", c_6much: "much" }, HEAD = { c_6fast: "t1", c_6slow: "warn", c_6much: "bad" };
+  function fillCmp() {
+    // a link shared before the comparison existed has none: no block rather than rows that never fill
+    $(".cmp").hidden = SHOWN && !Object.keys(C).length;
+    const max = Math.max(1, ...Object.values(C).filter(x => x.ok && x.rtt != null).map(x => x.rtt));
+    for (const p of PAIRS) {
+      const row = CROW[p.id], a = C[p.id + 4], b = C[p.id + 6];
+      row.classList.toggle("wait", !a && !b);
+      for (const [fam, x] of [[4, a], [6, b]]) {
+        const cell = row.querySelector(`.cv[data-f="${fam}"]`), ok = x && x.ok && x.rtt != null;
+        cell.classList.toggle("bad", !!x && !ok);
+        cell.querySelector("b").textContent = !x ? "…" : ok ? timeOf(x.rtt) : "—";
+        cell.title = x && !ok ? t(x.err === "timeout" ? "r_timeout" : "r_fail") : "";
+        cell.querySelector(".cb i").style.transform = `scaleX(${ok ? Math.max(.02, x.rtt / max) : 0})`;
+      }
+      const d = row.querySelector(".cd"), both = a && b && a.ok && b.ok && a.rtt != null && b.rtt != null;
+      const one = both && compare({ [p.id + 4]: a, [p.id + 6]: b }), diff = both ? b.rtt - a.rtt : 0;
+      d.className = "cd" + (both ? " " + DIF[one.key] : "");
+      d.querySelector("b").textContent = !a || !b ? "…" : !both ? "—" : (diff > 0 ? "+" : diff < 0 ? "−" : "±") + timeOf(Math.abs(diff));
+    }
+    const all = SIDES.every(x => C[x.id]), c = compare(C), head = $("#cmpHead");
+    head.textContent = all ? t(c.key, { ms: c.n ? fmtMs(Math.abs(c.diff)) : "" }) : t("c_wait");
+    head.className = all ? HEAD[c.key] || "" : "";
+    $("#cmpHint").textContent = all ? t("ch_" + c.key.slice(2)) : " ";
+  }
+
+  let total = TESTS.length + SIDES.length, done = 0, t0 = 0;
   function progress() {
     $("#prog i").style.transform = `scaleX(${done / total})`;
     $("#progTxt").textContent = t("progress", { n: done, of: total });
@@ -169,11 +199,18 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     if (!$("#shared").hidden) { $("#shared").hidden = true; history.replaceState(null, "", D.paths[D.lang]); }
     if (RUN) RUN.abort();
     const ctl = RUN = new AbortController();
-    R = {}; SHOWN = false; LAST = null; done = 0; t0 = performance.now();
+    R = {}; C = {}; SHOWN = false; LAST = null; done = 0; t0 = performance.now();
     $("#shareBtn").disabled = true; $("#rerun").disabled = true; $("#prog").classList.remove("end");
     $("#verdict").textContent = t("v_wait"); $("#verdict").className = "verdict"; $("#probs").innerHTML = "&nbsp;";
-    IDS.forEach(fillRow); fillAddr(6); fillAddr(4); links(false); hero(false); progress();
-    await Promise.all(TESTS.map(async test => {
+    IDS.forEach(fillRow); fillAddr(6); fillAddr(4); links(false); hero(false); fillCmp(); progress();
+    // each network's two sides at the same moment, so they meet the same conditions
+    const sides = SIDES.map(async side => {
+      const x = await runTest(side, { signal: ctl.signal });
+      if (ctl.signal.aborted) return;
+      C[side.id] = x;
+      done++; progress(); fillCmp();
+    });
+    await Promise.all([...sides, ...TESTS.map(async test => {
       const x = await runTest(test, { signal: ctl.signal });
       if (ctl.signal.aborted) return;
       if ((test.id === "v4" || test.id === "v6") && x.ok && !x.asn) {
@@ -188,22 +225,24 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       IDS.forEach(fillRow);
       if (test.id === "v4" || test.id === "v6") { fillAddr(test.fam); }
       hero(false);
-    }));
+    })]);
     if (ctl.signal.aborted) return;
     RUN = null;
     hero(true); links(true);
     $("#prog").classList.add("end");
     $("#progTxt").textContent = t("done", { s: ((performance.now() - t0) / 1000).toFixed(1) });
     $("#rerun").disabled = false;
-    LAST = { ts: Date.now(), cc: CC, r: R };
+    LAST = { ts: Date.now(), cc: CC, r: { ...R, ...C } };
     $("#shareBtn").disabled = false;
   }
 
   /* ---------- a shared result ---------- */
   // Opening /r/<code> shows that result as the test would have drawn it, and doesn't test until the visitor asks
   function showShared(S) {
-    R = S.r; SHOWN = true;
-    IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(true); links(true);
+    R = Object.fromEntries(IDS.filter(id => id in S.r).map(id => [id, S.r[id]]));
+    C = Object.fromEntries(SIDES.filter(x => x.id in S.r).map(x => [x.id, S.r[x.id]]));
+    SHOWN = true;
+    IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(true); links(true); fillCmp();
     $("#sharedTxt").textContent = t("shared_on", { where: S.cc ? t("shared_where", { where: country(S.cc) }) : "", date: new Date(S.ts).toLocaleString(D.lang, { dateStyle: "medium", timeStyle: "short" }) });
     $("#shared").hidden = false;
     $("#prog").classList.add("end"); $("#progTxt").innerHTML = "&nbsp;";
@@ -222,7 +261,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       link: show => location.origin + D.home + "r/" + encodeShare({ ...S, cc: show ? S.cc : "" }),
       home: location.origin + D.home,
       text: () => t("share_text", { s: res.score }),
-      height: 630, draw: (x, kit) => drawCard(x, kit, S, res),
+      height: 680, draw: (x, kit) => drawCard(x, kit, S, res),
       foot: show => [t("card_sub"), show && S.cc && country(S.cc)],
       ts: S.ts,
     }).open();
@@ -255,10 +294,19 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       x.fillStyle = C.fg; x.font = `500 23px ${F}`;
       x.fillText(clip(x, t("t_" + test.id) + (test.id === "ds" && ok ? " · IPv" + r.fam : ""), tw / 2 - 44), ax + 32, ay);
     });
+    // IPv4 against IPv6, when the result has it (links from before it don't)
+    const c = compare(S.r);
+    if (SIDES.some(z => z.id in S.r)) {
+      const cy2 = kit.top + 352;
+      x.fillStyle = C.muted; x.font = `600 23px ${F}`; x.fillText(t("h_cmp"), tx, cy2);
+      const lw = x.measureText(t("h_cmp")).width + 16;
+      x.fillStyle = c.key === "c_6much" ? C.bad : c.key === "c_6slow" ? C.warn : c.key === "c_6fast" ? C.t1 : C.fg;
+      x.font = `650 23px ${F}`; x.fillText(clip(x, t(c.key, { ms: c.n ? fmtMs(Math.abs(c.diff)) : "" }), tw - lw), tx + lw, cy2);
+    }
   }
 
   $("#rerun").onclick = start;
   $("#testMine").onclick = start;
-  const SP = sharePath(location.pathname), SHARED = SP && decodeShare(SP.code, new Set(IDS));
+  const SP = sharePath(location.pathname), SHARED = SP && decodeShare(SP.code, new Set([...IDS, ...SIDES.map(x => x.id)]));
   if (SHARED) showShared(SHARED); else start();
 })();
