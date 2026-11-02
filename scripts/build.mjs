@@ -25,8 +25,9 @@ export const LANGS = [["en", "", "en_US"], ["zh-CN", "zh-cn", "zh_CN"], ["zh-TW"
 
 // Runs before first paint: apply the saved theme. On an English page, send visitors to their language's (a saved
 // choice first, then the browser languages), and a shared result /r/<code> to /<lang>/r/<code>; crawlers and English
-// readers stay.
-const PREPAINT = `(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root"))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}var p=location.pathname,t=p===P.en?"":p.indexOf("/r/")===0?p.slice(1):null;if(l&&l!=="en"&&t!==null)location.replace(P[l]+t+location.search+location.hash)})();`;
+// readers stay, and so does the Connection Checkup frame (?embed=checkup): it asked for this language, and a redirect
+// would leave its page as the referrer the embed check reads.
+const PREPAINT = `(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root")||/[?&]embed=checkup(&|$)/.test(location.search))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}var p=location.pathname,t=p===P.en?"":p.indexOf("/r/")===0?p.slice(1):null;if(l&&l!=="en"&&t!==null)location.replace(P[l]+t+location.search+location.hash)})();`;
 
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const hash = s => createHash("sha256").update(s).digest("hex").slice(0, 10);
@@ -40,7 +41,7 @@ async function loadI18n() {
 }
 
 // Strings only the build uses (the page already shows them); everything else goes to the browser
-const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "docs", "lang_label", "faq_h", "h_tests", "share_desc", "share_title",
+const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "docs", "lang_label", "faq_h", "share_desc", "share_title",
   "cmp_sub", "cw_global", "cw_nocn", "cw_cn", "c_net", "c_dif", "slow_link", "slow_title", "slow_desc", "slow_kw", "slow_h1", "slow_og", "slow_intro", "slow_art"]);
 
 // The pages every language has: the test, and the test as an answer to "is IPv6 slower than IPv4?"

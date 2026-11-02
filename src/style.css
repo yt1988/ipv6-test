@@ -183,3 +183,13 @@ svg.ext[viewBox] { width: .95em; height: .95em; flex: none; }
   .art { padding: 18px 16px 10px; }
   .intro { font-size: 13.5px; }
 }
+
+/* framed by the Connection Checkup (1ms-shell docs/checkup.md): the score, the verdict, the comparison and the tests,
+   compact and as wide as the frame; no header, help, share or reading. app.js drops the attribute for any other frame. */
+html[data-ms-embed] { scrollbar-gutter: auto; }
+[data-ms-embed] .app { padding-block: 0; padding-inline: 0; gap: 0; }
+[data-ms-embed] main { gap: 12px; }
+[data-ms-embed] .top, [data-ms-embed] .shared, [data-ms-embed] .hero h1, [data-ms-embed] .intro, [data-ms-embed] .links,
+[data-ms-embed] #shareBtn, [data-ms-embed] #rerun, [data-ms-embed] .cmp-sub, [data-ms-embed] .cmp-more, [data-ms-embed] .art,
+[data-ms-embed] .scrim, [data-ms-embed] footer { display: none !important; }
+[data-ms-embed] .hero { padding-top: 16px; gap: 12px; }

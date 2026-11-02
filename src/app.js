@@ -14,6 +14,17 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
   const K = { theme: "ipv6test:theme", lang: "ipv6test:lang" };
 
+  /* ---------- framed by the Connection Checkup (1ms-shell docs/checkup.md) ---------- */
+  // ?embed=checkup, the shell's <meta name="check"> and that page framing us: the results only (style.css), progress,
+  // size and the result sent up to it. Anything else, an ordinary page, so the shell's data-ms-embed goes.
+  const CHECK = (() => {
+    const m = $('meta[name="check"]');
+    if (!m || window.parent === window || new URLSearchParams(location.search).get("embed") !== "checkup") return "";
+    try { const o = new URL(m.content).origin; return new URL(document.referrer).origin === o ? o : ""; } catch (e) { return ""; }
+  })();
+  if (!CHECK) document.documentElement.removeAttribute("data-ms-embed");
+  const post = msg => { if (CHECK) window.parent.postMessage({ ms: "checkup", v: 1, tool: "ipv6", ...msg }, CHECK); };
+
   /* ---------- theme and language (synced across the 1ms.dog tools) ---------- */
   const thBtn = $("#theme"), TH = ["system", "light", "dark"];
   const applyTheme = th => {
@@ -187,6 +198,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   function progress() {
     $("#prog i").style.transform = `scaleX(${done / total})`;
     $("#progTxt").textContent = t("progress", { n: done, of: total });
+    post({ type: "progress", done, total, text: $("#progTxt").textContent });
   }
 
   // where the visitor is (Cloudflare's own trace on this site), for the share card when they tick "show my country"
@@ -234,6 +246,36 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     $("#rerun").disabled = false;
     LAST = { ts: Date.now(), cc: CC, r: { ...R, ...C } };
     $("#shareBtn").disabled = false;
+    if (CHECK) post(checkupResult(LAST));
+  }
+
+  // The result for the checkup's report: the hero's verdict, a few numbers, the problems worst first, and the facts its
+  // cross-tool rules read. The score on its 0 to 100 scale; no grade, this test has none. The link leaves out the country,
+  // as the share dialog does until the visitor ticks it.
+  const FBAD = new Set(["p_nodns", "p_mtu"]), FORDER = { bad: 0, warn: 1, ok: 2 };
+  function checkupResult(S) {
+    const v = verdict(R), c = compare(C), ok = id => !!(R[id] && R[id].ok);
+    const has6 = ok("v6") || ok("lit6"), k = ok("v6") ? R.v6.kind || kind6(R.v6.ip) : null;
+    const stats = [
+      { label: "IPv6", value: k ? t("k_" + k) : t(has6 ? "r_ok" : "none6") },
+      { label: t("t_ds"), value: ok("ds") ? "IPv" + R.ds.fam : t(R.ds && R.ds.err === "timeout" ? "r_timeout" : "r_fail") },
+      c.n && { label: "IPv6 − IPv4", value: (c.diff > 0 ? "+" : c.diff < 0 ? "−" : "±") + timeOf(Math.abs(c.diff)) },
+      { label: t("h_tests"), value: `${IDS.filter(ok).length} / ${IDS.length}` },
+    ].filter(Boolean);
+    const findings = v.probs.map(p => ({ level: FBAD.has(p) ? "bad" : "warn", text: t(p) }));
+    if (c.key === "c_6much" || c.key === "c_6slow") findings.push({ level: c.key === "c_6much" ? "bad" : "warn", text: t(c.key, { ms: fmtMs(Math.abs(c.diff)) }) });
+    if (v.head === "v_offline") findings.push({ level: "bad", text: t("off_hint") });
+    else if (v.head === "v_none") findings.push({ level: "warn", text: t("ok_v4") });
+    else if (!findings.length) findings.push({ level: "ok", text: t("ok_all") });
+    findings.sort((a, b) => FORDER[a.level] - FORDER[b.level]);
+    // slower: IPv6 noticeably behind IPv4 in the comparison, or holding pages up (dual-stack sites wait for it, it answers late)
+    const facts = { score: v.score * 10, v6: has6 };
+    if (has6) {
+      facts.native = k ? k === "native" : null;
+      facts.slower = c.key === "c_6much" || v.probs.includes("p_slowds") || v.probs.includes("p_slow6");
+    }
+    return { type: "result", lang: D.lang, path: D.home + "r/" + encodeShare({ ...S, cc: "" }), grade: null, score: v.score * 10,
+      headline: t(v.head), stats, findings: findings.slice(0, 4), facts };
   }
 
   /* ---------- a shared result ---------- */
@@ -308,5 +350,10 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   $("#rerun").onclick = start;
   $("#testMine").onclick = start;
   const SP = sharePath(location.pathname), SHARED = SP && decodeShare(SP.code, new Set([...IDS, ...SIDES.map(x => x.id)]));
-  if (SHARED) showShared(SHARED); else start();
+  // the checkup sizes its frame to the page
+  if (CHECK && window.ResizeObserver) {
+    let h = 0;
+    new ResizeObserver(() => { const n = Math.ceil($(".app").getBoundingClientRect().height); if (n !== h) post({ type: "size", height: h = n }); }).observe($(".app"));
+  }
+  if (SHARED && !CHECK) showShared(SHARED); else start();
 })();
