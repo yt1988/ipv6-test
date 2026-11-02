@@ -149,8 +149,8 @@ export async function build({ check = false } = {}) {
         .replace(pg.dir ? ` aria-current="page"` : "{{none}}", "").split("{{homeHref}}").join(pathOf(slug)).replace("{{langOpts}}", langOpts).replace("{{h1}}", esc(T(pg.h1)))
         .replace("{{intro}}", pg.intro ? `<p class="intro">${esc(T(pg.intro))}</p>` : "")
         .replace("{{pairs}}", pairsHTML(T))
-        .replace("{{slowMore}}", pg.id === "slow" ? "" : `<p class="cmp-more"><a href="${pathOf(slug, "ipv6-slow/")}">${esc(T("slow_link"))}</a></p>`)
-        .replace("{{article}}", pg.art ? `<article class="art card">${T(pg.art).map(sectionHTML).join("")}</article>` : "")
+        .replace("{{slowMore}}", pg.id === "slow" ? "" : `<p class="cmp-more"><a href="${pathOf(slug, "ipv6-slow/")}#why">${esc(T("slow_link"))}</a></p>`)
+        .replace("{{article}}", pg.art ? `<article class="art card" id="why">${T(pg.art).map(sectionHTML).join("")}</article>` : "")
         .replace("{{rows}}", rowsHTML(T))
         .replace("{{helpNav}}", helpNav).replace("{{helpC}}", helpC)
         .replace("{{data}}", JSON.stringify({ lang, paths, home: pathOf(slug) }).replace(/</g, "\\u003c"));
