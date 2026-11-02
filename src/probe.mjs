@@ -1,8 +1,9 @@
 // The tests, how they run in the browser, and how the results become a score.
 //
 // Each test asks a few hosts at once and takes the first that answers: one host may be blocked or slow from a network
-// where another works (DNSPod answers in mainland China, icanhazip and Cloudflare everywhere else). A test passes when
-// any of them answers within TIMEOUT.
+// where another works. Every test has hosts on more than one network, so that one of them answers wherever the visitor
+// is: Cloudflare (anycast, everywhere), Google (anycast, everywhere but mainland China), DNSPod and AliDNS (mainland
+// China, where the others are blocked or routed abroad), ipify. A test passes when any of them answers within TIMEOUT.
 //
 //   v4    hosts with only an IPv4 address (A record): can you reach the IPv4 internet, and from which address
 //   v6    hosts with only an IPv6 address (AAAA record): can you reach the IPv6 internet; needs your DNS to give AAAA
@@ -39,17 +40,21 @@ export const TESTS = [
     { url: "https://icanhazip.com/", read: "text" },
     { url: "https://api64.ipify.org/", read: "text" },
   ] },
+  // each on an address no other test asks, so its connection is new
   { id: "big", fam: 6, hosts: [
     { url: "https://[2606:4700:4700::1001]/cdn-cgi/trace?pad=" + PAD, read: "trace" },
+    { url: "https://[2001:4860:4860::8844]/resolve?name=ipv6.1ms.dog&random_padding=" + PAD, read: "any" },
     { url: "https://api6.ipify.org/?pad=" + PAD, read: "text" },
   ] },
   { id: "lit6", fam: 6, hosts: [
     { url: "https://[2606:4700:4700::1111]/cdn-cgi/trace", read: "trace" },
     // not AliDNS [2400:3200::1]: its certificate doesn't list its IPv6 addresses, so browsers refuse it
     { url: "https://[2606:4700:4700::64]/cdn-cgi/trace", read: "trace" },
+    { url: "https://[2001:4860:4860::6464]/resolve?name=ipv6.1ms.dog&type=AAAA", read: "any" },
   ] },
   { id: "lit4", fam: 4, hosts: [
     { url: "https://1.0.0.1/cdn-cgi/trace", read: "trace" },
+    { url: "https://8.8.4.4/resolve?name=ipv6.1ms.dog&type=A", read: "any" },
     { url: "https://223.5.5.5/resolve?name=1ms.dog&type=1", read: null },
   ] },
 ];
@@ -58,21 +63,24 @@ export const IDS = TESTS.map(t => t.id);
 // IPv4 against IPv6: the same network asked over each, at the same time, so a difference is the path and not the
 // server. Every pair has an IPv4-only and an IPv6-only way in (an address, or a name with only A or only AAAA). Each
 // side is a test of its own (id + 4 or 6), so it is timed and shared like the others.
-//   cf  Cloudflare's resolver      gg  Google Public DNS (doesn't answer in mainland China)
-//   ak  Akamai's edge              dp  Tencent DNSPod (answers best in mainland China)
+// Three of them have servers near almost everyone, so the times are to a nearby server; the fourth is for mainland
+// China, where Google doesn't answer and the others' IPv6 is often routed abroad (from elsewhere it is far, and its
+// difference is the long way to China). where: the page says so under the name (global, nocn, cn)
+//   cf  Cloudflare's resolver      gg  Google Public DNS
+//   ak  Akamai's edge              dp  Tencent DNSPod
 // read "any": a CORS answer whose body doesn't matter; warm: time the round trip of a no-cors host too
 export const PAIRS = [
-  { id: "cf", name: "Cloudflare",
+  { id: "cf", name: "Cloudflare", where: "global",
     4: { url: "https://1.0.0.1/cdn-cgi/trace", read: "trace" },
     // not ::1001: the large-packet test needs its own new connection there
     6: { url: "https://[2606:4700:4700::1111]/cdn-cgi/trace", read: "trace" } },
-  { id: "gg", name: "Google",
+  { id: "gg", name: "Google", where: "nocn",
     4: { url: "https://8.8.8.8/resolve?name=ipv6.1ms.dog&type=A", read: "any" },
     6: { url: "https://[2001:4860:4860::8888]/resolve?name=ipv6.1ms.dog&type=A", read: "any" } },
-  { id: "ak", name: "Akamai",
+  { id: "ak", name: "Akamai", where: "global",
     4: { url: "https://ipv4.whatismyip.akamai.com/", read: null, warm: true },
     6: { url: "https://ipv6.whatismyip.akamai.com/", read: null, warm: true } },
-  { id: "dp", name: "DNSPod",
+  { id: "dp", name: "DNSPod", where: "cn",
     4: { url: "https://ipv4.ddnspod.com/", read: "text" },
     6: { url: "https://ipv6.ddnspod.com/", read: "text" } },
 ];

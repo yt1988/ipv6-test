@@ -41,7 +41,7 @@ async function loadI18n() {
 
 // Strings only the build uses (the page already shows them); everything else goes to the browser
 const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "docs", "lang_label", "faq_h", "h_tests", "share_desc", "share_title",
-  "cmp_sub", "c_net", "c_dif", "slow_link", "slow_title", "slow_desc", "slow_kw", "slow_h1", "slow_og", "slow_intro", "slow_art"]);
+  "cmp_sub", "cw_global", "cw_nocn", "cw_cn", "c_net", "c_dif", "slow_link", "slow_title", "slow_desc", "slow_kw", "slow_h1", "slow_og", "slow_intro", "slow_art"]);
 
 // The pages every language has: the test, and the test as an answer to "is IPv6 slower than IPv4?"
 //   dir: the folder under the language's; title, desc, kw, og, h1: their strings; art: the article under the results
@@ -61,8 +61,8 @@ const rowsHTML = T => TESTS.map(x =>
 
 // IPv4 against IPv6: one row per network, both sides and the difference waiting
 const BAR = '<i class="cb"><i></i></i>';
-const pairsHTML = () => PAIRS.map(p =>
-  `        <div class="cr wait" data-p="${p.id}"><span class="cn">${esc(p.name)}</span><span class="cv" data-f="4"><b>…</b>${BAR}</span><span class="cv" data-f="6"><b>…</b>${BAR}</span><span class="cd"><b>…</b></span></div>`).join("\n");
+const pairsHTML = T => PAIRS.map(p =>
+  `        <div class="cr wait" data-p="${p.id}"><span class="cn"><b>${esc(p.name)}</b><span>${esc(T("cw_" + p.where))}</span></span><span class="cv" data-f="4"><b>…</b>${BAR}</span><span class="cv" data-f="6"><b>…</b>${BAR}</span><span class="cd"><b>…</b></span></div>`).join("\n");
 
 // An article section: paragraphs, and a list where a paragraph ends with a colon (each item's lead, up to its own colon,
 // in bold)
@@ -147,7 +147,7 @@ export async function build({ check = false } = {}) {
         .replace("{{prepaint}}", PREPAINT).replace("{{head}}", head).replace("{{css}}", cssName).replace("{{js}}", jsName).replace("{{strings}}", sName)
         .replace(pg.dir ? ` aria-current="page"` : "{{none}}", "").split("{{homeHref}}").join(pathOf(slug)).replace("{{langOpts}}", langOpts).replace("{{h1}}", esc(T(pg.h1)))
         .replace("{{intro}}", pg.intro ? `<p class="intro">${esc(T(pg.intro))}</p>` : "")
-        .replace("{{pairs}}", pairsHTML())
+        .replace("{{pairs}}", pairsHTML(T))
         .replace("{{slowMore}}", pg.id === "slow" ? "" : `<p class="cmp-more"><a href="${pathOf(slug, "ipv6-slow/")}">${esc(T("slow_link"))}</a></p>`)
         .replace("{{article}}", pg.art ? `<article class="art card">${T(pg.art).map(sectionHTML).join("")}</article>` : "")
         .replace("{{rows}}", rowsHTML(T))
@@ -171,8 +171,9 @@ export async function build({ check = false } = {}) {
 > address with no DNS (IPv6 without DNS; IPv6-only networks with NAT64). Shows the IPv4 and IPv6 addresses (with
 > ASN and country where the host reports them) and a score out of 10, after test-ipv6.com's idea: 4 points for
 > IPv6-only sites, 2 for large packets, 2 for dual-stack sites without delay, 1 for IPv6 without DNS, 1 when the
-> browser prefers IPv6, minus 1 when IPv6 is slow. Each test asks two or three providers at once (DNSPod,
-> icanhazip, Cloudflare, ipify) and takes the first answer. Nothing is sent to this site.
+> browser prefers IPv6, minus 1 when IPv6 is slow. Each test asks two to four providers at once (Cloudflare,
+> Google, DNSPod, AliDNS, icanhazip, ipify), so one answers wherever the visitor is, and takes the first answer.
+> Nothing is sent to this site.
 
 - Page: ${SITE}/ (also ${langs.slice(1).map(([, s]) => "/" + s + "/").join(", ")})
 - IPv4 against IPv6: the same four networks (${PAIRS.map(p => p.name).join(", ")}) asked over each at once, round trips
