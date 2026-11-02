@@ -82,7 +82,9 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   // every link to another tool ends with the external-link mark (1ms-shell docs/tool-contract.md, section 4)
   const EXT = '<svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
   const tool = n => { const m = document.querySelector(`meta[name="${n}"]`); return m ? m.content.replace(/\/+$/, "") + D.home : null; };
-  const IPQS = tool("ipqs"), EGRESS = tool("egress"), ASN = tool("asn"), WHO = tool("who"), SPEED = tool("speed");
+  const IPQS = tool("ipqs"), EGRESS = tool("egress"), ASN = tool("asn"), WHO = tool("who"), SPEED = tool("speed"), FULL = tool("check");
+  // the Connection Checkup runs this test among the others; not inside its own report
+  if (FULL && !CHECK) { $("#checkLink").href = FULL; $("#checkLink").hidden = false; }
   if (EGRESS) { $("#egressLink").href = EGRESS; $("#egressLink").hidden = false; }
   if (WHO) $("#whoLink").href = WHO;
   if (SPEED) $("#speedLink").href = SPEED;

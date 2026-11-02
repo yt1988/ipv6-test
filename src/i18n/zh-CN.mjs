@@ -41,6 +41,7 @@ export default {
   ipqs_link: "查纯净度",
   who_link: "IPv4 和 IPv6 的出口不在同一个网络：看看网站眼中的你",
   speed_link: "IPv6 正常，再测一下速度",
+  check_link: "做一次完整体检",
   egress_link: "每个网站看到的是哪个 IP？",
 
   h_tests: "测试项目",

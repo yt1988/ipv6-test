@@ -41,6 +41,7 @@ export default {
   ipqs_link: "Est-elle propre ?",
   who_link: "IPv4 et IPv6 sortent par des réseaux différents : voyez ce que voient les sites",
   speed_link: "IPv6 fonctionne : testez aussi votre débit",
+  check_link: "Faire un bilan complet",
   egress_link: "Quelle adresse voit chaque site ?",
 
   h_tests: "Les tests",

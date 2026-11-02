@@ -42,6 +42,7 @@ export default {
   ipqs_link: "Is it clean?",
   who_link: "IPv4 and IPv6 leave from different networks: see what sites see",
   speed_link: "IPv6 works: test your speed too",
+  check_link: "Run a full checkup",
   egress_link: "Which address does each site see?",
 
   h_tests: "The tests",

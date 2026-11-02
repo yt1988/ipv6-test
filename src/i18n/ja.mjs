@@ -41,6 +41,7 @@ export default {
   ipqs_link: "クリーンか確認",
   who_link: "IPv4 と IPv6 の出口が別のネットワーク：サイトから見たあなたを確認",
   speed_link: "IPv6 は正常、速度もテスト",
+  check_link: "総合チェックを実行",
   egress_link: "各サイトにはどの IP が見えている？",
 
   h_tests: "テスト項目",
