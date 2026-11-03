@@ -24,7 +24,7 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
 .score-n { display: flex; align-items: baseline; gap: 2px; margin-top: -10px; }
 .score-n b { font: 700 50px/1 var(--f-num); letter-spacing: -.04em; font-variant-numeric: tabular-nums; width: 2ch; text-align: center; }
 .score-n i { font: 500 18px var(--f-num); font-style: normal; color: var(--muted); }
-.score-k { position: absolute; bottom: 34px; left: 0; right: 0; text-align: center; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.score-k { position: absolute; bottom: 34px; left: 0; right: 0; text-align: center; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 .score.wait .score-n b { color: var(--muted); animation: blink 1.2s ease-in-out infinite; }
 .sum-r { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding-top: 6px; }
 /* the verdict, and the share button right beside it once there is a result */
@@ -41,9 +41,11 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
 .addr-ip { min-width: 0; font: 600 15px/1.5 var(--f-num); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .addr-ip code { font: inherit; background: none; padding: 0; }
 .addr-ip .no { font: 500 13.5px var(--f-ui); color: var(--muted); }
-.addr-m { grid-column: 2; font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.5em; }
+/* what is known about the address, then the link to check it: the link wraps under it where the line runs out (long languages, phones) */
+.addr-m { grid-column: 2; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; font-size: 12.5px; color: var(--muted); min-height: 1.5em; min-width: 0; }
+.addr-m .m-i { min-width: 0; overflow-wrap: anywhere; }
 .addr-m b { font-weight: 600; font-family: var(--f-num); }
-.tag { display: inline-block; font: 600 10.5px/16px var(--f-ui); padding: 0 5px; border-radius: 4px; background: var(--soft); color: var(--muted); margin-right: 6px; vertical-align: 1px; }
+.tag { display: inline-block; font: 600 12px/17px var(--f-ui); padding: 0 5px; border-radius: 4px; background: var(--soft); color: var(--muted); margin-right: 6px; vertical-align: 1px; }
 .tag.bad { background: var(--warn-soft); color: var(--warn); }
 .links { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 12.5px; min-height: 1.5em; }
 .links a { color: var(--muted); text-decoration: none; }
@@ -123,7 +125,7 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
   .help-nav { display: none; }
   .help-b .help-pick { display: flex; }
 }
-.addr-m .q { color: var(--muted); margin-left: 10px; text-decoration: none; }
+.addr-m .q { color: var(--muted); text-decoration: none; white-space: nowrap; }
 .addr-m .q:hover { color: var(--ink); text-decoration: underline; }
 @media (max-width: 720px) {
   /* a full IPv6 address doesn't fit on one line on a phone: two lines kept for it from the start */
@@ -135,6 +137,12 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
 .links #whoLink, .links #speedLink { color: var(--ink); font-weight: 600; }
 /* links to the other tools: text, then the external-link mark */
 .links a, .addr-m .q { display: inline-flex; align-items: center; gap: 3px; }
+/* fingers: the standalone links get a 32px target; on the address lines without moving anything, in the row of links with room between rows */
+@media (pointer: coarse) {
+  .addr-m .q, .addr-m .q0 { padding: 7px 0; margin: -7px 0; }
+  .links { row-gap: 0; }
+  .links a { min-height: 32px; }
+}
 svg.ext[viewBox] { width: .95em; height: .95em; flex: none; }
 
 /* IPv4 against IPv6: one row per network, each side's round trip with a bar, and the difference */
@@ -181,7 +189,7 @@ svg.ext[viewBox] { width: .95em; height: .95em; flex: none; }
   .cmp-v { align-items: flex-start; text-align: left; min-height: 64px; }
   .cr { grid-template-columns: minmax(0, 1fr) 70px 70px 62px; gap: 8px; }
   .cn b { font-size: 13px; }
-  .cn span { font-size: 11px; }
+  .cn span { font-size: 12px; }
   .cv b, .cd b { font-size: 12.5px; }
   .art { padding: 18px 16px 10px; }
   .intro { font-size: 13.5px; }

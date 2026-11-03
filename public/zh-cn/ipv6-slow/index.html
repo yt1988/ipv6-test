@@ -44,7 +44,7 @@
 <meta name="twitter:description" content="IPv4 和 IPv6 并排测速，以及 IPv6 为什么会慢">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"IPv6 测试 · 1ms.dog","url":"https://ipv6.1ms.dog/zh-cn/ipv6-slow/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"在线对比你的 IPv4 和 IPv6：同一家网络两种协议同时测速。看看 IPv6 是不是更慢、为什么慢（线路绕路、MTU、隧道、路由器），以及不关闭 IPv6 也能解决的办法。","inLanguage":"zh-CN","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"IPv6 本身比 IPv4 慢吗？","acceptedAnswer":{"@type":"Answer","text":"不会。IPv6 的包头稍大一点，但影响小到测不出来。真正的差别在线路：运营商的 IPv6 可能链路更少或更长，和其他网络的 IPv6 互联更少，或者走隧道。所以有的网络 IPv6 更快（没有 NAT，链路更新），有的明显更慢。上面的对比会告诉你属于哪一种。"}},{"@type":"Question","name":"IPv6 为什么会慢、会卡？","acceptedAnswer":{"@type":"Answer","text":"常见原因，按出现频率排列： 线路绕路：很多运营商的 IPv6 出国或连到其他网络时，经过的交换点比 IPv4 少，延迟多出几十毫秒。国内访问境外时，IPv6 经常绕路。 MTU 有问题：满尺寸的 IPv6 包在某段链路（PPPoE、隧道）上丢失，小请求正常，大页面卡住。上面的大数据包测试就是查这个。 隧道：6to4 和 Teredo 的 IPv6 要经过很远的中继。 路由器或光猫：固件太旧、IPv6 防火墙丢掉了回包，或者自己的上联没有 IPv6 却给设备分配了 IPv6 地址。 代理或 VPN 只接管 IPv4，IPv6 直接出去了。"}},{"@type":"Question","name":"IPv6 慢怎么解决？","acceptedAnswer":{"@type":"Answer","text":"换个时间再测：只有晚上慢，说明是运营商那边拥堵。如果大数据包测试失败，在路由器的 WAN 或 IPv6 设置里调低 MTU（PPPoE 可以试 1480 或 1452）。升级并重启路由器和光猫。如果 IPv6 一直慢很多，把上面的数字发给运营商：这是他们的线路问题。在那之前，IPv6 连接慢时浏览器会自动改用 IPv4（Happy Eyeballs），大部分网站照常能用。"}},{"@type":"Question","name":"要不要关掉 IPv6？","acceptedAnswer":{"@type":"Answer","text":"一般不要。关掉以后，纯 IPv6 的网站、部分应用和游戏会用不了，微软也不支持关闭 IPv6 的 Windows。如果 IPv6 确实更差，改成 IPv4 优先，IPv6 留给需要它的服务：Windows 把注册表值 DisabledComponents 设为 0x20（微软的「IPv4 优先于 IPv6」）；Linux 在 /etc/gai.conf 里取消「precedence ::ffff:0:0/96 100」这一行的注释。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.243b110e24.css">
+<link rel="stylesheet" href="/assets/app.6490fb1f2a.css">
 </head>
 <body>
 <div class="app">
@@ -152,6 +152,6 @@
 
 <script type="application/json" id="data">{"lang":"zh-CN","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/zh-cn/"}</script>
 <script src="/assets/l.zh-cn.918ca9e60d.js"></script>
-<script src="/assets/app.c05882c073.js"></script>
+<script src="/assets/app.4a43755a4e.js"></script>
 </body>
 </html>
