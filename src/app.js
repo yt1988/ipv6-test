@@ -99,7 +99,10 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   /* ---------- numbers ---------- */
   const fmtMs = ms => ms < 10 ? ms.toFixed(1) : String(Math.round(ms));
   const timeOf = ms => ms >= 1000 ? t("r_s", { s: (ms / 1000).toFixed(1) }) : t("r_ms", { ms: fmtMs(ms) });
-  const country = cc => { try { return new Intl.DisplayNames([D.lang], { type: "region" }).of(cc); } catch (e) { return cc; } };
+  // region names as the visitor's language gives them, except Taiwan, written the same in every tool (1ms-shell tool-contract §5)
+  const TW = { "zh-CN": "中国台湾", "zh-TW": "中國台灣", en: "Taiwan, China", ja: "中国台湾", ko: "중국 대만", es: "Taiwán, China", fr: "Taïwan, Chine", de: "Taiwan, China", pt: "Taiwan, China", ru: "Тайвань, Китай" };
+  const regionName = (cc, lang) => cc === "TW" ? (TW[lang] || TW.en) : new Intl.DisplayNames([lang], { type: "region" }).of(cc);
+  const country = cc => { try { return regionName(cc, D.lang); } catch (e) { return cc; } };
 
   /* ---------- the rows and the hero ---------- */
   const ROW = Object.fromEntries($$(".tr[data-t]").map(r => [r.dataset.t, r]));

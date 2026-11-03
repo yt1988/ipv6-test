@@ -40,8 +40,9 @@ test("every language has every string, with the same placeholders", async () => 
 
 test("no English fallback in the page script or the build", async () => {
   const [app, build] = await Promise.all(["src/app.js", "scripts/build.mjs"].map(read));
+  // TW is the shared Taiwan line from 1ms-shell tool-contract §5, written there with "|| TW.en"; its table has all 10 languages
   for (const [name, s] of [["src/app.js", app], ["scripts/build.mjs", build]]) {
-    assert.ok(!/\|\|\s*\w+(\.name)?\.en\b|\?\?\s*en\[/.test(s), name + " falls back to English");
+    assert.ok(!/\|\|\s*(?!TW\.)\w+(\.name)?\.en\b|\?\?\s*en\[/.test(s), name + " falls back to English");
   }
 });
 
