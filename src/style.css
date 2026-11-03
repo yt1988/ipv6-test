@@ -117,6 +117,8 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
   .vrow { justify-content: center; }
   .score { width: 132px; height: 132px; }
   .score-n b { font-size: 44px; }
+  /* at 12px the capitals of the long labels (Оценка IPv6, IPv6-Punkte) reach the smaller ring */
+  .score-k { text-transform: none; letter-spacing: .01em; }
   .score-k { bottom: 28px; }
   .addr-ip { font-size: 13.5px; }
   .tv { width: 118px; }
