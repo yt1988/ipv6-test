@@ -54,7 +54,7 @@ export default {
   t_lit4: "IPv4 アドレスに直接接続", d_lit4: "DNS を使わず、IPv4 アドレスに直接つなぐ",
   r_ok: "OK", r_fail: "失敗", r_timeout: "タイムアウト", r_slow: "遅い",
   r_ms: "{ms} ms", r_s: "{s} 秒",
-  r_picked: "ブラウザは {fam} を選択",
+  r_picked: "{fam} を選択",
   r_from: "{host} が応答",
 
   share: "共有",

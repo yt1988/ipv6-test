@@ -54,7 +54,7 @@ export default {
   t_lit4: "IPv4-адрес без DNS", d_lit4: "Подключение напрямую к IPv4-адресу, без запроса к DNS",
   r_ok: "OK", r_fail: "Ошибка", r_timeout: "Нет ответа", r_slow: "Медленно",
   r_ms: "{ms} мс", r_s: "{s} с",
-  r_picked: "Браузер выбрал {fam}",
+  r_picked: "Выбран {fam}",
   r_from: "Ответил {host}",
 
   share: "Поделиться",

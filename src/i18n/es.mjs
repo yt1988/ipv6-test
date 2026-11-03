@@ -54,7 +54,7 @@ export default {
   t_lit4: "Dirección IPv4, sin DNS", d_lit4: "Conecta directamente a una dirección IPv4, sin consultar el DNS",
   r_ok: "Bien", r_fail: "Falló", r_timeout: "Sin respuesta", r_slow: "Lento",
   r_ms: "{ms} ms", r_s: "{s} s",
-  r_picked: "El navegador eligió {fam}",
+  r_picked: "Elegido: {fam}",
   r_from: "Respondió {host}",
 
   share: "Compartir",
