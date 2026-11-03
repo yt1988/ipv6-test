@@ -4,7 +4,7 @@ export default {
   seo_title: "IPv6 測試：線上檢測你的網路有沒有支援 IPv6，滿分 10 分 · IPv6 測試",
   seo_desc: "免費線上 IPv6 測試，幾秒鐘告訴你：網路有沒有支援 IPv6、會不會拖慢上網、有問題該怎麼調整。檢測純 IPv6 和雙堆疊網站、大封包（MTU）、DNS 和 NAT64，並顯示你的 IPv4 和 IPv6 位址，滿分 10 分。",
   seo_kw: "IPv6 測試, IPv6 檢測, 測試 IPv6, IPv6 支援檢測, 我的網路支援 IPv6 嗎, IPv6 連線測試, 查詢 IPv6 位址, 我的 IPv6 位址, test-ipv6",
-  og_sub: "能不能用、慢不慢、哪裡有問題，滿分 10 分",
+  og_sub: "能不能用、慢不慢，問題出在哪",
   h1: "你的網路支援 IPv6 嗎？",
 
   lang_label: "語言", faq_h: "說明", a_logo: "1ms.dog", a_theme: "主題", a_close: "關閉", a_prev: "上一則", a_next: "下一則",

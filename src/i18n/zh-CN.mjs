@@ -4,7 +4,7 @@ export default {
   seo_title: "IPv6 测试：在线检测你的网络支不支持 IPv6，满分 10 分 · IPv6 测试",
   seo_desc: "免费在线 IPv6 测试，几秒钟告诉你：网络支不支持 IPv6、会不会拖慢上网、有问题该怎么改。检测纯 IPv6 和双栈网站、大数据包（MTU）、DNS 和 NAT64，显示你的 IPv4 和 IPv6 地址，满分 10 分。",
   seo_kw: "IPv6 测试, IPv6 检测, 测试 IPv6, IPv6 支持检测, 我的网络支持 IPv6 吗, IPv6 连通性测试, 查看 IPv6 地址, 我的 IPv6 地址, test-ipv6",
-  og_sub: "能不能用、慢不慢、哪里有问题，满分 10 分",
+  og_sub: "能不能用、慢不慢，问题出在哪",
   h1: "你的网络支持 IPv6 吗？",
 
   lang_label: "语言", faq_h: "帮助", a_logo: "1ms.dog", a_theme: "主题", a_close: "关闭", a_prev: "上一条", a_next: "下一条",
