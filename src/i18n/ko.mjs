@@ -42,7 +42,7 @@ export default {
   ipqs_link: "깨끗한 IP인지 확인",
   who_link: "IPv4와 IPv6가 서로 다른 네트워크로 나가요: 사이트에 내가 어떻게 보이는지 확인",
   speed_link: "IPv6 정상이에요. 속도도 측정해 보기",
-  check_link: "종합 점검 실행",
+  check_link: "전체 점검하기",
   egress_link: "사이트마다 어떤 IP가 보일까?",
 
   h_tests: "테스트 항목",
