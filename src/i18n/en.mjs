@@ -98,7 +98,7 @@ export default {
   he_warn: "A slow fallback: when IPv6 is flaky, pages open noticeably later.",
   he_bad: "Far too slow: when IPv6 breaks, many pages wait over a second.",
   he_direct: "Went straight to IPv4, no wait",
-  he_direct_h: "Your browser may remember that IPv6 failed for this site, or prefer IPv4 anyway.",
+  he_direct_h: "With a proxy or VPN on, it makes the connection and the browser's fallback never runs; without one, your browser may remember that IPv6 failed for this site, or prefer IPv4 anyway.",
   he_no6: "No working IPv6: nothing to wait for",
   he_fail: "Couldn't measure it (the 1ms.dog test server didn't answer)",
   slow_title: "Is IPv6 slower than IPv4? Why IPv6 is slow or laggy, and how to fix it · IPv6 Test",

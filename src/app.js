@@ -175,7 +175,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       row.className = "tr bad"; b.textContent = t("r_hole");
       s.textContent = t("mtu_hole", { fam: hole, mtu: MTU[hole].mtu });
     } else s.textContent = t("mtu_line", { list: fams.map(f => `IPv${f} ${MTU[f].mtu}` + (MTU[f].ptb ? " " + t("mtu_ptb") : "")).join(" · ") });
-    s.dataset.why = t("mtu_why", { list: fams.map(f => `IPv${f} MSS ${MTU[f].mss}`).join(", ") });
+    s.dataset.why = t("mtu_why", { list: fams.map(f => `IPv${f} MSS ${MTU[f].mss}`).join(" · ") });
   }
 
   // How long the browser makes you wait when IPv6 is broken (the slow page): he.ipv6.1ms.dog has both addresses and the

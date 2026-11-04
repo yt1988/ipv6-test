@@ -97,7 +97,7 @@ export default {
   he_warn: "Un cambio lento: cuando IPv6 falla a ratos, las páginas tardan más en abrir.",
   he_bad: "Demasiado lento: cuando IPv6 se rompe, muchas páginas esperan más de un segundo.",
   he_direct: "Fue directo a IPv4, sin esperar",
-  he_direct_h: "Puede que tu navegador recuerde que IPv6 falló con este sitio, o que prefiera IPv4 de todos modos.",
+  he_direct_h: "Con un proxy o una VPN activos, son ellos quienes abren la conexión y el cambio del navegador no llega a actuar; sin ellos, puede que tu navegador recuerde que IPv6 falló con este sitio, o que prefiera IPv4 de todos modos.",
   he_no6: "No hay IPv6 que funcione: nada que esperar",
   he_fail: "No se pudo medir (el servidor de prueba de 1ms.dog no respondió)",
   slow_title: "¿IPv6 es más lento que IPv4? Por qué IPv6 va lento o con lag, y cómo arreglarlo · Test de IPv6",

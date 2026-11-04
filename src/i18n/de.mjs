@@ -97,7 +97,7 @@ export default {
   he_warn: "Langsamer Wechsel: Wenn IPv6 wackelt, öffnen Seiten spürbar später.",
   he_bad: "Viel zu langsam: Wenn IPv6 ausfällt, warten viele Seiten über eine Sekunde.",
   he_direct: "Gleich über IPv4, ohne zu warten",
-  he_direct_h: "Dein Browser merkt sich vielleicht, dass IPv6 bei dieser Seite fehlschlug, oder bevorzugt ohnehin IPv4.",
+  he_direct_h: "Mit Proxy oder VPN baut der die Verbindung auf, und der Wechsel des Browsers greift nicht; ohne merkt sich dein Browser vielleicht, dass IPv6 bei dieser Seite fehlschlug, oder bevorzugt ohnehin IPv4.",
   he_no6: "Kein funktionierendes IPv6: nichts zu warten",
   he_fail: "Nicht messbar (der 1ms.dog-Testserver hat nicht geantwortet)",
   slow_title: "Ist IPv6 langsamer als IPv4? Warum IPv6 langsam ist oder laggt, und was hilft · IPv6-Test",

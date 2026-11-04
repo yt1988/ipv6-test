@@ -97,7 +97,7 @@ export default {
   he_warn: "Un repli lent : quand IPv6 est instable, les pages s’ouvrent nettement plus tard.",
   he_bad: "Bien trop lent : quand IPv6 tombe, beaucoup de pages attendent plus d’une seconde.",
   he_direct: "Directement en IPv4, sans attendre",
-  he_direct_h: "Votre navigateur se souvient peut-être qu’IPv6 a échoué pour ce site, ou préfère IPv4 de toute façon.",
+  he_direct_h: "Avec un proxy ou un VPN actif, c’est lui qui ouvre la connexion et le repli du navigateur ne joue pas ; sans, votre navigateur se souvient peut-être qu’IPv6 a échoué pour ce site, ou préfère IPv4 de toute façon.",
   he_no6: "Pas d’IPv6 qui marche : rien à attendre",
   he_fail: "Mesure impossible (le serveur de test 1ms.dog n’a pas répondu)",
   slow_title: "IPv6 est-il plus lent qu’IPv4 ? Pourquoi IPv6 rame, et comment y remédier · Test IPv6",

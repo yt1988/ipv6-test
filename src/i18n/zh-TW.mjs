@@ -97,7 +97,7 @@ export default {
   he_warn: "回退偏慢：IPv6 時好時壞時，開網頁會慢一截。",
   he_bad: "回退太慢：IPv6 一壞，很多網頁要多等一秒以上。",
   he_direct: "直接走了 IPv4，沒等 IPv6",
-  he_direct_h: "瀏覽器可能記住了這個網站的 IPv6 不通，或者它本來就優先用 IPv4。",
+  he_direct_h: "開著代理或 VPN 時，連線由它們去建，瀏覽器的回退不起作用；沒開的話，瀏覽器可能記住了這個網站的 IPv6 不通，或者本來就優先用 IPv4。",
   he_no6: "沒有可用的 IPv6，不用等",
   he_fail: "沒測出來（連不上 1ms.dog 的測試伺服器）",
   slow_title: "IPv6 比 IPv4 慢嗎？IPv6 很慢、卡頓的原因和解決方法 · IPv6 測試",
