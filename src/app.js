@@ -326,20 +326,40 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       link: show => location.origin + D.home + "r/" + encodeShare({ ...S, cc: show ? S.cc : "" }),
       home: location.origin + D.home,
       text: () => t("share_text", { s: res.score }),
-      height: 680, draw: (x, kit) => drawCard(x, kit, S, res),
+      height: (x, kit) => 680 + cardLayout(x, kit, S, res).grow, draw: (x, kit) => drawCard(x, kit, S, res),
       foot: show => [t("card_sub"), show && S.cc && country(S.cc)],
       ts: S.ts,
     }).open();
   };
 
+  // Where the card's words go, so nothing is cut to "…" (1ms-shell tool-contract, "Share card"): the verdict at the
+  // largest size from 44px down to 34px that holds it, else on two lines; the IPv4-against-IPv6 sentence beside its
+  // label when it fits there, else on its own lines under it. grow: how much taller than 680 that makes the card.
+  function cardLayout(x, kit, S, res) {
+    const { W, P, F, fit, wrap } = kit, tx = P + 260, tw = W - P - tx;
+    const size = fit(x, t(res.head), tw, 44, 34, 750);
+    const head = x.measureText(t(res.head)).width <= tw ? [t(res.head)] : wrap(x, t(res.head), tw, 2);
+    const lh = Math.round(size * 1.2), down = (head.length - 1) * lh;
+    let cmp = null;
+    if (SIDES.some(z => z.id in S.r)) {
+      const c = compare(S.r), text = t(c.key, { ms: c.n ? fmtMs(Math.abs(c.diff)) : "" });
+      x.font = `600 23px ${F}`; const lw = x.measureText(t("h_cmp")).width + 16;
+      x.font = `650 23px ${F}`;
+      cmp = { c, lw, lines: x.measureText(text).width <= tw - lw ? [text] : wrap(x, text, tw, 2) };
+      cmp.under = cmp.lines.length > 1 || x.measureText(text).width > tw - lw;
+    }
+    return { tx, tw, size, head, lh, down, cmp, grow: down + (cmp && cmp.under ? cmp.lines.length * 32 : 0) };
+  }
+
   // The middle of the card: the score in its ring, the verdict, every test with its mark; never an address
   function drawCard(x, kit, S, res) {
-    const { W, P, F, M, v, clip } = kit;
+    const { F, M, v, clip } = kit;
+    const L = cardLayout(x, kit, S, res), { tx, tw, down } = L;
     const C = { fg: v("fg"), muted: v("muted"), soft: v("soft"), bad: v("bad"), warn: v("warn"), t1: v("t1"), t2: v("t2"), t3: v("t3"), t4: v("t4"), t5: v("t5") };
     const col = C[tierOf(res.score)];
     x.textBaseline = "alphabetic";
     // the score in its ring, and the verdict beside it
-    const cx = P + 110, cy = 376, rr = 96;
+    const cx = kit.P + 110, cy = 376 + down / 2, rr = 96;
     x.lineWidth = 16; x.lineCap = "round";
     x.strokeStyle = C.soft; x.beginPath(); x.arc(cx, cy, rr, 0, Math.PI * 2); x.stroke();
     if (res.score) { x.strokeStyle = col; x.beginPath(); x.arc(cx, cy, rr, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * res.score / 10); x.stroke(); }
@@ -347,12 +367,12 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     x.fillStyle = col; x.font = `700 80px ${M}`; x.fillText(String(res.score), cx, cy + 18);
     x.fillStyle = C.muted; x.font = `500 24px ${M}`; x.fillText("/ 10", cx, cy + 54);
     x.textAlign = "left";
-    const tx = P + 260, tw = W - P - tx;
     x.fillStyle = C.muted; x.font = `600 24px ${F}`; x.fillText(t("score_k"), tx, kit.top + 100);
-    x.fillStyle = C.fg; x.font = `750 44px ${F}`; x.fillText(clip(x, t(res.head), tw), tx, kit.top + 156);
+    x.fillStyle = C.fg; x.font = `750 ${L.size}px ${F}`;
+    L.head.forEach((line, i) => x.fillText(line, tx, kit.top + 156 + i * L.lh));
     // the tests in two columns, each with its mark
     TESTS.forEach((test, i) => {
-      const r = S.r[test.id], col2 = i % 2, row = Math.floor(i / 2), ax = tx + col2 * (tw / 2), ay = kit.top + 208 + row * 44;
+      const r = S.r[test.id], col2 = i % 2, row = Math.floor(i / 2), ax = tx + col2 * (tw / 2), ay = kit.top + 208 + down + row * 44;
       const ok = r && r.ok, warn = ok && (r.ms > SLOW || (test.id === "ds" && r.fam === 4 && S.r.v6 && S.r.v6.ok));
       x.fillStyle = ok ? (warn ? C.warn : C.t1) : C.bad;
       x.font = `700 23px ${F}`; x.fillText(ok ? (warn ? "!" : "✓") : "✕", ax, ay);
@@ -360,13 +380,12 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       x.fillText(clip(x, t("t_" + test.id) + (test.id === "ds" && ok ? " · IPv" + r.fam : ""), tw / 2 - 44), ax + 32, ay);
     });
     // IPv4 against IPv6, when the result has it (links from before it don't)
-    const c = compare(S.r);
-    if (SIDES.some(z => z.id in S.r)) {
-      const cy2 = kit.top + 352;
+    if (L.cmp) {
+      const { c, lw, lines, under } = L.cmp, cy2 = kit.top + 352 + down;
       x.fillStyle = C.muted; x.font = `600 23px ${F}`; x.fillText(t("h_cmp"), tx, cy2);
-      const lw = x.measureText(t("h_cmp")).width + 16;
       x.fillStyle = c.key === "c_6much" ? C.bad : c.key === "c_6slow" ? C.warn : c.key === "c_6fast" ? C.t1 : C.fg;
-      x.font = `650 23px ${F}`; x.fillText(clip(x, t(c.key, { ms: c.n ? fmtMs(Math.abs(c.diff)) : "" }), tw - lw), tx + lw, cy2);
+      x.font = `650 23px ${F}`;
+      lines.forEach((line, i) => under ? x.fillText(line, tx, cy2 + 32 * (i + 1)) : x.fillText(line, tx + lw, cy2));
     }
   }
 
