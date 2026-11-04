@@ -333,15 +333,18 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     })]);
     if (ctl.signal.aborted) return;
     if (!ONLY) { hero(true); links(true); }
-    // the 1ms.dog server's view, once the tests are in (it needs their addresses, and has the line to itself); not
-    // inside the checkup, which waits for the result
-    if (!CHECK && ONLY) await heWait(ctl.signal);
-    else if (!CHECK) {
+    // the 1ms.dog server's view, once the tests are in (it needs their addresses, and has the line to itself); the
+    // Happy Eyeballs wait not inside the checkup, the path MTU there too (its facts carry it)
+    if (ONLY) { if (!CHECK) await heWait(ctl.signal); }
+    else {
       await pathMtu(ctl.signal);
       if (ctl.signal.aborted) return;
+      // an IPv6 black hole is the large-packet test failing, seen from the other side: it counts as that in the score
+      // (and its hint is p_mtu's); one on IPv4 is outside this test's score, so only said
+      if (MTU[6] && MTU[6].stalled && R.big && R.big.ok) { R.big = { ok: false, err: "fail" }; hero(true); }
       fillRow("big");
-      const h = [6, 4].find(f => MTU[f] && MTU[f].stalled), p = $("#probs");
-      if (h) { p.textContent = (verdict(R).probs.length ? p.textContent + " " : "") + t("p_hole", { fam: h }); p.title = p.textContent; }
+      const p = $("#probs");
+      if (MTU[4] && MTU[4].stalled) { p.textContent = (verdict(R).probs.length ? p.textContent + " " : "") + t("p_hole", { fam: 4 }); p.title = p.textContent; }
     }
     if (ctl.signal.aborted) return;
     RUN = null;
@@ -374,6 +377,12 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     findings.sort((a, b) => FORDER[a.level] - FORDER[b.level]);
     // slower: IPv6 noticeably behind IPv4 in the comparison, or holding pages up (dual-stack sites wait for it, it answers late)
     const facts = { score: v.score * 10, v6: has6 };
+    // the 1ms.dog server's path MTU (1ms-shell docs/checkup.md): the largest packet each family carries, and whether
+    // either has a black hole; a key left out when it wasn't measured
+    const fits = f => MTU[f] && !MTU[f].stalled && MTU[f].mtu >= 1280 && MTU[f].mtu <= 1500 ? MTU[f].mtu : 0;
+    if (fits(4)) facts.mtu = fits(4);
+    if (fits(6)) facts.mtu6 = fits(6);
+    if (MTU[4] || MTU[6]) facts.blackhole = !!((MTU[4] && MTU[4].stalled) || (MTU[6] && MTU[6].stalled));
     if (has6) {
       facts.native = k ? k === "native" : null;
       facts.slower = c.key === "c_6much" || v.probs.includes("p_slowds") || v.probs.includes("p_slow6");

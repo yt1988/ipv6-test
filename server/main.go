@@ -7,7 +7,7 @@
 //	       GET /seen?ip=<addr> the last connection from that address in the last minute: a TLS handshake that never
 //	                           finished, with full-size segments sent again and again and no Packet Too Big, is a PMTU
 //	                           black hole (the page asks this over the other family, since that one can't get through)
-//	:8446  he.ipv6.1ms.dog (both A and AAAA); the table inet 1ms_ipv6 (he.nft) drops every IPv6 SYN to this port, so a
+//	:8446  he.ipv6.1ms.dog (both A and AAAA); the table inet msdog_ipv6 (he.nft) drops every IPv6 SYN to this port, so a
 //	       browser tries IPv6, hears nothing, and falls back to IPv4 (Happy Eyeballs)
 //	       GET /he?t=<token>   how long the browser waited: from its first IPv6 SYN (seen on a packet socket before the
 //	                           drop, matched by the /64 the token's /mss came from) to its IPv4 SYN

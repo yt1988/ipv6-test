@@ -1,6 +1,6 @@
 # /etc/systemd/system/1ms-ipv6.service: the server side of ipv6.1ms.dog (see main.go). User, directory, ports, names
 # and the nftables table are as registered in 1ms-shell docs/processes.md, "专用服务器": 1ms-ipv6, /opt/1ms/ipv6/,
-# 8445/tcp and 8446/tcp, v4/v6/he.ipv6.1ms.dog, inet 1ms_ipv6. Certificates are certbot's, renewed by Public, who
+# 8445/tcp and 8446/tcp, v4/v6/he.ipv6.1ms.dog, inet msdog_ipv6. Certificates are certbot's, renewed by Public, who
 # restarts this service after.
 [Unit]
 Description=1ms-ipv6: MTU/MSS (8445) and Happy Eyeballs (8446) for ipv6.1ms.dog
@@ -12,7 +12,7 @@ User=1ms-ipv6
 Group=1ms-ipv6
 ExecStartPre=/usr/sbin/nft -f /opt/1ms/ipv6/he.nft
 ExecStart=/opt/1ms/ipv6/ipv6-server
-ExecStopPost=-/usr/sbin/nft delete table inet 1ms_ipv6
+ExecStopPost=-/usr/sbin/nft delete table inet msdog_ipv6
 LoadCredential=v4.crt:/etc/letsencrypt/live/v4.ipv6.1ms.dog/fullchain.pem
 LoadCredential=v4.key:/etc/letsencrypt/live/v4.ipv6.1ms.dog/privkey.pem
 LoadCredential=v6.crt:/etc/letsencrypt/live/v6.ipv6.1ms.dog/fullchain.pem

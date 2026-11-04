@@ -40,7 +40,7 @@ systemctl daemon-reload && systemctl enable --now 1ms-ipv6
 ## Check
 
 ```bash
-systemctl is-active 1ms-ipv6 && nft list table inet 1ms_ipv6 && ss -tlnp | grep -E ':844[56]'
+systemctl is-active 1ms-ipv6 && nft list table inet msdog_ipv6 && ss -tlnp | grep -E ':844[56]'
 ```
 
 From outside the machine (the Lightsail firewall is only crossed from outside):
