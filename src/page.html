@@ -37,19 +37,20 @@
       <h1>{{h1}}</h1>
       {{intro}}
       <div class="sum">
-        <div class="score" id="scoreBox" data-why="{{a:score_tip}}" tabindex="0">
+        <!--full--><div class="score" id="scoreBox" data-why="{{a:score_tip}}" tabindex="0">
           <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fg" id="ring" cx="60" cy="60" r="52"/></svg>
           <span class="score-n"><b id="score">–</b><i>/10</i></span>
           <span class="score-k" data-i="score_k"></span>
-        </div>
+        </div><!--/full-->
         <div class="sum-r">
           <div class="vrow"><p class="verdict" id="verdict" data-i="v_wait"></p><button class="btn out" id="shareBtn" type="button" aria-haspopup="dialog" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share"></span></button></div>
           <p class="probs" id="probs">&nbsp;</p>
-          <div class="addrs">
+          <!--full--><div class="addrs">
             <div class="addr" data-a="6"><span class="addr-k">IPv6</span><span class="addr-ip" id="ip6"><i class="skl"></i></span><span class="addr-m" id="m6">&nbsp;</span></div>
             <div class="addr" data-a="4"><span class="addr-k">IPv4</span><span class="addr-ip" id="ip4"><i class="skl"></i></span><span class="addr-m" id="m4">&nbsp;</span></div>
           </div>
-          <p class="links"><a id="checkLink" hidden target="_blank" rel="noopener"><span data-i="check_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="egressLink" hidden target="_blank" rel="noopener"><span data-i="egress_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="whoLink" hidden target="_blank" rel="noopener"><span data-i="who_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="speedLink" hidden target="_blank" rel="noopener"><span data-i="speed_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a></p>
+          <p class="links"><a id="checkLink" hidden target="_blank" rel="noopener"><span data-i="check_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="egressLink" hidden target="_blank" rel="noopener"><span data-i="egress_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="whoLink" hidden target="_blank" rel="noopener"><span data-i="who_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="speedLink" hidden target="_blank" rel="noopener"><span data-i="speed_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a></p><!--/full-->
+          {{allLink}}
         </div>
       </div>
       <div class="bar">
@@ -62,7 +63,7 @@
     <section class="cmp card" aria-labelledby="cmpT">
       <div class="cmp-top">
         <div class="cmp-h"><h2 id="cmpT" data-i="h_cmp"></h2><span class="cmp-sub" data-i="cmp_sub"></span></div>
-        <p class="cmp-v"><b id="cmpHead" data-i="c_wait"></b><span id="cmpHint">&nbsp;</span></p>
+        <!--full--><p class="cmp-v"><b id="cmpHead" data-i="c_wait"></b><span id="cmpHint">&nbsp;</span></p><!--/full-->
       </div>
       <div class="ct">
         <div class="cr ch"><span data-i="c_net"></span><span>IPv4</span><span>IPv6</span><span data-i="c_dif"></span></div>
@@ -71,12 +72,12 @@
       {{slowMore}}
     </section>
 
-    <section class="tests card">
+    <!--full--><section class="tests card">
       <h2 data-i="h_tests"></h2>
       <ol class="tl" id="tl">
 {{rows}}
       </ol>
-    </section>
+    </section><!--/full-->
 
     {{article}}
     <div data-ms-more></div>

@@ -82,6 +82,8 @@ export default {
   ch_no6: "在路由器里开启 IPv6 后才能对比。",
   ch_none: "先确认网络是通的，再看看有没有防火墙或浏览器扩展拦下了这些网站。",
   slow_link: "IPv6 为什么会慢，怎么解决",
+  all_link: "做完整的 IPv6 测试（6 项，10 分制）",
+  slow_share_text: "我的网络：{verdict}。你的 IPv6 慢不慢？",
   slow_title: "IPv6 比 IPv4 慢吗？IPv6 慢、卡顿的原因和解决办法 · IPv6 测试",
   slow_desc: "在线对比你的 IPv4 和 IPv6 速度：同一批网络，两种协议同时测。看看 IPv6 是不是更慢、为什么慢（线路绕路、MTU、隧道、路由器），以及不用关掉 IPv6 的解决办法。",
   slow_kw: "IPv6 慢, IPv6 卡, IPv6 比 IPv4 慢, IPv4 和 IPv6 哪个快, IPv6 延迟, 关闭 IPv6, IPv4 优先",

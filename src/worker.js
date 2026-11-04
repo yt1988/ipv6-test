@@ -1,6 +1,7 @@
 // The IPv6 Test Worker. Files in ./public are served before it runs, so it only sees paths that are not files:
 //   /r/<code>, /<lang>/r/<code>   a shared result: that language's page with the score and the verdict in its title
-//                         (what chat apps show as the link's preview), not indexed; the page itself reads the code and
+//                         (what chat apps show as the link's preview), not indexed; under ipv6-slow/, that page's
+//                         result, IPv4 against IPv6 alone, with what the comparison found as its title; the page reads the code and
 //                         shows the result (src/share.mjs); a code it can not read (garbled, cut short, a format it
 //                         does not know) is a 404, so search engines drop the dead link
 //   anything else         a bare 404; 1ms-shell puts the shared 1ms.dog 404 page in front of it
@@ -39,14 +40,14 @@ export default {
 };
 
 // A shared result: the language's page as it is, with the title, description and their Open Graph and Twitter copies
-// giving the score. r: the result the code holds.
-async function shared(req, env, url, { slug }, r) {
-  const home = "/" + (slug ? slug + "/" : "");
+// giving the score (the slow page's: what IPv4 against IPv6 found). r: the result the code holds.
+async function shared(req, env, url, { slug, page: pg }, r) {
+  const home = "/" + (slug ? slug + "/" : "") + (pg === "slow" ? "ipv6-slow/" : "");
   const S = STR[slug], v = verdict(r.r);
-  const title = fill(S.share_title, { s: v.score, verdict: S[v.head] });
   // IPv4 against IPv6 leads the description when the link has it (links from before it do not)
   const c = compare(r.r), ms = c.n ? (Math.abs(c.diff) < 10 ? Math.abs(c.diff).toFixed(1) : String(Math.round(Math.abs(c.diff)))) : "";
-  const desc = SIDES.some(x => x.id in r.r) ? fill(S[c.key], { ms }) + " · " + S.share_desc : S.share_desc;
+  const title = pg === "slow" ? fill(S[c.key], { ms }) + " · " + S.app_name : fill(S.share_title, { s: v.score, verdict: S[v.head] });
+  const desc = pg === "slow" ? S.slow_og : SIDES.some(x => x.id in r.r) ? fill(S[c.key], { ms }) + " · " + S.share_desc : S.share_desc;
   const page = await env.ASSETS.fetch(new Request(new URL(home, url), { headers: req.headers }));
   if (!page.ok) return page;
   const attr = (val, name = "content") => ({ element: e => e.setAttribute(name, val) });

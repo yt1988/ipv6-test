@@ -32,6 +32,12 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
 .vrow .verdict { min-width: 0; }
 .btn.out { height: 32px; padding: 0 12px; font-size: 13px; font-weight: 600; color: var(--ink); border-color: var(--ink); background: none; }
 .btn.out:hover { background: var(--ink-soft); }
+/* the slow page: no score, so the verdict alone across the hero, and the way to the whole test under it */
+.sum-r:only-child { grid-column: 1 / -1; align-items: center; text-align: center; }
+.sum-r:only-child .vrow { justify-content: center; }
+.verdict.warn { color: var(--warn); } .verdict.bad { color: var(--bad); }
+.all { padding-top: 8px; }
+.all .btn { height: auto; min-height: 34px; padding: 6px 14px; white-space: normal; }
 .verdict { font-size: clamp(20px, 2.4vw, 25px); font-weight: 750; letter-spacing: -.02em; line-height: 1.3; min-height: 1.3em; }
 /* problems: two lines reserved from the start, and all of it shown at the end (each says what to do) */
 .probs { font-size: 13.5px; color: var(--muted); line-height: 1.55; min-height: 3.1em; }

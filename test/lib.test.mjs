@@ -79,8 +79,10 @@ test("a shared result survives the link, without the addresses", () => {
   assert.equal(verdict(back.r).score, verdict({ ...all, big: no }).score, "same score");
   assert.equal(decode("2~x~-~v6_6_1__n", new Set(IDS)), null, "a later format");
   assert.equal(decode("1~x~-~v6_9_1__n", new Set(IDS)), null, "garbage");
-  assert.deepEqual(sharePath("/zh-cn/r/" + code), { slug: "zh-cn", code });
-  assert.deepEqual(sharePath("/r/" + code), { slug: "", code });
+  assert.deepEqual(sharePath("/zh-cn/r/" + code), { slug: "zh-cn", page: "home", code });
+  assert.deepEqual(sharePath("/r/" + code), { slug: "", page: "home", code });
+  assert.deepEqual(sharePath("/ipv6-slow/r/" + code), { slug: "", page: "slow", code }, "the slow page's own result");
+  assert.deepEqual(sharePath("/de/ipv6-slow/r/" + code), { slug: "de", page: "slow", code });
   assert.equal(sharePath("/zh-cn/"), null);
 });
 

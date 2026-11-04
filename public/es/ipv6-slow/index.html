@@ -2,7 +2,7 @@
 <html lang="es" data-paths="{&quot;en&quot;:&quot;/ipv6-slow/&quot;,&quot;zh-CN&quot;:&quot;/zh-cn/ipv6-slow/&quot;,&quot;zh-TW&quot;:&quot;/zh-tw/ipv6-slow/&quot;,&quot;ja&quot;:&quot;/ja/ipv6-slow/&quot;,&quot;ko&quot;:&quot;/ko/ipv6-slow/&quot;,&quot;es&quot;:&quot;/es/ipv6-slow/&quot;,&quot;fr&quot;:&quot;/fr/ipv6-slow/&quot;,&quot;de&quot;:&quot;/de/ipv6-slow/&quot;,&quot;pt&quot;:&quot;/pt/ipv6-slow/&quot;,&quot;ru&quot;:&quot;/ru/ipv6-slow/&quot;}">
 <head>
 <meta charset="utf-8">
-<script>(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root")||/[?&]embed=checkup(&|$)/.test(location.search))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}var p=location.pathname,t=p===P.en?"":p.indexOf("/r/")===0?p.slice(1):null;if(l&&l!=="en"&&t!==null)location.replace(P[l]+t+location.search+location.hash)})();</script>
+<script>(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root")||/[?&]embed=checkup(&|$)/.test(location.search))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}var p=location.pathname,t=p===P.en?"":p.indexOf(P.en+"r/")===0?p.slice(P.en.length):null;if(l&&l!=="en"&&t!==null)location.replace(P[l]+t+location.search+location.hash)})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>¿IPv6 es más lento que IPv4? Por qué IPv6 va lento o con lag, y cómo arreglarlo · Test de IPv6</title>
 <meta name="description" content="Compara IPv4 e IPv6 en tu conexión: las mismas redes medidas por ambos a la vez. Mira si IPv6 va más lento, por qué (rutas, MTU, túneles, el router) y cómo arreglarlo sin desactivar IPv6.">
@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="IPv4 e IPv6 medidos a la vez, y por qué IPv6 puede ir lento">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Test de IPv6 · 1ms.dog","url":"https://ipv6.1ms.dog/es/ipv6-slow/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Compara IPv4 e IPv6 en tu conexión: las mismas redes medidas por ambos a la vez. Mira si IPv6 va más lento, por qué (rutas, MTU, túneles, el router) y cómo arreglarlo sin desactivar IPv6.","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿IPv6 es más lento que IPv4?","acceptedAnswer":{"@type":"Answer","text":"No por sí mismo. Las cabeceras de IPv6 son un poco más grandes, pero la diferencia es demasiado pequeña para medirla. Lo que cambia es la ruta: tu operador puede llevar IPv6 por menos enlaces o más largos, conectar con menos redes por IPv6 o mandarlo por un túnel. Por eso en unas redes IPv6 va más rápido (sin NAT, equipos más nuevos) y en otras claramente más lento. La comparación de arriba te dice cuál es tu caso."}},{"@type":"Question","name":"¿Por qué IPv6 va lento o con lag?","acceptedAnswer":{"@type":"Answer","text":"Las causas habituales, de más a menos frecuente: Rutas más largas: muchos operadores sacan el IPv6 al extranjero o a otras redes por menos puntos de intercambio que el IPv4, y eso suma decenas de milisegundos. Desde China continental, el IPv6 internacional suele dar un rodeo. Un MTU roto: los paquetes IPv6 de tamaño completo se pierden en algún tramo (PPPoE, túneles), así que las peticiones pequeñas funcionan y las páginas grandes se atascan. El test de paquetes grandes de arriba lo comprueba. Túneles: 6to4 y Teredo llevan el IPv6 por repetidores que pueden estar lejos. El router o el módem: firmware antiguo, un firewall IPv6 que descarta las respuestas, o un router que reparte direcciones IPv6 cuando su propia línea no tiene. Un proxy o VPN que solo lleva IPv4, mientras el tráfico IPv6 sale directamente."}},{"@type":"Question","name":"¿Cómo arreglo un IPv6 lento?","acceptedAnswer":{"@type":"Answer","text":"Repite el test a otra hora: si solo va lento por la noche, la red de tu operador está saturada. Si falla el test de paquetes grandes, baja el MTU en los ajustes WAN o IPv6 del router (prueba 1480 o 1452 con PPPoE). Actualiza el firmware y reinicia el router y el módem. Si IPv6 va mucho más lento siempre, envía las cifras de arriba a tu operador: la ruta la tiene que arreglar él. Mientras tanto, no te preocupes demasiado: los navegadores pasan a IPv4 cuando IPv6 tarda en conectar (Happy Eyeballs), así que casi todos los sitios siguen funcionando."}},{"@type":"Question","name":"¿Debo desactivar IPv6?","acceptedAnswer":{"@type":"Answer","text":"Normalmente no. Si lo desactivas, dejan de funcionar los sitios solo IPv6 y algunas apps y juegos, y Microsoft no da soporte a Windows con IPv6 desactivado. Si tu IPv6 de verdad va peor, mejor da preferencia a IPv4 y deja IPv6 para lo que lo necesite: en Windows, pon el valor del registro DisabledComponents en 0x20 (el «preferir IPv4 sobre IPv6» de Microsoft); en Linux, quita el comentario de «precedence ::ffff:0:0/96 100» en /etc/gai.conf."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.8ae8ba0ab1.css">
+<link rel="stylesheet" href="/assets/app.d525246818.css">
 </head>
 <body>
 <div class="app">
@@ -72,25 +72,12 @@
       <h1>¿IPv6 va más lento que IPv4 en tu conexión?</h1>
       <p class="intro">El test de abajo mide las mismas redes por IPv4 y por IPv6 a la vez. Como ambos llegan a la misma red, cualquier diferencia viene del camino que tu operador da a cada uno, no del servidor. Debajo de los resultados: por qué IPv6 suele ir más lento y qué hacer.</p>
       <div class="sum">
-        <div class="score" id="scoreBox" data-why="Sobre 10:
-4  abren los sitios solo IPv6
-2  pasan los paquetes IPv6 grandes
-2  los sitios de doble pila abren sin esperar
-1  IPv6 funciona sin DNS
-1  tu navegador elige IPv6
-−1 IPv6 tarda más de 3 s en responder" tabindex="0">
-          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fg" id="ring" cx="60" cy="60" r="52"/></svg>
-          <span class="score-n"><b id="score">–</b><i>/10</i></span>
-          <span class="score-k" data-i="score_k">Nota IPv6</span>
-        </div>
+        
         <div class="sum-r">
           <div class="vrow"><p class="verdict" id="verdict" data-i="v_wait">Probando…</p><button class="btn out" id="shareBtn" type="button" aria-haspopup="dialog" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share">Compartir</span></button></div>
           <p class="probs" id="probs">&nbsp;</p>
-          <div class="addrs">
-            <div class="addr" data-a="6"><span class="addr-k">IPv6</span><span class="addr-ip" id="ip6"><i class="skl"></i></span><span class="addr-m" id="m6">&nbsp;</span></div>
-            <div class="addr" data-a="4"><span class="addr-k">IPv4</span><span class="addr-ip" id="ip4"><i class="skl"></i></span><span class="addr-m" id="m4">&nbsp;</span></div>
-          </div>
-          <p class="links"><a id="checkLink" hidden target="_blank" rel="noopener"><span data-i="check_link">Hacer un chequeo completo</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="egressLink" hidden target="_blank" rel="noopener"><span data-i="egress_link">¿Qué IP ve cada sitio?</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="whoLink" hidden target="_blank" rel="noopener"><span data-i="who_link">IPv4 e IPv6 salen por redes distintas: mira lo que ven los sitios</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="speedLink" hidden target="_blank" rel="noopener"><span data-i="speed_link">IPv6 funciona: mide también tu velocidad</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a></p>
+          
+          <p class="all"><a class="btn out" href="/es/">Hacer el test IPv6 completo (6 pruebas, nota sobre 10)</a></p>
         </div>
       </div>
       <div class="bar">
@@ -103,7 +90,7 @@
     <section class="cmp card" aria-labelledby="cmpT">
       <div class="cmp-top">
         <div class="cmp-h"><h2 id="cmpT" data-i="h_cmp">IPv4 o IPv6: ¿cuál es más rápido?</h2><span class="cmp-sub" data-i="cmp_sub">Las mismas redes, medidas por ambos a la vez: latencia, cuanto menos, más rápido</span></div>
-        <p class="cmp-v"><b id="cmpHead" data-i="c_wait">Comparando…</b><span id="cmpHint">&nbsp;</span></p>
+        
       </div>
       <div class="ct">
         <div class="cr ch"><span data-i="c_net">Red</span><span>IPv4</span><span>IPv6</span><span data-i="c_dif">IPv6 − IPv4</span></div>
@@ -115,17 +102,7 @@
       
     </section>
 
-    <section class="tests card">
-      <h2 data-i="h_tests">Las pruebas</h2>
-      <ol class="tl" id="tl">
-        <li class="tr wait" data-t="v4"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Sitio solo IPv4</b><span>Un sitio que solo tiene dirección IPv4</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="v6"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Sitio solo IPv6</b><span>Un sitio que solo tiene dirección IPv6. Para abrirlo necesitas IPv6 y un DNS que dé direcciones IPv6</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="ds"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Sitio de doble pila</b><span>Un sitio con dirección IPv4 e IPv6: cuál elige tu navegador</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="big"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Paquetes IPv6 grandes</b><span>Paquetes de tamaño completo en ambos sentidos. Si falla, las páginas se quedan a medio cargar</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="lit6"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Dirección IPv6, sin DNS</b><span>Conecta directamente a una dirección IPv6, sin consultar el DNS</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="lit4"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>Dirección IPv4, sin DNS</b><span>Conecta directamente a una dirección IPv4, sin consultar el DNS</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-      </ol>
-    </section>
+    
 
     <article class="art card" id="why"><h2>¿IPv6 es más lento que IPv4?</h2><p>No por sí mismo. Las cabeceras de IPv6 son un poco más grandes, pero la diferencia es demasiado pequeña para medirla. Lo que cambia es la ruta: tu operador puede llevar IPv6 por menos enlaces o más largos, conectar con menos redes por IPv6 o mandarlo por un túnel. Por eso en unas redes IPv6 va más rápido (sin NAT, equipos más nuevos) y en otras claramente más lento. La comparación de arriba te dice cuál es tu caso.</p><h2>¿Por qué IPv6 va lento o con lag?</h2><p>Las causas habituales, de más a menos frecuente:</p><ul><li><b>Rutas más largas:</b> muchos operadores sacan el IPv6 al extranjero o a otras redes por menos puntos de intercambio que el IPv4, y eso suma decenas de milisegundos. Desde China continental, el IPv6 internacional suele dar un rodeo.</li><li><b>Un MTU roto:</b> los paquetes IPv6 de tamaño completo se pierden en algún tramo (PPPoE, túneles), así que las peticiones pequeñas funcionan y las páginas grandes se atascan. El test de paquetes grandes de arriba lo comprueba.</li><li><b>Túneles:</b> 6to4 y Teredo llevan el IPv6 por repetidores que pueden estar lejos.</li><li><b>El router o el módem:</b> firmware antiguo, un firewall IPv6 que descarta las respuestas, o un router que reparte direcciones IPv6 cuando su propia línea no tiene.</li><li>Un proxy o VPN que solo lleva IPv4, mientras el tráfico IPv6 sale directamente.</li></ul><h2>¿Cómo arreglo un IPv6 lento?</h2><p>Repite el test a otra hora: si solo va lento por la noche, la red de tu operador está saturada. Si falla el test de paquetes grandes, baja el MTU en los ajustes WAN o IPv6 del router (prueba 1480 o 1452 con PPPoE). Actualiza el firmware y reinicia el router y el módem. Si IPv6 va mucho más lento siempre, envía las cifras de arriba a tu operador: la ruta la tiene que arreglar él. Mientras tanto, no te preocupes demasiado: los navegadores pasan a IPv4 cuando IPv6 tarda en conectar (Happy Eyeballs), así que casi todos los sitios siguen funcionando.</p><h2>¿Debo desactivar IPv6?</h2><p>Normalmente no. Si lo desactivas, dejan de funcionar los sitios solo IPv6 y algunas apps y juegos, y Microsoft no da soporte a Windows con IPv6 desactivado. Si tu IPv6 de verdad va peor, mejor da preferencia a IPv4 y deja IPv6 para lo que lo necesite: en Windows, pon el valor del registro DisabledComponents en 0x20 (el «preferir IPv4 sobre IPv6» de Microsoft); en Linux, quita el comentario de «precedence ::ffff:0:0/96 100» en /etc/gai.conf.</p></article>
     <div data-ms-more></div>
@@ -147,8 +124,8 @@
   </div>
 </div>
 
-<script type="application/json" id="data">{"lang":"es","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/es/"}</script>
-<script src="/assets/l.es.f25633e14c.js"></script>
-<script src="/assets/app.3123e0565b.js"></script>
+<script type="application/json" id="data">{"lang":"es","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/es/","page":"slow"}</script>
+<script src="/assets/l.es.cfa423de76.js"></script>
+<script src="/assets/app.da3e42160e.js"></script>
 </body>
 </html>

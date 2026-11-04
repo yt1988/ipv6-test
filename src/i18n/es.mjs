@@ -82,6 +82,8 @@ export default {
   ch_no6: "Activa IPv6 en el router para poder comparar.",
   ch_none: "Comprueba que tienes conexión y que ningún firewall o extensión bloquea estos servidores.",
   slow_link: "Por qué IPv6 puede ir lento y cómo arreglarlo",
+  all_link: "Hacer el test IPv6 completo (6 pruebas, nota sobre 10)",
+  slow_share_text: "Mi conexión: {verdict}. ¿Tu IPv6 va más lento?",
   slow_title: "¿IPv6 es más lento que IPv4? Por qué IPv6 va lento o con lag, y cómo arreglarlo · Test de IPv6",
   slow_desc: "Compara IPv4 e IPv6 en tu conexión: las mismas redes medidas por ambos a la vez. Mira si IPv6 va más lento, por qué (rutas, MTU, túneles, el router) y cómo arreglarlo sin desactivar IPv6.",
   slow_kw: "IPv6 lento, IPv6 más lento que IPv4, velocidad IPv6 vs IPv4, latencia IPv6, desactivar IPv6, preferir IPv4, lag IPv6",

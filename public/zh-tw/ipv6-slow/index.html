@@ -2,7 +2,7 @@
 <html lang="zh-TW" data-paths="{&quot;en&quot;:&quot;/ipv6-slow/&quot;,&quot;zh-CN&quot;:&quot;/zh-cn/ipv6-slow/&quot;,&quot;zh-TW&quot;:&quot;/zh-tw/ipv6-slow/&quot;,&quot;ja&quot;:&quot;/ja/ipv6-slow/&quot;,&quot;ko&quot;:&quot;/ko/ipv6-slow/&quot;,&quot;es&quot;:&quot;/es/ipv6-slow/&quot;,&quot;fr&quot;:&quot;/fr/ipv6-slow/&quot;,&quot;de&quot;:&quot;/de/ipv6-slow/&quot;,&quot;pt&quot;:&quot;/pt/ipv6-slow/&quot;,&quot;ru&quot;:&quot;/ru/ipv6-slow/&quot;}">
 <head>
 <meta charset="utf-8">
-<script>(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root")||/[?&]embed=checkup(&|$)/.test(location.search))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}var p=location.pathname,t=p===P.en?"":p.indexOf("/r/")===0?p.slice(1):null;if(l&&l!=="en"&&t!==null)location.replace(P[l]+t+location.search+location.hash)})();</script>
+<script>(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root")||/[?&]embed=checkup(&|$)/.test(location.search))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}var p=location.pathname,t=p===P.en?"":p.indexOf(P.en+"r/")===0?p.slice(P.en.length):null;if(l&&l!=="en"&&t!==null)location.replace(P[l]+t+location.search+location.hash)})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>IPv6 比 IPv4 慢嗎？IPv6 很慢、卡頓的原因和解決方法 · IPv6 測試</title>
 <meta name="description" content="線上比較你的 IPv4 和 IPv6 速度：同一批網路，兩種協定同時測。看看 IPv6 是不是比較慢、為什麼慢（線路繞路、MTU、通道、路由器），以及不必關閉 IPv6 的解決方法。">
@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="IPv4 和 IPv6 同時測速，看看 IPv6 為什麼慢">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"IPv6 測試 · 1ms.dog","url":"https://ipv6.1ms.dog/zh-tw/ipv6-slow/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"線上比較你的 IPv4 和 IPv6 速度：同一批網路，兩種協定同時測。看看 IPv6 是不是比較慢、為什麼慢（線路繞路、MTU、通道、路由器），以及不必關閉 IPv6 的解決方法。","inLanguage":"zh-TW","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"IPv6 本身比 IPv4 慢嗎？","acceptedAnswer":{"@type":"Answer","text":"不會。IPv6 的標頭大一點，但差別小到測不出來。真正拉開差距的是線路：電信業者的 IPv6 可能鏈路較少、比較繞，和其他網路的 IPv6 互連較少，或者乾脆走通道。所以有些網路 IPv6 比較快（不用 NAT，設備較新），有些則明顯比較慢。上面的比較會告訴你是哪一種。"}},{"@type":"Question","name":"IPv6 為什麼會慢、會卡？","acceptedAnswer":{"@type":"Answer","text":"常見原因，依出現頻率排列： 線路繞路：很多電信業者的 IPv6 連到國外或其他網路時，經過的交換點比 IPv4 少，延遲多出幾十毫秒。從中國大陸連國外，IPv6 經常繞路。 MTU 有問題：最大尺寸的 IPv6 封包在某段鏈路（PPPoE 撥接、通道）上遺失，小請求正常，大網頁卡住。上面的大封包測試檢查的就是這個。 通道：6to4 和 Teredo 的 IPv6 要繞到很遠的中繼伺服器。 路由器或數據機：韌體太舊；IPv6 防火牆把回應封包丟掉；或者路由器自己的上游沒有 IPv6，卻配發 IPv6 位址給裝置。 代理或 VPN 只接管 IPv4，IPv6 的流量直接出去了。"}},{"@type":"Question","name":"IPv6 很慢怎麼解決？","acceptedAnswer":{"@type":"Answer","text":"先換個時間再測：只有晚上慢，是電信業者那邊壅塞。大封包測試沒通過的話，到路由器的 WAN 或 IPv6 設定調低 MTU（PPPoE 撥接可試 1480 或 1452）。更新韌體，重新啟動路由器和數據機。如果 IPv6 一直慢很多，把上面的數字提供給電信業者，這是他們線路的問題。在那之前也不用太擔心：IPv6 連線慢時，瀏覽器會自動改用 IPv4（Happy Eyeballs），大部分網站照樣能用。"}},{"@type":"Question","name":"要不要關閉 IPv6？","acceptedAnswer":{"@type":"Answer","text":"一般不建議。關掉以後，只有 IPv6 的網站、部分 App 和遊戲會無法使用，微軟也不支援關閉 IPv6 的 Windows。如果你的 IPv6 真的比較差，可以改成 IPv4 優先，IPv6 留給需要它的服務：Windows 把登錄值 DisabledComponents 設為 0x20（微軟官方的「IPv4 優先於 IPv6」）；Linux 在 /etc/gai.conf 裡取消「precedence ::ffff:0:0/96 100」這一行的註解。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.8ae8ba0ab1.css">
+<link rel="stylesheet" href="/assets/app.d525246818.css">
 </head>
 <body>
 <div class="app">
@@ -72,25 +72,12 @@
       <h1>你的 IPv6 比 IPv4 慢嗎？</h1>
       <p class="intro">下面的測試讓同一批網路分別走 IPv4 和 IPv6，同時測延遲。兩邊連的是同一家網路，所以快慢的差別來自電信業者給兩種協定的線路，和伺服器無關。結果下方說明 IPv6 為什麼常常比較慢，以及怎麼解決。</p>
       <div class="sum">
-        <div class="score" id="scoreBox" data-why="滿分 10 分：
-4  打得開只有 IPv6 的網站
-2  IPv6 大封包不會遺失
-2  雙堆疊網站不用等就開
-1  不靠 DNS 也連得上 IPv6
-1  瀏覽器優先走 IPv6
-−1 IPv6 回應超過 3 秒" tabindex="0">
-          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fg" id="ring" cx="60" cy="60" r="52"/></svg>
-          <span class="score-n"><b id="score">–</b><i>/10</i></span>
-          <span class="score-k" data-i="score_k">IPv6 分數</span>
-        </div>
+        
         <div class="sum-r">
           <div class="vrow"><p class="verdict" id="verdict" data-i="v_wait">測試中…</p><button class="btn out" id="shareBtn" type="button" aria-haspopup="dialog" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share">分享</span></button></div>
           <p class="probs" id="probs">&nbsp;</p>
-          <div class="addrs">
-            <div class="addr" data-a="6"><span class="addr-k">IPv6</span><span class="addr-ip" id="ip6"><i class="skl"></i></span><span class="addr-m" id="m6">&nbsp;</span></div>
-            <div class="addr" data-a="4"><span class="addr-k">IPv4</span><span class="addr-ip" id="ip4"><i class="skl"></i></span><span class="addr-m" id="m4">&nbsp;</span></div>
-          </div>
-          <p class="links"><a id="checkLink" hidden target="_blank" rel="noopener"><span data-i="check_link">做一次完整健檢</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="egressLink" hidden target="_blank" rel="noopener"><span data-i="egress_link">每個網站看到的是你哪個 IP？</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="whoLink" hidden target="_blank" rel="noopener"><span data-i="who_link">IPv4 和 IPv6 從不同的網路出去：看看網站眼中的你</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="speedLink" hidden target="_blank" rel="noopener"><span data-i="speed_link">IPv6 正常，順便測個網速</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a></p>
+          
+          <p class="all"><a class="btn out" href="/zh-tw/">做完整的 IPv6 測試（6 項，10 分制）</a></p>
         </div>
       </div>
       <div class="bar">
@@ -103,7 +90,7 @@
     <section class="cmp card" aria-labelledby="cmpT">
       <div class="cmp-top">
         <div class="cmp-h"><h2 id="cmpT" data-i="h_cmp">IPv4 和 IPv6 誰比較快</h2><span class="cmp-sub" data-i="cmp_sub">同一批網路，兩種協定同時測延遲，越低越快</span></div>
-        <p class="cmp-v"><b id="cmpHead" data-i="c_wait">比較中…</b><span id="cmpHint">&nbsp;</span></p>
+        
       </div>
       <div class="ct">
         <div class="cr ch"><span data-i="c_net">網路</span><span>IPv4</span><span>IPv6</span><span data-i="c_dif">IPv6 − IPv4</span></div>
@@ -115,17 +102,7 @@
       
     </section>
 
-    <section class="tests card">
-      <h2 data-i="h_tests">測試項目</h2>
-      <ol class="tl" id="tl">
-        <li class="tr wait" data-t="v4"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>只有 IPv4 的網站</b><span>看 IPv4 通不通</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="v6"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>只有 IPv6 的網站</b><span>要打開它，網路得有 IPv6，DNS 也得回傳 IPv6 位址</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="ds"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>雙堆疊網站</b><span>IPv4 和 IPv6 位址都有的網站，看瀏覽器選哪一個</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="big"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>IPv6 大封包</b><span>雙向都傳送最大尺寸的封包。這項不通，網頁會卡住載入不完</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="lit6"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>IPv6 位址直連</b><span>不查 DNS，直接連一個 IPv6 位址</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="lit4"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>IPv4 位址直連</b><span>不查 DNS，直接連一個 IPv4 位址</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-      </ol>
-    </section>
+    
 
     <article class="art card" id="why"><h2>IPv6 本身比 IPv4 慢嗎？</h2><p>不會。IPv6 的標頭大一點，但差別小到測不出來。真正拉開差距的是線路：電信業者的 IPv6 可能鏈路較少、比較繞，和其他網路的 IPv6 互連較少，或者乾脆走通道。所以有些網路 IPv6 比較快（不用 NAT，設備較新），有些則明顯比較慢。上面的比較會告訴你是哪一種。</p><h2>IPv6 為什麼會慢、會卡？</h2><p>常見原因，依出現頻率排列：</p><ul><li><b>線路繞路：</b>很多電信業者的 IPv6 連到國外或其他網路時，經過的交換點比 IPv4 少，延遲多出幾十毫秒。從中國大陸連國外，IPv6 經常繞路。</li><li><b>MTU 有問題：</b>最大尺寸的 IPv6 封包在某段鏈路（PPPoE 撥接、通道）上遺失，小請求正常，大網頁卡住。上面的大封包測試檢查的就是這個。</li><li><b>通道：</b>6to4 和 Teredo 的 IPv6 要繞到很遠的中繼伺服器。</li><li><b>路由器或數據機：</b>韌體太舊；IPv6 防火牆把回應封包丟掉；或者路由器自己的上游沒有 IPv6，卻配發 IPv6 位址給裝置。</li><li>代理或 VPN 只接管 IPv4，IPv6 的流量直接出去了。</li></ul><h2>IPv6 很慢怎麼解決？</h2><p>先換個時間再測：只有晚上慢，是電信業者那邊壅塞。大封包測試沒通過的話，到路由器的 WAN 或 IPv6 設定調低 MTU（PPPoE 撥接可試 1480 或 1452）。更新韌體，重新啟動路由器和數據機。如果 IPv6 一直慢很多，把上面的數字提供給電信業者，這是他們線路的問題。在那之前也不用太擔心：IPv6 連線慢時，瀏覽器會自動改用 IPv4（Happy Eyeballs），大部分網站照樣能用。</p><h2>要不要關閉 IPv6？</h2><p>一般不建議。關掉以後，只有 IPv6 的網站、部分 App 和遊戲會無法使用，微軟也不支援關閉 IPv6 的 Windows。如果你的 IPv6 真的比較差，可以改成 IPv4 優先，IPv6 留給需要它的服務：Windows 把登錄值 DisabledComponents 設為 0x20（微軟官方的「IPv4 優先於 IPv6」）；Linux 在 /etc/gai.conf 裡取消「precedence ::ffff:0:0/96 100」這一行的註解。</p></article>
     <div data-ms-more></div>
@@ -147,8 +124,8 @@
   </div>
 </div>
 
-<script type="application/json" id="data">{"lang":"zh-TW","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/zh-tw/"}</script>
-<script src="/assets/l.zh-tw.a2c4b6cd31.js"></script>
-<script src="/assets/app.3123e0565b.js"></script>
+<script type="application/json" id="data">{"lang":"zh-TW","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/zh-tw/","page":"slow"}</script>
+<script src="/assets/l.zh-tw.d946a2b56b.js"></script>
+<script src="/assets/app.da3e42160e.js"></script>
 </body>
 </html>

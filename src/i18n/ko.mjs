@@ -82,6 +82,8 @@ export default {
   ch_no6: "비교하려면 공유기에서 IPv6를 켜세요.",
   ch_none: "인터넷이 연결되어 있는지, 방화벽이나 확장 프로그램이 이 호스트들을 막고 있지 않은지 확인하세요.",
   slow_link: "IPv6가 느린 이유와 해결 방법",
+  all_link: "IPv6 전체 테스트하기 (6개 항목, 10점 만점)",
+  slow_share_text: "내 인터넷: {verdict}. 당신의 IPv6는 느리지 않나요?",
   slow_title: "IPv6가 IPv4보다 느릴까? IPv6가 느리고 끊기는 원인과 해결 방법 · IPv6 테스트",
   slow_desc: "내 인터넷에서 IPv4와 IPv6를 비교해요. 같은 네트워크를 두 방식으로 동시에 측정해서, IPv6가 더 느린지, 왜 느린지(경로, MTU, 터널, 공유기), IPv6를 끄지 않고 고치는 방법을 알려 드려요.",
   slow_kw: "IPv6 느림, IPv6 IPv4 속도 비교, IPv6 지연, IPv6 끊김, IPv6 끄기, IPv4 우선, IPv6 핑",

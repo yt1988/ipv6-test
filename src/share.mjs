@@ -45,9 +45,10 @@ export function decode(code, known) {
   return Object.keys(r).length ? { ts: parseInt(ts, 36) * 1000, cc: /^[A-Z]{2}$/.test(cc) ? cc : "", r } : null;
 }
 
-// /r/<code> or /<lang folder>/r/<code> → { slug, code }, or null
+// /r/<code>, /<lang folder>/r/<code>, and the same under ipv6-slow/ (a result of that page: IPv4 against IPv6 only)
+// → { slug, page: "home" | "slow", code }, or null
 export function sharePath(pathname) {
-  const m = /^\/(?:([a-z]{2}(?:-[a-z]{2})?)\/)?r\/([0-9A-Za-z~._-]+)\/?$/.exec(pathname);
-  return m ? { slug: m[1] || "", code: decodeURIComponent(m[2]) } : null;
+  const m = /^\/(?:([a-z]{2}(?:-[a-z]{2})?)\/)?(ipv6-slow\/)?r\/([0-9A-Za-z~._-]+)\/?$/.exec(pathname);
+  return m ? { slug: m[1] || "", page: m[2] ? "slow" : "home", code: decodeURIComponent(m[3]) } : null;
 }
 

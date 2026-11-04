@@ -27,7 +27,7 @@ export const LANGS = [["en", "", "en_US"], ["zh-CN", "zh-cn", "zh_CN"], ["zh-TW"
 // choice first, then the browser languages), and a shared result /r/<code> to /<lang>/r/<code>; crawlers and English
 // readers stay, and so does the Connection Checkup frame (?embed=checkup): it asked for this language, and a redirect
 // would leave its page as the referrer the embed check reads.
-const PREPAINT = `(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root")||/[?&]embed=checkup(&|$)/.test(location.search))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}var p=location.pathname,t=p===P.en?"":p.indexOf("/r/")===0?p.slice(1):null;if(l&&l!=="en"&&t!==null)location.replace(P[l]+t+location.search+location.hash)})();`;
+const PREPAINT = `(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root")||/[?&]embed=checkup(&|$)/.test(location.search))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}var p=location.pathname,t=p===P.en?"":p.indexOf(P.en+"r/")===0?p.slice(P.en.length):null;if(l&&l!=="en"&&t!==null)location.replace(P[l]+t+location.search+location.hash)})();`;
 
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const hash = s => createHash("sha256").update(s).digest("hex").slice(0, 10);
@@ -42,7 +42,7 @@ async function loadI18n() {
 
 // Strings only the build uses (the page already shows them); everything else goes to the browser
 const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "docs", "lang_label", "faq_h", "share_desc", "share_title",
-  "cmp_sub", "cw_global", "cw_nocn", "cw_cn", "c_net", "c_dif", "slow_link", "slow_title", "slow_desc", "slow_kw", "slow_h1", "slow_og", "slow_intro", "slow_art"]);
+  "cmp_sub", "cw_global", "cw_nocn", "cw_cn", "slow_link", "slow_title", "slow_desc", "slow_kw", "slow_h1", "slow_og", "slow_intro", "slow_art"]);
 
 // The pages every language has: the test, and the test as an answer to "is IPv6 slower than IPv4?"
 //   dir: the folder under the language's; title, desc, kw, og, h1: their strings; art: the article under the results
@@ -141,7 +141,8 @@ export async function build({ check = false } = {}) {
       const langOpts = langs.map(([l]) => `<option value="${l}"${l === lang ? " selected" : ""}>${esc(I[l].name)}</option>`).join("");
       const paths = Object.fromEntries(langs.map(([l, sl]) => [l, at(sl)]));
 
-      const html = tpl
+      // the slow page tests only IPv4 against IPv6: the score, addresses and six tests are the home page's (between <!--full--> marks)
+      const html = (pg.id === "home" ? tpl.replace(/<!--\/?full-->/g, "") : tpl.replace(/<!--full-->[\s\S]*?<!--\/full-->/g, ""))
         .replace(/(<(\w+)\b[^>]*\sdata-i="(\w+)"[^>]*>)([^<]*)(<\/\2>)/g, (m, open, tag, k, inner, close) => open + esc(T(k)) + close)
         .replace(/\{\{a:(\w+)\}\}/g, (m, k) => esc(T(k)))   // translated attribute values (aria-label, tooltips)
         .replace("{{lang}}", lang).replace("{{pathsAttr}}", esc(JSON.stringify(paths))).replace("{{rootAttr}}", slug ? "" : " data-root")
@@ -150,10 +151,11 @@ export async function build({ check = false } = {}) {
         .replace("{{intro}}", pg.intro ? `<p class="intro">${esc(T(pg.intro))}</p>` : "")
         .replace("{{pairs}}", pairsHTML(T))
         .replace("{{slowMore}}", pg.id === "slow" ? "" : `<p class="cmp-more"><a href="${pathOf(slug, "ipv6-slow/")}#why">${esc(T("slow_link"))}</a></p>`)
+        .replace("{{allLink}}", pg.id === "home" ? "" : `<p class="all"><a class="btn out" href="${pathOf(slug)}">${esc(T("all_link"))}</a></p>`)
         .replace("{{article}}", pg.art ? `<article class="art card" id="why">${T(pg.art).map(sectionHTML).join("")}</article>` : "")
         .replace("{{rows}}", rowsHTML(T))
         .replace("{{helpNav}}", helpNav).replace("{{helpC}}", helpC)
-        .replace("{{data}}", JSON.stringify({ lang, paths, home: pathOf(slug) }).replace(/</g, "\\u003c"));
+        .replace("{{data}}", JSON.stringify({ lang, paths, home: pathOf(slug), page: pg.id }).replace(/</g, "\\u003c"));
       if (/\{\{[\w:]+\}\}/.test(html)) throw new Error("unfilled placeholder in " + at(slug) + ": " + /\{\{[\w:]+\}\}/.exec(html)[0]);
       files[at(slug).slice(1) + "index.html"] = html;
     }
@@ -178,7 +180,8 @@ export async function build({ check = false } = {}) {
 
 - Page: ${SITE}/ (also ${langs.slice(1).map(([, s]) => "/" + s + "/").join(", ")})
 - IPv4 against IPv6: the same four networks (${PAIRS.map(p => p.name).join(", ")}) asked over each at once, round trips
-  compared; as a page on slow IPv6, with why it happens and what to do: ${SITE}/ipv6-slow/
+  compared; on its own (no score, no other test) as a page on slow IPv6, with why it happens and what to do:
+  ${SITE}/ipv6-slow/
 - Comparison hosts: ${PAIRS.map(p => `${p.id}: ${new URL(p[4].url).host} / ${new URL(p[6].url).host}`).join("; ")}
 - Test hosts: ${TESTS.map(x => `${x.id}: ${x.hosts.map(h => new URL(h.url, SITE).host).join(", ")}`).join("; ")}
 - Source code: https://github.com/yt1988/ipv6-test

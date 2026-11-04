@@ -82,6 +82,8 @@ export default {
   ch_no6: "比較するには、ルーターで IPv6 を有効にしてください。",
   ch_none: "ネットにつながっているか、ファイアウォールや拡張機能がこれらのホストをブロックしていないか確認してください。",
   slow_link: "IPv6 が遅くなる理由と対処法",
+  all_link: "IPv6 テストをすべて受ける（6 項目・10 点満点）",
+  slow_share_text: "うちの回線：{verdict}。あなたの IPv6 は遅くない？",
   slow_title: "IPv6 は IPv4 より遅い？IPv6 が遅い・重い原因と対処法 · IPv6 テスト",
   slow_desc: "あなたの回線で IPv4 と IPv6 を比較：同じネットワークを両方で同時に計測します。IPv6 のほうが遅いか、その理由（経路、MTU、トンネル、ルーター）、IPv6 を無効にせずに直す方法がわかります。",
   slow_kw: "IPv6 遅い, IPv6 重い, IPv6 IPv4 速度 比較, IPv6 遅延, IPv6 無効化, IPv4 優先, IPv6 ラグ",

@@ -2,7 +2,7 @@
 <html lang="ja" data-paths="{&quot;en&quot;:&quot;/ipv6-slow/&quot;,&quot;zh-CN&quot;:&quot;/zh-cn/ipv6-slow/&quot;,&quot;zh-TW&quot;:&quot;/zh-tw/ipv6-slow/&quot;,&quot;ja&quot;:&quot;/ja/ipv6-slow/&quot;,&quot;ko&quot;:&quot;/ko/ipv6-slow/&quot;,&quot;es&quot;:&quot;/es/ipv6-slow/&quot;,&quot;fr&quot;:&quot;/fr/ipv6-slow/&quot;,&quot;de&quot;:&quot;/de/ipv6-slow/&quot;,&quot;pt&quot;:&quot;/pt/ipv6-slow/&quot;,&quot;ru&quot;:&quot;/ru/ipv6-slow/&quot;}">
 <head>
 <meta charset="utf-8">
-<script>(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root")||/[?&]embed=checkup(&|$)/.test(location.search))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}var p=location.pathname,t=p===P.en?"":p.indexOf("/r/")===0?p.slice(1):null;if(l&&l!=="en"&&t!==null)location.replace(P[l]+t+location.search+location.hash)})();</script>
+<script>(function(){var d=document.documentElement,th=null,s=null;try{th=localStorage.getItem("ipv6test:theme");s=localStorage.getItem("ipv6test:lang")}catch(e){}if(th==="light"||th==="dark")d.setAttribute("data-theme",th);if(!d.hasAttribute("data-root")||/[?&]embed=checkup(&|$)/.test(location.search))return;var P=JSON.parse(d.getAttribute("data-paths")||"{}"),l=null;try{var q=new URLSearchParams(location.search).get("lang");if(P[q])l=q}catch(e){}if(!l&&P[s])l=s;for(var ls=navigator.languages||[navigator.language||"en"],i=0;!l&&!s&&i<ls.length;i++){var x=String(ls[i]).toLowerCase(),b=x.split("-")[0];l=b==="zh"?(/tw|hk|mo|hant/.test(x)?"zh-TW":"zh-CN"):P[b]?b:null}var p=location.pathname,t=p===P.en?"":p.indexOf(P.en+"r/")===0?p.slice(P.en.length):null;if(l&&l!=="en"&&t!==null)location.replace(P[l]+t+location.search+location.hash)})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>IPv6 は IPv4 より遅い？IPv6 が遅い・重い原因と対処法 · IPv6 テスト</title>
 <meta name="description" content="あなたの回線で IPv4 と IPv6 を比較：同じネットワークを両方で同時に計測します。IPv6 のほうが遅いか、その理由（経路、MTU、トンネル、ルーター）、IPv6 を無効にせずに直す方法がわかります。">
@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="IPv4 と IPv6 を同時に計測し、IPv6 が遅い理由を探る">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"IPv6 テスト · 1ms.dog","url":"https://ipv6.1ms.dog/ja/ipv6-slow/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"あなたの回線で IPv4 と IPv6 を比較：同じネットワークを両方で同時に計測します。IPv6 のほうが遅いか、その理由（経路、MTU、トンネル、ルーター）、IPv6 を無効にせずに直す方法がわかります。","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"IPv6 は IPv4 より遅いの？","acceptedAnswer":{"@type":"Answer","text":"IPv6 そのものは遅くありません。ヘッダーが少し大きいだけで、測れるほどの差にはなりません。差がつくのは経路です。プロバイダーの IPv6 は、回線が少ない・遠回り、他のネットワークとの IPv6 接続が少ない、あるいはトンネル経由ということがあります。そのため、IPv6 のほうが速い回線（NAT がなく、設備も新しい）もあれば、はっきり遅い回線もあります。どちらなのかは上の比較でわかります。"}},{"@type":"Question","name":"IPv6 が遅い・重いのはなぜ？","acceptedAnswer":{"@type":"Answer","text":"よくある原因を多い順に挙げます。 遠回りの経路：多くのプロバイダーでは、IPv6 で海外や他のネットワークへ出るときの接続点が IPv4 より少なく、数十ミリ秒余計にかかります。中国本土から海外への IPv6 はよく遠回りします。 MTU の問題：最大サイズの IPv6 パケットがどこかの区間（PPPoE、トンネル）で失われ、小さな通信は通るのに大きなページが止まります。上の「大きなパケット」のテストで確認できます。 トンネル：6to4 や Teredo の IPv6 は、遠くの中継サーバーを経由します。 ルーターやモデム：古いファームウェア、応答を捨ててしまう IPv6 ファイアウォール、自分の回線に IPv6 がないのに IPv6 アドレスを配っているルーター。 IPv4 しか扱わないプロキシや VPN を使っていて、IPv6 の通信だけ直接出ている。"}},{"@type":"Question","name":"遅い IPv6 を直すには？","acceptedAnswer":{"@type":"Answer","text":"まず時間帯を変えて測り直してください。夜だけ遅いなら、プロバイダー側の混雑です。「大きなパケット」のテストが失敗するなら、ルーターの WAN または IPv6 設定で MTU を下げます（PPPoE なら 1480 か 1452）。ファームウェアを更新し、ルーターとモデムを再起動します。それでも IPv6 がいつも大幅に遅いなら、上の数値をプロバイダーに伝えてください。経路を直せるのはプロバイダーです。それまでもあまり心配はいりません。IPv6 の接続が遅いとブラウザが自動で IPv4 に切り替えるので（Happy Eyeballs）、ほとんどのサイトは普通に使えます。"}},{"@type":"Question","name":"IPv6 は無効にしたほうがいい？","acceptedAnswer":{"@type":"Answer","text":"普通はおすすめしません。無効にすると IPv6 だけのサイトや一部のアプリ・ゲームが使えなくなり、Microsoft も IPv6 を無効にした Windows をサポートしていません。IPv6 が本当に遅いなら、IPv4 を優先する設定にして、IPv6 は必要なサービスのために残しましょう。Windows ではレジストリ値 DisabledComponents を 0x20 に設定します（Microsoft の「IPv6 より IPv4 を優先」）。Linux では /etc/gai.conf の「precedence ::ffff:0:0/96 100」の行のコメントを外します。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.8ae8ba0ab1.css">
+<link rel="stylesheet" href="/assets/app.d525246818.css">
 </head>
 <body>
 <div class="app">
@@ -72,25 +72,12 @@
       <h1>あなたの回線では、IPv6 は IPv4 より遅い？</h1>
       <p class="intro">下のテストは、同じネットワークに IPv4 と IPv6 で同時に接続して遅延を測ります。接続先は同じなので、差が出るのはサーバーではなく、プロバイダーがそれぞれに用意した経路の違いです。結果の下に、IPv6 が遅くなりがちな理由と対処法をまとめました。</p>
       <div class="sum">
-        <div class="score" id="scoreBox" data-why="10 点満点：
-4  IPv6 だけのサイトが開ける
-2  IPv6 の大きなパケットが通る
-2  デュアルスタックのサイトが待たずに開く
-1  DNS なしでも IPv6 につながる
-1  ブラウザが IPv6 を選ぶ
-−1 IPv6 の応答に 3 秒超" tabindex="0">
-          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fg" id="ring" cx="60" cy="60" r="52"/></svg>
-          <span class="score-n"><b id="score">–</b><i>/10</i></span>
-          <span class="score-k" data-i="score_k">IPv6 スコア</span>
-        </div>
+        
         <div class="sum-r">
           <div class="vrow"><p class="verdict" id="verdict" data-i="v_wait">テスト中…</p><button class="btn out" id="shareBtn" type="button" aria-haspopup="dialog" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share">共有</span></button></div>
           <p class="probs" id="probs">&nbsp;</p>
-          <div class="addrs">
-            <div class="addr" data-a="6"><span class="addr-k">IPv6</span><span class="addr-ip" id="ip6"><i class="skl"></i></span><span class="addr-m" id="m6">&nbsp;</span></div>
-            <div class="addr" data-a="4"><span class="addr-k">IPv4</span><span class="addr-ip" id="ip4"><i class="skl"></i></span><span class="addr-m" id="m4">&nbsp;</span></div>
-          </div>
-          <p class="links"><a id="checkLink" hidden target="_blank" rel="noopener"><span data-i="check_link">まとめて診断する</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="egressLink" hidden target="_blank" rel="noopener"><span data-i="egress_link">サイトごとにどの IP が見えている？</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="whoLink" hidden target="_blank" rel="noopener"><span data-i="who_link">IPv4 と IPv6 で出口のネットワークが違います：サイトからどう見えるか確認</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="speedLink" hidden target="_blank" rel="noopener"><span data-i="speed_link">IPv6 は正常です。速度も測ってみる</span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a></p>
+          
+          <p class="all"><a class="btn out" href="/ja/">IPv6 テストをすべて受ける（6 項目・10 点満点）</a></p>
         </div>
       </div>
       <div class="bar">
@@ -103,7 +90,7 @@
     <section class="cmp card" aria-labelledby="cmpT">
       <div class="cmp-top">
         <div class="cmp-h"><h2 id="cmpT" data-i="h_cmp">IPv4 と IPv6、どちらが速い？</h2><span class="cmp-sub" data-i="cmp_sub">同じネットワークに両方で同時に接続して遅延を比較。低いほど速い</span></div>
-        <p class="cmp-v"><b id="cmpHead" data-i="c_wait">比較中…</b><span id="cmpHint">&nbsp;</span></p>
+        
       </div>
       <div class="ct">
         <div class="cr ch"><span data-i="c_net">ネットワーク</span><span>IPv4</span><span>IPv6</span><span data-i="c_dif">IPv6 − IPv4</span></div>
@@ -115,17 +102,7 @@
       
     </section>
 
-    <section class="tests card">
-      <h2 data-i="h_tests">テスト項目</h2>
-      <ol class="tl" id="tl">
-        <li class="tr wait" data-t="v4"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>IPv4 だけのサイト</b><span>IPv4 アドレスしか持たないサイト</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="v6"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>IPv6 だけのサイト</b><span>IPv6 アドレスしか持たないサイト。開くには IPv6 と、IPv6 アドレスを返す DNS が必要</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="ds"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>デュアルスタックのサイト</b><span>IPv4 と IPv6 の両方のアドレスを持つサイト。ブラウザがどちらを選ぶか</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="big"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>IPv6 の大きなパケット</b><span>最大サイズのパケットを双方向に送信。ここで失敗するとページが読み込み途中で止まる</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="lit6"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>IPv6 アドレスに直接接続</b><span>DNS を使わず、IPv6 アドレスに直接つなぐ</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-        <li class="tr wait" data-t="lit4"><span class="st"><svg class="i-ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg><svg class="i-x" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><svg class="i-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12v.5"/></svg></span><span class="tn"><b>IPv4 アドレスに直接接続</b><span>DNS を使わず、IPv4 アドレスに直接つなぐ</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>
-      </ol>
-    </section>
+    
 
     <article class="art card" id="why"><h2>IPv6 は IPv4 より遅いの？</h2><p>IPv6 そのものは遅くありません。ヘッダーが少し大きいだけで、測れるほどの差にはなりません。差がつくのは経路です。プロバイダーの IPv6 は、回線が少ない・遠回り、他のネットワークとの IPv6 接続が少ない、あるいはトンネル経由ということがあります。そのため、IPv6 のほうが速い回線（NAT がなく、設備も新しい）もあれば、はっきり遅い回線もあります。どちらなのかは上の比較でわかります。</p><h2>IPv6 が遅い・重いのはなぜ？</h2><p>よくある原因を多い順に挙げます。</p><p>遠回りの経路：多くのプロバイダーでは、IPv6 で海外や他のネットワークへ出るときの接続点が IPv4 より少なく、数十ミリ秒余計にかかります。中国本土から海外への IPv6 はよく遠回りします。</p><p>MTU の問題：最大サイズの IPv6 パケットがどこかの区間（PPPoE、トンネル）で失われ、小さな通信は通るのに大きなページが止まります。上の「大きなパケット」のテストで確認できます。</p><p>トンネル：6to4 や Teredo の IPv6 は、遠くの中継サーバーを経由します。</p><p>ルーターやモデム：古いファームウェア、応答を捨ててしまう IPv6 ファイアウォール、自分の回線に IPv6 がないのに IPv6 アドレスを配っているルーター。</p><p>IPv4 しか扱わないプロキシや VPN を使っていて、IPv6 の通信だけ直接出ている。</p><h2>遅い IPv6 を直すには？</h2><p>まず時間帯を変えて測り直してください。夜だけ遅いなら、プロバイダー側の混雑です。「大きなパケット」のテストが失敗するなら、ルーターの WAN または IPv6 設定で MTU を下げます（PPPoE なら 1480 か 1452）。ファームウェアを更新し、ルーターとモデムを再起動します。それでも IPv6 がいつも大幅に遅いなら、上の数値をプロバイダーに伝えてください。経路を直せるのはプロバイダーです。それまでもあまり心配はいりません。IPv6 の接続が遅いとブラウザが自動で IPv4 に切り替えるので（Happy Eyeballs）、ほとんどのサイトは普通に使えます。</p><h2>IPv6 は無効にしたほうがいい？</h2><p>普通はおすすめしません。無効にすると IPv6 だけのサイトや一部のアプリ・ゲームが使えなくなり、Microsoft も IPv6 を無効にした Windows をサポートしていません。IPv6 が本当に遅いなら、IPv4 を優先する設定にして、IPv6 は必要なサービスのために残しましょう。Windows ではレジストリ値 DisabledComponents を 0x20 に設定します（Microsoft の「IPv6 より IPv4 を優先」）。Linux では /etc/gai.conf の「precedence ::ffff:0:0/96 100」の行のコメントを外します。</p></article>
     <div data-ms-more></div>
@@ -147,8 +124,8 @@
   </div>
 </div>
 
-<script type="application/json" id="data">{"lang":"ja","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/ja/"}</script>
-<script src="/assets/l.ja.7495570cf2.js"></script>
-<script src="/assets/app.3123e0565b.js"></script>
+<script type="application/json" id="data">{"lang":"ja","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/ja/","page":"slow"}</script>
+<script src="/assets/l.ja.6574776ed2.js"></script>
+<script src="/assets/app.da3e42160e.js"></script>
 </body>
 </html>

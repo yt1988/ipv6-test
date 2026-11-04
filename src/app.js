@@ -8,6 +8,9 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   "use strict";
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
   const D = JSON.parse($("#data").textContent);
+  // The slow page tests IPv4 against IPv6 and nothing else, its finding in the hero, and links to the whole test on the
+  // home page (1ms-shell tool-contract: a subpage tests only its own thing); its share link and card carry only that
+  const ONLY = D.page === "slow";
   const L = window.L1MS || {};
   const t = (k, v) => { let s = L[k] ?? k; if (v) for (const x in v) s = s.split("{" + x + "}").join(v[x]); return s; };
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -84,10 +87,12 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   const tool = n => { const m = document.querySelector(`meta[name="${n}"]`); return m ? m.content.replace(/\/+$/, "") + D.home : null; };
   const IPQS = tool("ipqs"), EGRESS = tool("egress"), ASN = tool("asn"), WHO = tool("who"), SPEED = tool("speed"), FULL = tool("check");
   // the Connection Checkup runs this test among the others; not inside its own report
-  if (FULL && !CHECK) { $("#checkLink").href = FULL; $("#checkLink").hidden = false; }
-  if (EGRESS) { $("#egressLink").href = EGRESS; $("#egressLink").hidden = false; }
-  if (WHO) $("#whoLink").href = WHO;
-  if (SPEED) $("#speedLink").href = SPEED;
+  if (!ONLY) {
+    if (FULL && !CHECK) { $("#checkLink").href = FULL; $("#checkLink").hidden = false; }
+    if (EGRESS) { $("#egressLink").href = EGRESS; $("#egressLink").hidden = false; }
+    if (WHO) $("#whoLink").href = WHO;
+    if (SPEED) $("#speedLink").href = SPEED;
+  }
   // Under the addresses, once the test is over: Who Are You when IPv4 and IPv6 leave from different networks (often a
   // proxy or VPN that carries only one of them, so the other leaks), the speed test when IPv6 works
   function links(final) {
@@ -193,13 +198,16 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       d.className = "cd" + (both ? " " + DIF[one.key] : "");
       d.querySelector("b").textContent = !a || !b ? "…" : !both ? "—" : (diff > 0 ? "+" : diff < 0 ? "−" : "±") + timeOf(Math.abs(diff));
     }
-    const all = SIDES.every(x => C[x.id]), c = compare(C), head = $("#cmpHead");
+    // what they say together: under the table on the home page, as the hero's verdict on the slow page
+    const all = SIDES.every(x => C[x.id]), c = compare(C), head = $(ONLY ? "#verdict" : "#cmpHead");
     head.textContent = all ? t(c.key, { ms: c.n ? fmtMs(Math.abs(c.diff)) : "" }) : t("c_wait");
-    head.className = all ? HEAD[c.key] || "" : "";
-    $("#cmpHint").textContent = all ? t("ch_" + c.key.slice(2)) : " ";
+    head.className = (ONLY ? "verdict " + (all ? TONE[c.key] : "") : all ? HEAD[c.key] || "" : "").trim();
+    $(ONLY ? "#probs" : "#cmpHint").textContent = all ? t("ch_" + c.key.slice(2)) : " ";
   }
+  // the slow page's verdict colours (the hero's tiers)
+  const TONE = { c_same: "t1", c_6fast: "t1", c_6slow: "warn", c_6much: "bad", c_no6: "warn", c_none: "bad" };
 
-  let total = TESTS.length + SIDES.length, done = 0, t0 = 0;
+  let total = ONLY ? SIDES.length : TESTS.length + SIDES.length, done = 0, t0 = 0;
   function progress() {
     $("#prog i").style.transform = `scaleX(${done / total})`;
     $("#progTxt").textContent = t("progress", { n: done, of: total });
@@ -233,18 +241,20 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     if (RUN) RUN.abort();
     const ctl = RUN = new AbortController();
     R = {}; C = {}; SHOWN = false; LAST = null; FAILED = false; done = 0; t0 = performance.now();
-    const ME = me();
+    const ME = ONLY ? null : me();
     $("#shareBtn").hidden = true; $("#rerun").disabled = true; $("#prog").classList.remove("end");
     $("#verdict").textContent = t("v_wait"); $("#verdict").className = "verdict"; $("#probs").innerHTML = "&nbsp;";
-    IDS.forEach(fillRow); fillAddr(6); fillAddr(4); links(false); hero(false); fillCmp(); progress();
+    if (!ONLY) { IDS.forEach(fillRow); fillAddr(6); fillAddr(4); links(false); hero(false); }
+    fillCmp(); progress();
     // each network's two sides at the same moment, so they meet the same conditions
     const sides = SIDES.map(async side => {
       const x = await runTest(side, { signal: ctl.signal });
       if (ctl.signal.aborted) return;
       C[side.id] = x;
+      if (ONLY && !CC && x.ok && x.cc) CC = x.cc;   // the slow page has no other test to say where the visitor is
       done++; progress(); fillCmp(); blocked();
     });
-    await Promise.all([...sides, ...TESTS.map(async test => {
+    await Promise.all([...sides, ...(ONLY ? [] : TESTS).map(async test => {
       const x = await runTest(test, { signal: ctl.signal });
       if (ctl.signal.aborted) return;
       if ((test.id === "v4" || test.id === "v6") && x.ok && !x.asn) {
@@ -263,13 +273,13 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     })]);
     if (ctl.signal.aborted) return;
     RUN = null;
-    hero(true); links(true);
+    if (!ONLY) { hero(true); links(true); }
     $("#prog").classList.add("end");
     $("#progTxt").textContent = t("done", { s: ((performance.now() - t0) / 1000).toFixed(1) });
     $("#rerun").disabled = false;
     LAST = { ts: Date.now(), cc: CC, r: { ...R, ...C } };
     $("#shareBtn").hidden = false;
-    if (CHECK && !FAILED) post(checkupResult(LAST));
+    if (CHECK && !FAILED && !ONLY) post(checkupResult(LAST));
   }
 
   // The result for the checkup's report: the hero's verdict, a few numbers, the problems worst first, and the facts its
@@ -307,7 +317,8 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     R = Object.fromEntries(IDS.filter(id => id in S.r).map(id => [id, S.r[id]]));
     C = Object.fromEntries(SIDES.filter(x => x.id in S.r).map(x => [x.id, S.r[x.id]]));
     SHOWN = true;
-    IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(true); links(true); fillCmp();
+    if (!ONLY) { IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(true); links(true); }
+    fillCmp();
     // the shared banner (1ms-shell assets/share/): whose result this is, and the visitor's own test
     RECV = import("/assets/share/share.js?v=8").then(m => m.received({ lang: D.lang, ts: S.ts, at: $(".hero"), test: start })).catch(() => null);
     $("#prog").classList.add("end"); $("#progTxt").innerHTML = "&nbsp;";
@@ -318,8 +329,24 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   /* ---------- share: the 1ms.dog share dialog (1ms-shell assets/share/, copied verbatim to /assets/share/) ---------- */
   $("#shareBtn").onclick = async () => {
     if (!LAST) return;
-    const S = LAST, res = verdict(S.r);
     const { share } = await import("/assets/share/share.js?v=8");
+    if (ONLY) {
+      // the slow page's result: IPv4 against IPv6 alone, its link on this page
+      const S = { ...LAST, r: Object.fromEntries(SIDES.filter(z => z.id in LAST.r).map(z => [z.id, LAST.r[z.id]])) };
+      const c = compare(S.r), said = t(c.key, { ms: c.n ? fmtMs(Math.abs(c.diff)) : "" }), here = location.origin + D.paths[D.lang];
+      share({
+        lang: D.lang, name: t("app_name"), file: "ipv6-slow",
+        show: ["country"], never: ["ip"], canShow: !!S.cc,
+        link: show => here + "r/" + encodeShare({ ...S, cc: show ? S.cc : "" }),
+        home: here,
+        text: () => t("slow_share_text", { verdict: said }),
+        height: (x, kit) => slowLayout(x, kit, said).height, draw: (x, kit) => drawSlow(x, kit, S, c, said),
+        foot: show => [show && S.cc && country(S.cc)],
+        ts: S.ts,
+      }).open();
+      return;
+    }
+    const S = LAST, res = verdict(S.r);
     share({
       lang: D.lang, name: t("app_name"), file: "ipv6-test",
       show: ["country"], never: ["ip"], canShow: !!S.cc,
@@ -387,6 +414,42 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       x.font = `650 23px ${F}`;
       lines.forEach((line, i) => under ? x.fillText(line, tx, cy2 + 32 * (i + 1)) : x.fillText(line, tx + lw, cy2));
     }
+  }
+
+  // The slow page's card: the question, what the comparison found (44px down to 34px, two lines if need be), then each
+  // network's two round trips and the difference, as on the page. height: the card's, from the verdict's lines.
+  function slowLayout(x, kit, said) {
+    const { W, P, top, fit, wrap } = kit, w = W - P * 2;
+    const size = fit(x, said, w, 44, 34, 750);
+    const lines = x.measureText(said).width <= w ? [said] : wrap(x, said, w, 2), lh = Math.round(size * 1.2);
+    const y = top + 150 + (lines.length - 1) * lh + 76;   // the table's header line
+    return { w, size, lines, lh, y, height: y + PAIRS.length * 52 + 104 };
+  }
+  function drawSlow(x, kit, S, c, said) {
+    const { P, F, M, v } = kit, L = slowLayout(x, kit, said);
+    const col = { t1: v("t1"), warn: v("warn"), bad: v("bad") }, fg = v("fg"), muted = v("muted");
+    x.textBaseline = "alphabetic"; x.textAlign = "left";
+    x.fillStyle = muted; x.font = `600 24px ${F}`; x.fillText(t("h_cmp"), P, kit.top + 90);
+    x.fillStyle = col[TONE[c.key]] || fg; x.font = `750 ${L.size}px ${F}`;
+    L.lines.forEach((line, i) => x.fillText(line, P, kit.top + 150 + i * L.lh));
+    // the table: network, IPv4, IPv6, difference (right-aligned numbers)
+    const cols = [P + 430, P + 680, P + L.w];
+    x.fillStyle = muted; x.font = `600 22px ${F}`; x.fillText(t("c_net"), P, L.y);
+    x.textAlign = "right"; ["IPv4", "IPv6", t("c_dif")].forEach((h, i) => x.fillText(h, cols[i], L.y));
+    PAIRS.forEach((p, i) => {
+      const a = S.r[p.id + 4], b = S.r[p.id + 6], y = L.y + 52 * (i + 1);
+      const okA = a && a.ok && a.rtt != null, okB = b && b.ok && b.rtt != null;
+      x.textAlign = "left"; x.fillStyle = fg; x.font = `600 26px ${F}`; x.fillText(p.name, P, y);
+      x.textAlign = "right"; x.font = `500 26px ${M}`;
+      x.fillStyle = okA ? fg : muted; x.fillText(!a ? "…" : okA ? timeOf(a.rtt) : "—", cols[0], y);
+      x.fillStyle = okB ? fg : muted; x.fillText(!b ? "…" : okB ? timeOf(b.rtt) : "—", cols[1], y);
+      if (okA && okB) {
+        const d = b.rtt - a.rtt, k = compare({ [p.id + 4]: a, [p.id + 6]: b }).key;
+        x.fillStyle = col[TONE[k]] && k !== "c_same" ? col[TONE[k]] : fg;
+        x.fillText((d > 0 ? "+" : d < 0 ? "−" : "±") + timeOf(Math.abs(d)), cols[2], y);
+      } else { x.fillStyle = muted; x.fillText("—", cols[2], y); }
+    });
+    x.textAlign = "left";
   }
 
   $("#rerun").onclick = start;
