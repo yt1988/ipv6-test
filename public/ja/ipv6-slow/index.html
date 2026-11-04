@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="IPv4 と IPv6 を同時に計測し、IPv6 が遅い理由を探る">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"IPv6 テスト · 1ms.dog","url":"https://ipv6.1ms.dog/ja/ipv6-slow/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"あなたの回線で IPv4 と IPv6 を比較：同じネットワークを両方で同時に計測します。IPv6 のほうが遅いか、その理由（経路、MTU、トンネル、ルーター）、IPv6 を無効にせずに直す方法がわかります。","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"IPv6 は IPv4 より遅いの？","acceptedAnswer":{"@type":"Answer","text":"IPv6 そのものは遅くありません。ヘッダーが少し大きいだけで、測れるほどの差にはなりません。差がつくのは経路です。プロバイダーの IPv6 は、回線が少ない・遠回り、他のネットワークとの IPv6 接続が少ない、あるいはトンネル経由ということがあります。そのため、IPv6 のほうが速い回線（NAT がなく、設備も新しい）もあれば、はっきり遅い回線もあります。どちらなのかは上の比較でわかります。"}},{"@type":"Question","name":"IPv6 が遅い・重いのはなぜ？","acceptedAnswer":{"@type":"Answer","text":"よくある原因を多い順に挙げます。 遠回りの経路：多くのプロバイダーでは、IPv6 で海外や他のネットワークへ出るときの接続点が IPv4 より少なく、数十ミリ秒余計にかかります。中国本土から海外への IPv6 はよく遠回りします。 MTU の問題：最大サイズの IPv6 パケットがどこかの区間（PPPoE、トンネル）で失われ、小さな通信は通るのに大きなページが止まります。上の「大きなパケット」のテストで確認できます。 トンネル：6to4 や Teredo の IPv6 は、遠くの中継サーバーを経由します。 ルーターやモデム：古いファームウェア、応答を捨ててしまう IPv6 ファイアウォール、自分の回線に IPv6 がないのに IPv6 アドレスを配っているルーター。 IPv4 しか扱わないプロキシや VPN を使っていて、IPv6 の通信だけ直接出ている。"}},{"@type":"Question","name":"遅い IPv6 を直すには？","acceptedAnswer":{"@type":"Answer","text":"まず時間帯を変えて測り直してください。夜だけ遅いなら、プロバイダー側の混雑です。「大きなパケット」のテストが失敗するなら、ルーターの WAN または IPv6 設定で MTU を下げます（PPPoE なら 1480 か 1452）。ファームウェアを更新し、ルーターとモデムを再起動します。それでも IPv6 がいつも大幅に遅いなら、上の数値をプロバイダーに伝えてください。経路を直せるのはプロバイダーです。それまでもあまり心配はいりません。IPv6 の接続が遅いとブラウザが自動で IPv4 に切り替えるので（Happy Eyeballs）、ほとんどのサイトは普通に使えます。"}},{"@type":"Question","name":"IPv6 は無効にしたほうがいい？","acceptedAnswer":{"@type":"Answer","text":"普通はおすすめしません。無効にすると IPv6 だけのサイトや一部のアプリ・ゲームが使えなくなり、Microsoft も IPv6 を無効にした Windows をサポートしていません。IPv6 が本当に遅いなら、IPv4 を優先する設定にして、IPv6 は必要なサービスのために残しましょう。Windows ではレジストリ値 DisabledComponents を 0x20 に設定します（Microsoft の「IPv6 より IPv4 を優先」）。Linux では /etc/gai.conf の「precedence ::ffff:0:0/96 100」の行のコメントを外します。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.d525246818.css">
+<link rel="stylesheet" href="/assets/app.6652f71c89.css">
 </head>
 <body>
 <div class="app">
@@ -99,6 +99,7 @@
         <div class="cr wait" data-p="ak"><span class="cn"><b>Akamai</b><span>世界各地</span></span><span class="cv" data-f="4"><b>…</b><i class="cb"><i></i></i></span><span class="cv" data-f="6"><b>…</b><i class="cb"><i></i></i></span><span class="cd"><b>…</b></span></div>
         <div class="cr wait" data-p="dp"><span class="cn"><b>DNSPod</b><span>中国本土</span></span><span class="cv" data-f="4"><b>…</b><i class="cb"><i></i></i></span><span class="cv" data-f="6"><b>…</b><i class="cb"><i></i></i></span><span class="cd"><b>…</b></span></div>
       </div>
+      <div class="he" id="he"><span class="he-k" data-i="he_k">IPv6 が応答しないとき、ブラウザーが待つ時間</span><p><b id="heV">…</b> <span id="heH"></span></p></div>
       
     </section>
 
@@ -125,7 +126,7 @@
 </div>
 
 <script type="application/json" id="data">{"lang":"ja","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/ja/","page":"slow"}</script>
-<script src="/assets/l.ja.6574776ed2.js"></script>
-<script src="/assets/app.da3e42160e.js"></script>
+<script src="/assets/l.ja.0eb36e3306.js"></script>
+<script src="/assets/app.c82a94745e.js"></script>
 </body>
 </html>

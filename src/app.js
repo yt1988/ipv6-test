@@ -85,7 +85,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   // every link to another tool ends with the external-link mark (1ms-shell docs/tool-contract.md, section 4)
   const EXT = '<svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
   const tool = n => { const m = document.querySelector(`meta[name="${n}"]`); return m ? m.content.replace(/\/+$/, "") + D.home : null; };
-  const IPQS = tool("ipqs"), EGRESS = tool("egress"), ASN = tool("asn"), WHO = tool("who"), SPEED = tool("speed"), FULL = tool("check");
+  const IPQS = tool("ipqs"), EGRESS = tool("egress"), ASN = tool("asn"), WHO = tool("who"), SPEED = tool("speed"), FULL = tool("check"), DNS = tool("dns");
   // the Connection Checkup runs this test among the others; not inside its own report
   if (!ONLY) {
     if (FULL && !CHECK) { $("#checkLink").href = FULL; $("#checkLink").hidden = false; }
@@ -99,6 +99,8 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     const v4 = R.v4, v6 = R.v6, split = !SHOWN && v4 && v6 && v4.ok && v6.ok && v4.asn && v6.asn && v4.asn !== v6.asn;
     $("#whoLink").hidden = !(WHO && final && split);
     $("#speedLink").hidden = !(SPEED && final && v6 && v6.ok && !split);
+    // whether your DNS resolvers can work over IPv6 is the DNS test's to find out (its own authoritative servers)
+    if (DNS) { $("#dnsLink").href = DNS; $("#dnsLink").hidden = !(final && !SHOWN); }
   }
 
   /* ---------- numbers ---------- */
@@ -114,9 +116,14 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   let R = {};          // results so far, by test id
   let C = {};          // IPv4 against IPv6 so far, by side id (cf4, cf6, …)
   let SHOWN = false;   // showing a shared result: no addresses
+  let MTU = {};        // the 1ms.dog server's view of the path, by family (pathMtu): not in shared results
 
   // a row: its state (ok, warn, bad, waiting) and its value; v6 tests only warn when there is no IPv6 at all
   function fillRow(id) {
+    fillTest(id);
+    if (id === "big") fillMtu();
+  }
+  function fillTest(id) {
     const row = ROW[id], x = R[id], b = row.querySelector(".tv b"), s = row.querySelector(".tv span");
     const noV6 = R.v6 && !R.v6.ok && R.lit6 && !R.lit6.ok;
     let st = "wait", main = "…", sub = "";
@@ -135,6 +142,58 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     }
     row.className = "tr " + st;
     b.textContent = main; s.textContent = sub || " ";
+  }
+
+  /* ---------- the path, from the 1ms.dog server (server/ in this repo, on the 1ms.dog VPS in Tokyo) ---------- */
+  // What the browser can't see: the MSS each family's SYN offered, the path MTU, and whether full-size packets vanish
+  // with no Packet Too Big coming back (a PMTU black hole: the TLS handshake to the server never finishes). A family
+  // that can't get through is asked about over the other one, by the address the tests above found.
+  const API = { 4: "https://v4.ipv6.1ms.dog:8445", 6: "https://v6.ipv6.1ms.dog:8445" }, HE = "https://he.ipv6.1ms.dog:8446";
+  function getJSON(url, ms, signal) {
+    const c = new AbortController(), stop = () => c.abort(), tm = setTimeout(stop, ms);
+    signal.addEventListener("abort", stop);
+    return fetch(url, { cache: "no-store", credentials: "omit", signal: c.signal }).then(r => r.ok ? r.json() : null).catch(() => null)
+      .finally(() => { clearTimeout(tm); signal.removeEventListener("abort", stop); });
+  }
+  async function pathMtu(signal) {
+    const ip = { 4: R.v4 && R.v4.ok && R.v4.ip, 6: R.v6 && R.v6.ok && R.v6.ip };
+    await Promise.all([6, 4].map(async fam => {
+      if (!ip[fam]) return;
+      let r = await getJSON(API[fam] + "/mss", 7000, signal);
+      const o = fam === 6 ? 4 : 6;
+      if (!r && ip[o]) r = await getJSON(API[o] + "/seen?ip=" + encodeURIComponent(ip[fam]), 5000, signal);
+      if (!signal.aborted && r && r.seen && r.mtu) MTU[fam] = r;
+    }));
+  }
+  // the large-packet row's second line: each family's path MTU; a black hole turns the row red and says so
+  function fillMtu() {
+    const row = ROW.big, s = row.querySelector(".tv span"), b = row.querySelector(".tv b");
+    const fams = [6, 4].filter(f => MTU[f]);
+    if (!fams.length) { s.removeAttribute("data-why"); return; }
+    const hole = fams.find(f => MTU[f].stalled);
+    if (hole) {
+      row.className = "tr bad"; b.textContent = t("r_hole");
+      s.textContent = t("mtu_hole", { fam: hole, mtu: MTU[hole].mtu });
+    } else s.textContent = t("mtu_line", { list: fams.map(f => `IPv${f} ${MTU[f].mtu}` + (MTU[f].ptb ? " " + t("mtu_ptb") : "")).join(" · ") });
+    s.dataset.why = t("mtu_why", { list: fams.map(f => `IPv${f} MSS ${MTU[f].mss}`).join(", ") });
+  }
+
+  // How long the browser makes you wait when IPv6 is broken (the slow page): he.ipv6.1ms.dog has both addresses and the
+  // server drops every IPv6 SYN to it, so the browser falls back to IPv4; the server times its first IPv6 SYN to its
+  // IPv4 one. The token ties the two: its /mss over IPv6 says which /64 the IPv6 SYNs come from.
+  const HE_TONE = ms => ms <= 400 ? "t1" : ms <= 1000 ? "warn" : "bad";
+  async function heWait(signal) {
+    const tok = Array.from(crypto.getRandomValues(new Uint8Array(12)), x => (x % 36).toString(36)).join("");
+    $("#heV").textContent = "…"; $("#heV").className = ""; $("#heH").textContent = "";
+    const v6 = await getJSON(API[6] + "/mss?t=" + tok, 6000, signal);
+    const r = v6 && await getJSON(HE + "/he?t=" + tok, 15000, signal);
+    if (signal.aborted) return;
+    let k = "he_fail", ms = 0;
+    if (!v6) k = ["c_no6", "c_none"].includes(compare(C).key) ? "he_no6" : "he_fail";
+    else if (r && r.fam === 4 && r.v6) { k = r.tries ? "he_wait" : "he_direct"; ms = r.wait; }
+    $("#heV").textContent = t(k === "he_wait" ? "he_ms" : k, { ms: fmtMs(ms) });
+    $("#heV").className = k === "he_wait" ? HE_TONE(ms) : "";
+    $("#heH").textContent = k === "he_wait" ? t("he_" + HE_TONE(ms)) : k === "he_direct" ? t("he_direct_h") : "";
   }
 
   // an address line in the hero: the address, then what kind it is, its network, country and round trip
@@ -240,7 +299,8 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     if (RECV) { RECV.then(r => r && r.remove()); RECV = null; history.replaceState(null, "", D.paths[D.lang]); }
     if (RUN) RUN.abort();
     const ctl = RUN = new AbortController();
-    R = {}; C = {}; SHOWN = false; LAST = null; FAILED = false; done = 0; t0 = performance.now();
+    R = {}; C = {}; MTU = {}; SHOWN = false; LAST = null; FAILED = false; done = 0; t0 = performance.now();
+    if (ONLY) $("#he").hidden = !!CHECK;
     const ME = ONLY ? null : me();
     $("#shareBtn").hidden = true; $("#rerun").disabled = true; $("#prog").classList.remove("end");
     $("#verdict").textContent = t("v_wait"); $("#verdict").className = "verdict"; $("#probs").innerHTML = "&nbsp;";
@@ -272,8 +332,19 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       hero(false);
     })]);
     if (ctl.signal.aborted) return;
-    RUN = null;
     if (!ONLY) { hero(true); links(true); }
+    // the 1ms.dog server's view, once the tests are in (it needs their addresses, and has the line to itself); not
+    // inside the checkup, which waits for the result
+    if (!CHECK && ONLY) await heWait(ctl.signal);
+    else if (!CHECK) {
+      await pathMtu(ctl.signal);
+      if (ctl.signal.aborted) return;
+      fillRow("big");
+      const h = [6, 4].find(f => MTU[f] && MTU[f].stalled), p = $("#probs");
+      if (h) { p.textContent = (verdict(R).probs.length ? p.textContent + " " : "") + t("p_hole", { fam: h }); p.title = p.textContent; }
+    }
+    if (ctl.signal.aborted) return;
+    RUN = null;
     $("#prog").classList.add("end");
     $("#progTxt").textContent = t("done", { s: ((performance.now() - t0) / 1000).toFixed(1) });
     $("#rerun").disabled = false;
@@ -318,6 +389,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     C = Object.fromEntries(SIDES.filter(x => x.id in S.r).map(x => [x.id, S.r[x.id]]));
     SHOWN = true;
     if (!ONLY) { IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(true); links(true); }
+    else $("#he").hidden = true;   // not part of a shared result
     fillCmp();
     // the shared banner (1ms-shell assets/share/): whose result this is, and the visitor's own test
     RECV = import("/assets/share/share.js?v=8").then(m => m.received({ lang: D.lang, ts: S.ts, at: $(".hero"), test: start })).catch(() => null);

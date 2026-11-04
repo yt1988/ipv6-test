@@ -163,6 +163,14 @@ svg.ext[viewBox] { width: .95em; height: .95em; flex: none; }
 .cmp-v { display: flex; flex-direction: column; align-items: flex-end; text-align: right; gap: 2px; min-height: 44px; font-size: 13px; color: var(--muted); line-height: 1.5; }
 .cmp-v b { font-size: 15px; font-weight: 650; color: var(--fg); }
 .cmp-v b.t1 { color: var(--t1); } .cmp-v b.warn { color: var(--warn); } .cmp-v b.bad { color: var(--bad); }
+/* the slow page: how long the browser waits for a broken IPv6 (the 1ms.dog server's reading), under the table */
+.he { display: grid; gap: 2px; padding: 10px 0 4px; border-top: 1px solid var(--line); line-height: 1.5; }
+.he[hidden] { display: none; }
+.he-k { font-size: 12.5px; color: var(--muted); }
+.he p { margin: 0; font-size: 13px; color: var(--muted); }
+.he b { font-size: 15px; font-weight: 650; color: var(--fg); }
+.he b.t1 { color: var(--t1); } .he b.warn { color: var(--warn); } .he b.bad { color: var(--bad); }
+.tv span[data-why] { cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; }
 .cr { display: grid; grid-template-columns: minmax(0, 1fr) 160px 160px 96px; gap: 14px; align-items: center; min-height: 54px; border-top: 1px solid var(--line); }
 .cr.ch { min-height: 28px; border-top: 0; font-size: 12px; color: var(--muted); }
 .cr.ch span:not(:first-child) { text-align: right; }

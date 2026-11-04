@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="IPv4 and IPv6 timed side by side, and why IPv6 can be slow">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"IPv6 Test · 1ms.dog","url":"https://ipv6.1ms.dog/ipv6-slow/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Compare IPv4 and IPv6 on your connection: the same networks timed over both at once. See whether IPv6 is slower, why (routing, MTU, tunnels, the router) and how to fix it without turning IPv6 off.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is IPv6 slower than IPv4?","acceptedAnswer":{"@type":"Answer","text":"Not in itself. IPv6 headers are slightly bigger, but the difference is too small to measure. What matters is the route: your provider may carry IPv6 over fewer or longer links, connect to fewer networks over IPv6, or send it through a tunnel. So on some networks IPv6 is faster (no NAT, newer gear), and on others it's clearly slower. The comparison above shows which one you have."}},{"@type":"Question","name":"Why does IPv6 feel slow or laggy?","acceptedAnswer":{"@type":"Answer","text":"The usual causes, most common first: Longer routes: many providers send IPv6 abroad or to other networks through fewer exchange points than IPv4, which adds tens of milliseconds. From mainland China, international IPv6 often takes a detour. A broken MTU: full-size IPv6 packets get lost on some link (PPPoE, tunnels), so small requests work and big pages stall. The large-packet test above checks for this. Tunnels: 6to4 and Teredo route IPv6 through relays that may be far away. The router or modem: old firmware, an IPv6 firewall that drops replies, or a router that hands out IPv6 addresses when its own uplink has none. A proxy or VPN that carries only IPv4, while IPv6 traffic goes out directly."}},{"@type":"Question","name":"How do I fix slow IPv6?","acceptedAnswer":{"@type":"Answer","text":"Test again at a different time: if it's only slow in the evening, your provider's network is congested. If the large-packet test fails, lower the MTU in the router's WAN or IPv6 settings (try 1480 or 1452 on PPPoE). Update the firmware and restart the router and modem. If IPv6 is much slower all the time, send the numbers above to your provider: the routing is theirs to fix. Until then, don't worry too much: browsers fall back to IPv4 when IPv6 is slow to connect (Happy Eyeballs), so most sites keep working."}},{"@type":"Question","name":"Should I turn IPv6 off?","acceptedAnswer":{"@type":"Answer","text":"Usually not. Turning it off breaks IPv6-only sites and some apps and games, and Microsoft doesn't support Windows with IPv6 disabled. If your IPv6 really is worse, make IPv4 the preferred one instead and keep IPv6 for what needs it: on Windows, set the registry value DisabledComponents to 0x20 (Microsoft's \"prefer IPv4 over IPv6\"); on Linux, uncomment \"precedence ::ffff:0:0/96 100\" in /etc/gai.conf."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.d525246818.css">
+<link rel="stylesheet" href="/assets/app.6652f71c89.css">
 </head>
 <body>
 <div class="app">
@@ -99,6 +99,7 @@
         <div class="cr wait" data-p="ak"><span class="cn"><b>Akamai</b><span>Worldwide</span></span><span class="cv" data-f="4"><b>…</b><i class="cb"><i></i></i></span><span class="cv" data-f="6"><b>…</b><i class="cb"><i></i></i></span><span class="cd"><b>…</b></span></div>
         <div class="cr wait" data-p="dp"><span class="cn"><b>DNSPod</b><span>Mainland China</span></span><span class="cv" data-f="4"><b>…</b><i class="cb"><i></i></i></span><span class="cv" data-f="6"><b>…</b><i class="cb"><i></i></i></span><span class="cd"><b>…</b></span></div>
       </div>
+      <div class="he" id="he"><span class="he-k" data-i="he_k">When IPv6 doesn't answer, your browser waits</span><p><b id="heV">…</b> <span id="heH"></span></p></div>
       
     </section>
 
@@ -125,7 +126,7 @@
 </div>
 
 <script type="application/json" id="data">{"lang":"en","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/","page":"slow"}</script>
-<script src="/assets/l.en.2ac72b5d14.js"></script>
-<script src="/assets/app.da3e42160e.js"></script>
+<script src="/assets/l.en.fa745335a1.js"></script>
+<script src="/assets/app.c82a94745e.js"></script>
 </body>
 </html>

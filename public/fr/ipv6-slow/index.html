@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="IPv4 et IPv6 mesurés côte à côte, et pourquoi IPv6 peut être lent">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Test IPv6 · 1ms.dog","url":"https://ipv6.1ms.dog/fr/ipv6-slow/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Comparez IPv4 et IPv6 sur votre connexion : les mêmes réseaux mesurés par les deux en même temps. Voyez si IPv6 est plus lent, pourquoi (routage, MTU, tunnels, routeur) et comment corriger sans désactiver IPv6.","inLanguage":"fr","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"IPv6 est-il plus lent qu’IPv4 ?","acceptedAnswer":{"@type":"Answer","text":"Pas en soi. Les en-têtes IPv6 sont un peu plus gros, mais la différence est trop faible pour se mesurer. Ce qui compte, c’est la route : votre opérateur peut faire passer l’IPv6 par des liens moins nombreux ou plus longs, se connecter à moins de réseaux en IPv6, ou l’envoyer dans un tunnel. Sur certains réseaux, IPv6 est donc plus rapide (pas de NAT, équipements plus récents), et sur d’autres nettement plus lent. La comparaison ci-dessus vous dit dans quel cas vous êtes."}},{"@type":"Question","name":"Pourquoi IPv6 rame-t-il ?","acceptedAnswer":{"@type":"Answer","text":"Les causes habituelles, des plus fréquentes aux plus rares : Des routes plus longues : beaucoup d’opérateurs envoient l’IPv6 vers l’étranger ou les autres réseaux par moins de points d’échange que l’IPv4, ce qui ajoute des dizaines de millisecondes. Depuis la Chine continentale, l’IPv6 international fait souvent un détour. Un MTU cassé : les paquets IPv6 de taille maximale se perdent sur un lien (PPPoE, tunnels), donc les petites requêtes passent et les grosses pages bloquent. Le test des gros paquets ci-dessus vérifie justement cela. Les tunnels : 6to4 et Teredo font passer l’IPv6 par des relais parfois lointains. La box ou le routeur : un firmware ancien, un pare-feu IPv6 qui jette les réponses, ou un routeur qui distribue des adresses IPv6 alors que sa propre ligne n’en a pas. Un proxy ou un VPN qui ne transporte que l’IPv4, pendant que le trafic IPv6 sort en direct."}},{"@type":"Question","name":"Comment réparer un IPv6 lent ?","acceptedAnswer":{"@type":"Answer","text":"Relancez le test à un autre moment : si c’est lent seulement le soir, le réseau de votre opérateur est saturé. Si le test des gros paquets échoue, baissez le MTU dans les réglages WAN ou IPv6 du routeur (essayez 1480 ou 1452 en PPPoE). Mettez à jour le firmware et redémarrez la box ou le routeur. Si IPv6 est toujours beaucoup plus lent, envoyez les chiffres ci-dessus à votre opérateur : c’est à lui de corriger le routage. En attendant, pas de panique : les navigateurs passent en IPv4 quand IPv6 tarde à se connecter (Happy Eyeballs), donc la plupart des sites continuent de marcher."}},{"@type":"Question","name":"Faut-il désactiver IPv6 ?","acceptedAnswer":{"@type":"Answer","text":"En général, non. Le désactiver casse les sites uniquement IPv6 et certaines applis et jeux, et Microsoft ne prend pas en charge Windows avec IPv6 désactivé. Si votre IPv6 est vraiment moins bon, donnez plutôt la priorité à IPv4 et gardez IPv6 pour ce qui en a besoin : sous Windows, mettez la valeur de registre DisabledComponents à 0x20 (le « préférer IPv4 à IPv6 » de Microsoft) ; sous Linux, décommentez « precedence ::ffff:0:0/96 100 » dans /etc/gai.conf."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.d525246818.css">
+<link rel="stylesheet" href="/assets/app.6652f71c89.css">
 </head>
 <body>
 <div class="app">
@@ -99,6 +99,7 @@
         <div class="cr wait" data-p="ak"><span class="cn"><b>Akamai</b><span>Monde entier</span></span><span class="cv" data-f="4"><b>…</b><i class="cb"><i></i></i></span><span class="cv" data-f="6"><b>…</b><i class="cb"><i></i></i></span><span class="cd"><b>…</b></span></div>
         <div class="cr wait" data-p="dp"><span class="cn"><b>DNSPod</b><span>Chine continentale</span></span><span class="cv" data-f="4"><b>…</b><i class="cb"><i></i></i></span><span class="cv" data-f="6"><b>…</b><i class="cb"><i></i></i></span><span class="cd"><b>…</b></span></div>
       </div>
+      <div class="he" id="he"><span class="he-k" data-i="he_k">Quand IPv6 ne répond pas, votre navigateur attend</span><p><b id="heV">…</b> <span id="heH"></span></p></div>
       
     </section>
 
@@ -125,7 +126,7 @@
 </div>
 
 <script type="application/json" id="data">{"lang":"fr","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/fr/","page":"slow"}</script>
-<script src="/assets/l.fr.cb17bd21d6.js"></script>
-<script src="/assets/app.da3e42160e.js"></script>
+<script src="/assets/l.fr.9f4aab66c7.js"></script>
+<script src="/assets/app.c82a94745e.js"></script>
 </body>
 </html>

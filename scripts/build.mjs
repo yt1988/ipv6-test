@@ -141,8 +141,10 @@ export async function build({ check = false } = {}) {
       const langOpts = langs.map(([l]) => `<option value="${l}"${l === lang ? " selected" : ""}>${esc(I[l].name)}</option>`).join("");
       const paths = Object.fromEntries(langs.map(([l, sl]) => [l, at(sl)]));
 
-      // the slow page tests only IPv4 against IPv6: the score, addresses and six tests are the home page's (between <!--full--> marks)
-      const html = (pg.id === "home" ? tpl.replace(/<!--\/?full-->/g, "") : tpl.replace(/<!--full-->[\s\S]*?<!--\/full-->/g, ""))
+      // the slow page tests only IPv4 against IPv6: the score, addresses and six tests are the home page's (between
+      // <!--full--> marks); how long the browser waits for a broken IPv6 is the slow page's alone (<!--slow--> marks)
+      const only = (keep, drop) => tpl.replace(new RegExp(`<!--${drop}-->[\\s\\S]*?<!--/${drop}-->`, "g"), "").replace(new RegExp(`<!--/?${keep}-->`, "g"), "");
+      const html = (pg.id === "home" ? only("full", "slow") : only("slow", "full"))
         .replace(/(<(\w+)\b[^>]*\sdata-i="(\w+)"[^>]*>)([^<]*)(<\/\2>)/g, (m, open, tag, k, inner, close) => open + esc(T(k)) + close)
         .replace(/\{\{a:(\w+)\}\}/g, (m, k) => esc(T(k)))   // translated attribute values (aria-label, tooltips)
         .replace("{{lang}}", lang).replace("{{pathsAttr}}", esc(JSON.stringify(paths))).replace("{{rootAttr}}", slug ? "" : " data-root")
