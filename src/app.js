@@ -309,7 +309,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     SHOWN = true;
     IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(true); links(true); fillCmp();
     // the shared banner (1ms-shell assets/share/): whose result this is, and the visitor's own test
-    RECV = import("/assets/share/share.js?v=6").then(m => m.received({ lang: D.lang, ts: S.ts, at: $(".hero"), test: start })).catch(() => null);
+    RECV = import("/assets/share/share.js?v=7").then(m => m.received({ lang: D.lang, ts: S.ts, at: $(".hero"), test: start })).catch(() => null);
     $("#prog").classList.add("end"); $("#progTxt").innerHTML = "&nbsp;";
     $("#rerun").disabled = false;
     LAST = S; $("#shareBtn").hidden = false;
@@ -319,7 +319,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   $("#shareBtn").onclick = async () => {
     if (!LAST) return;
     const S = LAST, res = verdict(S.r);
-    const { share } = await import("/assets/share/share.js?v=6");
+    const { share } = await import("/assets/share/share.js?v=7");
     share({
       lang: D.lang, name: t("app_name"), file: "ipv6-test",
       show: ["country"], never: ["ip"], canShow: !!S.cc,
