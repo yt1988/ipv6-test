@@ -1,0 +1,11 @@
+# /opt/1ms/ipv6/he.nft: loaded by 1ms-ipv6.service before it starts, removed when it stops. Its own table only
+# (1ms-shell docs/processes.md): every IPv6 SYN to port 8446 is dropped, so a browser asking he.ipv6.1ms.dog tries
+# IPv6, hears nothing, and falls back to IPv4. Nothing else on the machine is touched.
+table inet 1ms_ipv6
+delete table inet 1ms_ipv6
+table inet 1ms_ipv6 {
+	chain input {
+		type filter hook input priority -10; policy accept;
+		meta nfproto ipv6 tcp dport 8446 tcp flags & (fin | syn | rst | ack) == syn drop
+	}
+}
