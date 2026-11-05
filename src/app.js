@@ -196,6 +196,11 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     $("#heH").textContent = k === "he_wait" ? t("he_" + HE_TONE(ms)) : k === "he_direct" ? t("he_direct_h") : "";
   }
 
+  // The address goes up the moment its test answers (its network and country follow when looked up, on the line under
+  // it, which keeps its height meanwhile); written again only when it changes, so the same address isn't a new paint
+  const ipHTML = ip => `<code>${esc(ip)}</code>`;
+  const setHTML = (el, html) => { if (el.innerHTML !== html) el.innerHTML = html; };
+
   // an address line in the hero: the address, then what kind it is, its network, country and round trip
   function fillAddr(fam) {
     const x = fam === 6 ? R.v6 : R.v4, ip = $("#ip" + fam), m = $("#m" + fam);
@@ -203,7 +208,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       // a shared result has no address: what the test said about it instead
       ip.innerHTML = x && x.ok ? `<span class="no">${esc(t("r_ok"))}</span>` : x ? `<span class="no">${esc(t(fam === 6 ? "none6" : "none4"))}</span>` : "";
     } else if (!x) { ip.innerHTML = '<i class="skl"></i>'; m.innerHTML = "&nbsp;"; return; }
-    else ip.innerHTML = x.ok && x.ip ? `<code>${esc(x.ip)}</code>` : `<span class="no">${esc(t(fam === 6 ? "none6" : "none4"))}</span>`;
+    else setHTML(ip, x.ok && x.ip ? ipHTML(x.ip) : `<span class="no">${esc(t(fam === 6 ? "none6" : "none4"))}</span>`);
     const bits = [];
     if (x && x.ok) {
       const k = fam === 6 ? x.kind || kind6(x.ip) : "";
@@ -317,6 +322,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     await Promise.all([...sides, ...(ONLY ? [] : TESTS).map(async test => {
       const x = await runTest(test, { signal: ctl.signal });
       if (ctl.signal.aborted) return;
+      if ((test.id === "v4" || test.id === "v6") && x.ok && x.ip) setHTML($("#ip" + test.fam), ipHTML(x.ip));
       if ((test.id === "v4" || test.id === "v6") && x.ok && !x.asn) {
         const m = await ME;
         const n = m && m.asn && sameIp(m.ip, x.ip) ? { asn: m.asn, cc: m.country || "" } : await network(test.fam, x.ip, ctl.signal);
