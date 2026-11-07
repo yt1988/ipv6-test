@@ -1,4 +1,4 @@
-// 1ms-ipv6: the server side of ipv6.1ms.dog, on the 1ms.dog VPS (1ms-shell docs/processes.md, "专用服务器").
+// ipv6-server: the server side of the IPv6 test (ipv6.1ms.dog runs one; AGENTS.md says how to run your own).
 //
 //	:8445  v4.ipv6.1ms.dog (A only) and v6.ipv6.1ms.dog (AAAA only)
 //	       GET /mss?t=<token>  this connection: the MSS the visitor's SYN offered, the path MTU the kernel holds for the

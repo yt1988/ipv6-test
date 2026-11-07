@@ -59,6 +59,8 @@ src/i18n/*.mjs      10 种语言
 scripts/build.mjs   生成 public/（页面、资源、CSP）
 scripts/assets.mjs  生成 public/og/*.png 预览图
 scripts/verify.mjs  核实每个测试地址：A/AAAA 记录、CORS、返回内容
+server/            可选的服务端：路径 MTU、PMTU 黑洞、Happy Eyeballs 回退等待（见 AGENTS.md）
+docs/design.md      为什么这样设计，以及实测结论
 ```
 
 ## 运行和部署
