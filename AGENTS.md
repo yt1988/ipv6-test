@@ -64,13 +64,22 @@ One static Go binary under systemd on any Linux VPS with a public IPv4 and IPv6 
 and `TCP_INFO`, and opens a packet socket). It writes nothing to disk and keeps no access log; every reading stays in
 memory for a minute at most. About 6 MB of memory. What each endpoint does is at the top of `server/main.go`.
 
-1. **Build** (Go 1.24 or newer; the machine needs no Go):
+1. **Get the binary.** Every change to `server/` merged into `main` is built by GitHub Actions
+   (`.github/workflows/server.yml`: linux/amd64, static, no cgo) and published as a Release, tag
+   `server-<short commit>`, the newest marked latest, with `he.nft`, the unit and `SHA256SUMS`. Download and check
+   (the machine needs no Go):
+   ```bash
+   base=https://github.com/yt1988/ipv6-test/releases/latest/download
+   for f in ipv6-server he.nft 1ms-ipv6.service SHA256SUMS; do curl -fsSLO "$base/$f"; done
+   sha256sum -c SHA256SUMS   # every line must say OK
+   ```
+   A given version: `https://github.com/yt1988/ipv6-test/releases/download/server-<short commit>/<file>`. Or build
+   it yourself (Go 1.24 or newer):
    ```bash
    cd server
    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o ipv6-server .
    ```
-   `.github/workflows/server.yml` does the same on every change to `server/` and keeps the binary as the run's
-   artifact.
+   When replacing a running binary, keep the old one (`mv ipv6-server ipv6-server.prev`) so you can switch back.
 2. **Three DNS names, pointing straight at the server** (not through a proxy or CDN: the server must see the
    visitor's own TCP connection): `v4.<your-domain>` with only an A record, `v6.<your-domain>` with only an AAAA
    record, `he.<your-domain>` with both.

@@ -1,6 +1,8 @@
-# The 1ms-ipv6 server (server/): vet, test and build it for the 1ms.dog VPS (linux/amd64, static) on every change to
-# it, and keep the binary as the run's artifact. Deploying is by hand: the binary goes up over sftp
-# (server/README.md); nothing here can reach the machine.
+# The server (server/): vet, test and build it (linux/amd64, static, no cgo) on every change to it. A change merged
+# into main is also published as a GitHub Release, tag server-<short commit>, marked latest, with the binary, its
+# nftables table, the unit and SHA256SUMS, so a new machine downloads it instead of building it:
+#   https://github.com/yt1988/ipv6-test/releases/latest/download/ipv6-server
+# Installing is by hand (AGENTS.md, "Run the server"); nothing here can reach a server.
 name: server
 on:
   push:
@@ -12,6 +14,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     defaults:
       run:
         working-directory: server
@@ -24,7 +28,7 @@ jobs:
       - run: go vet ./...
       - run: go test ./...
       - run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o ipv6-server .
-      - run: sha256sum ipv6-server
+      - run: sha256sum ipv6-server he.nft 1ms-ipv6.service > SHA256SUMS && cat SHA256SUMS
       - uses: actions/upload-artifact@v4
         with:
           name: ipv6-server
@@ -32,3 +36,13 @@ jobs:
             server/ipv6-server
             server/he.nft
             server/1ms-ipv6.service
+            server/SHA256SUMS
+      - name: Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="server-${GITHUB_SHA::7}"
+          gh release create "$tag" ipv6-server he.nft 1ms-ipv6.service SHA256SUMS \
+            --target "$GITHUB_SHA" --latest --title "ipv6-server ${GITHUB_SHA::7}" \
+            --notes "The IPv6 test's server, built from ${GITHUB_SHA::7} (linux/amd64, static). How to download, check and install it: AGENTS.md, \"Run the server\"."

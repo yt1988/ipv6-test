@@ -15,6 +15,8 @@ readings stay in memory for a minute at most, to answer the page that asked.
 
 How to build, install and check it on your own server: [AGENTS.md](../AGENTS.md#run-the-server).
 [`.github/workflows/server.yml`](../.github/workflows/server.yml) vets, tests and builds it on every change here
-(linux/amd64, static, no cgo) and keeps `ipv6-server`, `he.nft` and `1ms-ipv6.service` as the run's artifact.
+(linux/amd64, static, no cgo); merged into `main`, it publishes `ipv6-server`, `he.nft`, `1ms-ipv6.service` and
+`SHA256SUMS` as a Release (tag `server-<short commit>`, latest at
+`https://github.com/yt1988/ipv6-test/releases/latest/download/ipv6-server`).
 `1ms-ipv6.service` and `he.nft` are the files ipv6.1ms.dog runs; change their paths, user, certificate directories
 and table name for yours.
