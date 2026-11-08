@@ -144,6 +144,14 @@ async function ask(h, signal) {
   return { ms, ...got };
 }
 
+// The first promise to fulfil, rejecting only when all of them reject: Promise.any, which Safari before 14 and Chrome
+// before 85 don't have (the page runs there too: the build targets ES2019)
+const firstOf = ps => new Promise((ok, fail) => {
+  let left = ps.length;
+  if (!left) fail(new Error("none"));
+  ps.forEach(p => Promise.resolve(p).then(ok, () => { if (!--left) fail(new Error("all failed")); }));
+});
+
 // A test: the first host to answer. Its connection is warm now, so three more requests to it time the round trip
 // (the smallest of the three); the first answer included DNS, TCP and TLS.
 // → { ok, ms, rtt, host, ip, fam, asn, cc } or { ok: false, err: "timeout" | "fail" }
@@ -152,7 +160,7 @@ export async function runTest(test, { signal, rtt = true } = {}) {
   signal && signal.addEventListener("abort", stop);
   const timer = setTimeout(() => ctl.abort(), TIMEOUT);
   try {
-    const won = await Promise.any(test.hosts.map(h => ask(h, ctl.signal).then(r => ({ h, r }))));
+    const won = await firstOf(test.hosts.map(h => ask(h, ctl.signal).then(r => ({ h, r }))));
     clearTimeout(timer);
     ctl.abort();   // the others lose
     const { h, r } = won, out = { ok: true, ms: r.ms, host: new URL(h.url, location.href).host, ip: r.ip || "", fam: famOf(r.ip) || test.fam, asn: r.asn || 0, cc: r.cc || "" };
@@ -177,11 +185,15 @@ export async function runTest(test, { signal, rtt = true } = {}) {
 // or didn't answer.
 export async function network(fam, ip, signal) {
   const h = TESTS.find(t => t.id === "v" + fam).hosts.find(x => x.read === "radar");
+  // (its own controller, not AbortSignal.any / .timeout, which older browsers don't have)
+  const ctl = new AbortController(), stop = () => ctl.abort(), timer = setTimeout(stop, 5000);
+  signal && signal.addEventListener("abort", stop);
   try {
-    const res = await fetch(h.url, { cache: "no-store", credentials: "omit", referrerPolicy: "no-referrer", signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(5000)]) : AbortSignal.timeout(5000) });
+    const res = await fetch(h.url, { cache: "no-store", credentials: "omit", referrerPolicy: "no-referrer", signal: ctl.signal });
     const n = res.ok ? readAnswer("radar", await res.text()) : null;
     return n && n.ip === ip ? n : null;
   } catch (e) { return null; }
+  finally { clearTimeout(timer); signal && signal.removeEventListener("abort", stop); }
 }
 
 // ---------- the score ----------
