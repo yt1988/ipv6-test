@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="IPv4 und IPv6 nebeneinander gemessen, und warum IPv6 langsam sein kann">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"IPv6-Test · 1ms.dog","url":"https://ipv6.1ms.dog/de/ipv6-slow/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Vergleiche IPv4 und IPv6 an deinem Anschluss: dieselben Netze, über beide gleichzeitig gemessen. Sieh, ob IPv6 langsamer ist, warum (Routing, MTU, Tunnel, Router) und wie du es behebst, ohne IPv6 abzuschalten.","inLanguage":"de","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Ist IPv6 an sich langsamer als IPv4?","acceptedAnswer":{"@type":"Answer","text":"Nein. IPv6-Header sind etwas größer, aber der Unterschied ist zu klein, um ihn zu messen. Entscheidend ist der Weg: Dein Anbieter führt IPv6 vielleicht über weniger oder längere Leitungen, ist über IPv6 mit weniger Netzen verbunden oder schickt es durch einen Tunnel. Deshalb ist IPv6 in manchen Netzen schneller (kein NAT, neuere Technik) und in anderen deutlich langsamer. Der Vergleich oben zeigt, was bei dir zutrifft."}},{"@type":"Question","name":"Warum ist IPv6 langsam oder laggt?","acceptedAnswer":{"@type":"Answer","text":"Die üblichen Ursachen, die häufigsten zuerst: Längere Wege: Viele Anbieter leiten IPv6 ins Ausland oder zu anderen Netzen über weniger Austauschpunkte als IPv4, das kostet Dutzende Millisekunden. Aus Festlandchina nimmt internationales IPv6 oft einen Umweg. Eine kaputte MTU: Volle IPv6-Pakete gehen auf einer Teilstrecke verloren (PPPoE, Tunnel), kleine Anfragen klappen, große Seiten hängen. Der Test mit großen Paketen oben prüft genau das. Tunnel: 6to4 und Teredo leiten IPv6 über Relais, die weit weg sein können. Router oder Modem: alte Firmware, eine IPv6-Firewall, die Antworten verwirft, oder ein Router, der IPv6-Adressen verteilt, obwohl seine eigene Leitung keins hat. Ein Proxy oder VPN, das nur IPv4 weiterleitet, während IPv6 direkt rausgeht."}},{"@type":"Question","name":"Wie behebe ich langsames IPv6?","acceptedAnswer":{"@type":"Answer","text":"Teste zu einer anderen Tageszeit: Ist es nur abends langsam, ist das Netz deines Anbieters überlastet. Scheitert der Test mit großen Paketen, senk die MTU in den WAN- oder IPv6-Einstellungen des Routers (bei PPPoE 1480 oder 1452 probieren). Aktualisiere die Firmware und starte Router und Modem neu. Ist IPv6 ständig viel langsamer, schick die Werte oben an deinen Anbieter: Das Routing muss er beheben. Bis dahin keine Sorge: Browser weichen auf IPv4 aus, wenn IPv6 sich langsam verbindet (Happy Eyeballs), die meisten Seiten funktionieren also weiter."}},{"@type":"Question","name":"Soll ich IPv6 abschalten?","acceptedAnswer":{"@type":"Answer","text":"Meistens nicht. Ohne IPv6 gehen reine IPv6-Seiten und manche Apps und Spiele nicht mehr, und Microsoft unterstützt Windows mit abgeschaltetem IPv6 nicht. Wenn dein IPv6 wirklich schlechter ist, bevorzuge stattdessen IPv4 und lass IPv6 für das, was es braucht: Unter Windows setzt du den Registrierungswert DisabledComponents auf 0x20 (Microsofts „IPv4 gegenüber IPv6 bevorzugen“); unter Linux entfernst du in /etc/gai.conf das Kommentarzeichen vor „precedence ::ffff:0:0/96 100“."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.6652f71c89.css">
+<link rel="stylesheet" href="/assets/app.2b7be23663.css">
 </head>
 <body>
 <div class="app">
@@ -85,6 +85,7 @@
         <span class="prog-t" id="progTxt">&nbsp;</span>
         <button class="btn pri" id="rerun" type="button" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v3h-3"/></svg><span data-i="rerun">Neu testen</span></button>
       </div>
+      <p class="rp-line" id="rpRow" hidden><button class="rp-btn" id="rpBtn" type="button" data-i="rp_btn">Ergebnis falsch?</button></p>
     </section>
 
     <section class="cmp card" aria-labelledby="cmpT">
@@ -126,7 +127,7 @@
 </div>
 
 <script type="application/json" id="data">{"lang":"de","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/de/","page":"slow"}</script>
-<script src="/assets/l.de.8b0816be6b.js"></script>
-<script src="/assets/app.2bd15dbd81.js"></script>
+<script src="/assets/l.de.0426bbdf29.js"></script>
+<script src="/assets/app.73cf41e4d7.js"></script>
 </body>
 </html>

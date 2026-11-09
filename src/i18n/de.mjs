@@ -10,6 +10,7 @@ export default {
   lang_label: "Sprache", faq_h: "Hilfe", a_logo: "1ms.dog", a_theme: "Design", a_close: "Schließen", a_prev: "Zurück", a_next: "Weiter",
   th_system: "Design: wie das System", th_light: "Design: hell", th_dark: "Design: dunkel",
   rerun: "Neu testen", copy: "Kopieren", copied: "Kopiert",
+  rp_btn: "Ergebnis falsch?", rp_pre: "Das Ergebnis stimmt nicht:",
   score_k: "IPv6-Note",
   score_tip: "Von 10:\n4  reine IPv6-Seiten gehen auf\n2  große IPv6-Pakete kommen durch\n2  Dual-Stack-Seiten öffnen ohne Warten\n1  IPv6 geht ohne DNS\n1  dein Browser wählt IPv6\n−1 IPv6 braucht über 3 s für die Antwort",
   progress: "{n} / {of}", done: "Fertig in {s} s",

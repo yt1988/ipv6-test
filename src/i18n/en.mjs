@@ -11,6 +11,7 @@ export default {
   lang_label: "Language", faq_h: "Help", a_logo: "1ms.dog", a_theme: "Theme", a_close: "Close", a_prev: "Previous", a_next: "Next",
   th_system: "Theme: system", th_light: "Theme: light", th_dark: "Theme: dark",
   rerun: "Test again", copy: "Copy", copied: "Copied",
+  rp_btn: "Result wrong?", rp_pre: "The result looks wrong:",
   score_k: "IPv6 score",
   score_tip: "Out of 10:\n4  IPv6-only sites open\n2  large IPv6 packets get through\n2  dual-stack sites open without a wait\n1  IPv6 works without DNS\n1  your browser picks IPv6\n−1 IPv6 takes over 3 s to answer",
   progress: "{n} / {of}", done: "Done in {s} s",

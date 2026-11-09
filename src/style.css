@@ -66,6 +66,11 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
 .bar .btn.sm { color: var(--muted); }
 .bar .btn.sm:hover:not(:disabled) { color: var(--fg); border-color: var(--ink); }
 
+/* reporting a problem: a quiet entry under the result, shown only when the shell's dialog is there (src/app.js) */
+.rp-line { margin: -6px 0 14px; text-align: right; }
+.rp-btn { border: 0; background: none; padding: 0; font: 500 12.5px var(--f-ui); color: var(--muted); cursor: pointer; }
+.rp-btn:hover { color: var(--ink); text-decoration: underline; }
+
 /* the tests */
 .tests { padding: 18px 22px 10px; display: flex; flex-direction: column; gap: 8px; }
 .tests h2 { font-size: 16px; letter-spacing: -.01em; }
@@ -121,6 +126,7 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
   .sum-r { width: 100%; padding-top: 0; }
   .verdict, .probs { text-align: center; }
   .vrow { justify-content: center; }
+  .rp-line { text-align: center; }
   .score { width: 132px; height: 132px; }
   .score-n b { font-size: 44px; }
   /* at 12px the capitals of the long labels (Оценка IPv6, IPv6-Punkte) reach the smaller ring */
@@ -150,6 +156,7 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
   .addr-m .q, .addr-m .q0 { padding: 7px 0; margin: -7px 0; }
   .links { row-gap: 0; }
   .links a { min-height: 32px; }
+  .rp-btn { min-height: 32px; }
 }
 svg.ext[viewBox] { width: .95em; height: .95em; flex: none; }
 

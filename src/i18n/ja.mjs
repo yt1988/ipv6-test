@@ -10,6 +10,7 @@ export default {
   lang_label: "言語", faq_h: "ヘルプ", a_logo: "1ms.dog", a_theme: "テーマ", a_close: "閉じる", a_prev: "前へ", a_next: "次へ",
   th_system: "テーマ：システムに合わせる", th_light: "テーマ：ライト", th_dark: "テーマ：ダーク",
   rerun: "もう一度テスト", copy: "コピー", copied: "コピーしました",
+  rp_btn: "結果が違いますか？", rp_pre: "テスト結果が違います：",
   score_k: "IPv6 スコア",
   score_tip: "10 点満点：\n4  IPv6 だけのサイトが開ける\n2  IPv6 の大きなパケットが通る\n2  デュアルスタックのサイトが待たずに開く\n1  DNS なしでも IPv6 につながる\n1  ブラウザが IPv6 を選ぶ\n−1 IPv6 の応答に 3 秒超",
   progress: "{n} / {of}", done: "{s} 秒で完了",

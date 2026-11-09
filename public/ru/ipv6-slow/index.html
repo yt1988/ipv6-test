@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="IPv4 и IPv6 бок о бок, и почему IPv6 бывает медленным">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Тест IPv6 · 1ms.dog","url":"https://ipv6.1ms.dog/ru/ipv6-slow/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Сравните IPv4 и IPv6 на вашем подключении: одни и те же сети, замер по обоим одновременно. Узнайте, медленнее ли IPv6, почему (маршруты, MTU, туннели, роутер) и как это исправить, не отключая IPv6.","inLanguage":"ru","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"IPv6 сам по себе медленнее IPv4?","acceptedAnswer":{"@type":"Answer","text":"Нет. Заголовки IPv6 чуть больше, но разница слишком мала, чтобы её измерить. Всё решает маршрут: провайдер может вести IPv6 по меньшему числу каналов или более длинным путём, иметь меньше стыков с другими сетями по IPv6 или пускать его через туннель. Поэтому в одних сетях IPv6 быстрее (без NAT, оборудование новее), а в других заметно медленнее. Сравнение выше покажет, какой случай у вас."}},{"@type":"Question","name":"Почему IPv6 тормозит?","acceptedAnswer":{"@type":"Answer","text":"Обычные причины, от самых частых: Длинные маршруты: многие провайдеры выводят IPv6 за границу или в другие сети через меньшее число точек обмена, чем IPv4, и это добавляет десятки миллисекунд. Из материкового Китая международный IPv6 часто идёт в обход. Сломанный MTU: пакеты IPv6 полного размера теряются на каком-то участке (PPPoE, туннели), поэтому мелкие запросы проходят, а большие страницы зависают. Это и проверяет тест больших пакетов выше. Туннели: 6to4 и Teredo гонят IPv6 через ретрансляторы, которые могут быть далеко. Роутер или модем: старая прошивка, файрвол IPv6, который отбрасывает ответы, или роутер, раздающий IPv6-адреса, хотя у его собственной линии IPv6 нет. Прокси или VPN, которые передают только IPv4, а трафик IPv6 уходит напрямую."}},{"@type":"Question","name":"Как исправить медленный IPv6?","acceptedAnswer":{"@type":"Answer","text":"Проверьте в другое время суток: если медленно только вечером, сеть провайдера перегружена. Если тест больших пакетов не проходит, уменьшите MTU в настройках WAN или IPv6 роутера (для PPPoE попробуйте 1480 или 1452). Обновите прошивку и перезагрузите роутер и модем. Если IPv6 всегда намного медленнее, отправьте цифры выше провайдеру: исправлять маршрут — его задача. А пока не переживайте: когда IPv6 долго подключается, браузер сам переходит на IPv4 (Happy Eyeballs), так что большинство сайтов продолжает работать."}},{"@type":"Question","name":"Стоит ли отключать IPv6?","acceptedAnswer":{"@type":"Answer","text":"Обычно нет. Без него перестают работать сайты только с IPv6, некоторые приложения и игры, а Microsoft не поддерживает Windows с отключённым IPv6. Если ваш IPv6 действительно хуже, лучше дайте приоритет IPv4 и оставьте IPv6 для того, чему он нужен: в Windows задайте параметру реестра DisabledComponents значение 0x20 («предпочитать IPv4, а не IPv6» по Microsoft); в Linux раскомментируйте строку «precedence ::ffff:0:0/96 100» в /etc/gai.conf."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.6652f71c89.css">
+<link rel="stylesheet" href="/assets/app.2b7be23663.css">
 </head>
 <body>
 <div class="app">
@@ -85,6 +85,7 @@
         <span class="prog-t" id="progTxt">&nbsp;</span>
         <button class="btn pri" id="rerun" type="button" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v3h-3"/></svg><span data-i="rerun">Проверить снова</span></button>
       </div>
+      <p class="rp-line" id="rpRow" hidden><button class="rp-btn" id="rpBtn" type="button" data-i="rp_btn">Результат неверный?</button></p>
     </section>
 
     <section class="cmp card" aria-labelledby="cmpT">
@@ -126,7 +127,7 @@
 </div>
 
 <script type="application/json" id="data">{"lang":"ru","paths":{"en":"/ipv6-slow/","zh-CN":"/zh-cn/ipv6-slow/","zh-TW":"/zh-tw/ipv6-slow/","ja":"/ja/ipv6-slow/","ko":"/ko/ipv6-slow/","es":"/es/ipv6-slow/","fr":"/fr/ipv6-slow/","de":"/de/ipv6-slow/","pt":"/pt/ipv6-slow/","ru":"/ru/ipv6-slow/"},"home":"/ru/","page":"slow"}</script>
-<script src="/assets/l.ru.5f295ba4dc.js"></script>
-<script src="/assets/app.2bd15dbd81.js"></script>
+<script src="/assets/l.ru.b500cf7941.js"></script>
+<script src="/assets/app.73cf41e4d7.js"></script>
 </body>
 </html>

@@ -10,6 +10,7 @@ export default {
   lang_label: "Langue", faq_h: "Aide", a_logo: "1ms.dog", a_theme: "Thème", a_close: "Fermer", a_prev: "Précédent", a_next: "Suivant",
   th_system: "Thème : celui du système", th_light: "Thème : clair", th_dark: "Thème : sombre",
   rerun: "Relancer le test", copy: "Copier", copied: "Copié",
+  rp_btn: "Résultat faux ?", rp_pre: "Le résultat est faux :",
   score_k: "Note IPv6",
   score_tip: "Sur 10 :\n4  les sites uniquement IPv6 s’ouvrent\n2  les gros paquets IPv6 passent\n2  les sites double pile s’ouvrent sans attente\n1  IPv6 marche sans DNS\n1  votre navigateur choisit IPv6\n−1 IPv6 met plus de 3 s à répondre",
   progress: "{n} / {of}", done: "Terminé en {s} s",

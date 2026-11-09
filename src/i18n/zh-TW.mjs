@@ -10,6 +10,7 @@ export default {
   lang_label: "語言", faq_h: "說明", a_logo: "1ms.dog", a_theme: "主題", a_close: "關閉", a_prev: "上一則", a_next: "下一則",
   th_system: "主題：跟隨系統", th_light: "主題：淺色", th_dark: "主題：深色",
   rerun: "重新測試", copy: "複製", copied: "已複製",
+  rp_btn: "結果不對？", rp_pre: "檢測結果不對：",
   score_k: "IPv6 分數",
   score_tip: "滿分 10 分：\n4  打得開只有 IPv6 的網站\n2  IPv6 大封包不會遺失\n2  雙堆疊網站不用等就開\n1  不靠 DNS 也連得上 IPv6\n1  瀏覽器優先走 IPv6\n−1 IPv6 回應超過 3 秒",
   progress: "{n} / {of}", done: "花了 {s} 秒",

@@ -10,6 +10,7 @@ export default {
   lang_label: "언어", faq_h: "도움말", a_logo: "1ms.dog", a_theme: "테마", a_close: "닫기", a_prev: "이전", a_next: "다음",
   th_system: "테마: 시스템 설정", th_light: "테마: 라이트", th_dark: "테마: 다크",
   rerun: "다시 테스트", copy: "복사", copied: "복사됨",
+  rp_btn: "결과가 다른가요?", rp_pre: "테스트 결과가 다릅니다:",
   score_k: "IPv6 점수",
   score_tip: "10점 만점:\n4  IPv6 전용 사이트 접속\n2  IPv6 큰 패킷 통과\n2  듀얼 스택 사이트가 기다림 없이 열림\n1  DNS 없이도 IPv6 연결\n1  브라우저가 IPv6 선택\n−1 IPv6 응답이 3초 초과",
   progress: "{n} / {of}", done: "{s}초 만에 완료",

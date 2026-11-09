@@ -117,6 +117,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   let C = {};          // IPv4 against IPv6 so far, by side id (cf4, cf6, …)
   let SHOWN = false;   // showing a shared result: no addresses
   let MTU = {};        // the 1ms.dog server's view of the path, by family (pathMtu): not in shared results
+  let HEW = null;      // how long the browser waited for a broken IPv6 (the slow page's Happy Eyeballs test)
 
   // a row: its state (ok, warn, bad, waiting) and its value; v6 tests only warn when there is no IPv6 at all
   function fillRow(id) {
@@ -191,6 +192,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     let k = "he_fail", ms = 0;
     if (!v6) k = ["c_no6", "c_none"].includes(compare(C).key) ? "he_no6" : "he_fail";
     else if (r && r.fam === 4 && r.v6) { k = r.tries ? "he_wait" : "he_direct"; ms = r.wait; }
+    HEW = { k, ms };
     $("#heV").textContent = t(k === "he_wait" ? "he_ms" : k, { ms: fmtMs(ms) });
     $("#heV").className = k === "he_wait" ? HE_TONE(ms) : "";
     $("#heH").textContent = k === "he_wait" ? t("he_" + HE_TONE(ms)) : k === "he_direct" ? t("he_direct_h") : "";
@@ -304,7 +306,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     if (RECV) { RECV.then(r => r && r.remove()); RECV = null; history.replaceState(null, "", D.paths[D.lang]); }
     if (RUN) RUN.abort();
     const ctl = RUN = new AbortController();
-    R = {}; C = {}; MTU = {}; SHOWN = false; LAST = null; FAILED = false; done = 0; t0 = performance.now();
+    R = {}; C = {}; MTU = {}; HEW = null; SHOWN = false; LAST = null; FAILED = false; done = 0; t0 = performance.now();
     if (ONLY) $("#he").hidden = !!CHECK;
     const ME = ONLY ? null : me();
     $("#shareBtn").hidden = true; $("#rerun").disabled = true; $("#prog").classList.remove("end");
@@ -537,6 +539,71 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       } else { x.fillStyle = muted; x.fillText("—", cols[2], y); }
     });
     x.textAlign = "left";
+  }
+
+  /* ---------- reporting a problem (window.msReport, called by the shell's dialog) ---------- */
+  // The dialog lists what the page can tell about itself and adds this under "This result": a line, and JSON that
+  // reproduces what the visitor saw, so a report is more than the one sentence most visitors write. The same rule as a
+  // shared link: an address keeps its first half only (route-trace's masking) and no country goes with it; what a link
+  // can't carry is here for debugging: which host answered, every test's numbers, what the Tokyo server saw (path MTU),
+  // and how long a broken IPv6 held the browser up. The link in it reproduces the result exactly.
+  const r1 = x => x == null ? null : Math.round(x * 10) / 10;
+  // an IPv4 address keeps its first two parts, an IPv6 its first two groups
+  const maskIp = ip => { ip = String(ip || ""); return !ip ? "" : ip.indexOf(":") >= 0 ? ip.split(":").slice(0, 2).join(":") + ":…" : ip.split(".").slice(0, 2).join(".") + ".*.*"; };
+  const kindOf = x => x && x.ok ? x.kind || kind6(x.ip) : "";
+  const testJson = x => !x ? null : !x.ok ? { ok: false, err: x.err || "fail" }
+    : { ok: true, fam: x.fam, ms: r1(x.ms), rtt: r1(x.rtt), host: x.host || null, ip: x.ip ? maskIp(x.ip) : null, kind: kindOf(x) || null };
+  window.msReport = () => {
+    if (!LAST || $("#rerun").disabled) return null;   // no result yet, or a test is running
+    const v = verdict(R), cmp = compare(C), sep = /^(zh|ja)/.test(D.lang) ? "：" : ": ";
+    const v4 = R.v4 && R.v4.ok ? maskIp(R.v4.ip) : "", v6 = R.v6 && R.v6.ok ? maskIp(R.v6.ip) : "";
+    const k6 = R.v6 && R.v6.ok ? kindOf(R.v6) : "";
+    // the kind a v6 result rests on; a shared link carries the kind, never the address
+    const k6t = R.v6 ? R.v6.ok ? k6 ? t("k_" + k6) : t("r_ok") : t("none6") : "";
+    // the conclusion in the visitor's words: the page's own verdict, the score, the kind of IPv6, how the two compare
+    const summary = (ONLY
+      ? [$("#verdict").textContent, HEW && HEW.k === "he_wait" ? t("he_ms", { ms: fmtMs(HEW.ms) }) : HEW ? t(HEW.k) : ""]
+      : [$("#verdict").textContent, t("score_k") + " " + v.score + "/10", k6t,
+        cmp.n ? t(cmp.key, { ms: fmtMs(Math.abs(cmp.diff)) }) : ""]
+    ).filter(Boolean).join(" · ").slice(0, 300);
+    // the readings a visitor most often calls wrong, one tap to add: the tests that failed, what each family left from,
+    // the score, the comparison, and what the Tokyo server measured
+    const picks = [];
+    if (!ONLY) for (const id of IDS) if (R[id] && !R[id].ok) picks.push(t("t_" + id) + sep + t(R[id].err === "timeout" ? "r_timeout" : "r_fail"));
+    if (picks.length > 3) picks.length = 3;
+    if (ONLY) for (const p of PAIRS) {
+      const a = C[p.id + "4"], b = C[p.id + "6"];
+      if (a && a.ok && a.rtt != null && b && b.ok && b.rtt != null) picks.push(p.name + sep + "IPv4 " + timeOf(a.rtt) + " · IPv6 " + timeOf(b.rtt));
+    }
+    if (R.v6) picks.push("IPv6" + sep + k6t + (v6 ? " · " + v6 : ""));
+    if (R.v4) picks.push("IPv4" + sep + (R.v4.ok ? v4 || t("r_ok") : t("none4")));
+    if (!ONLY) picks.push(t("score_k") + sep + v.score + "/10");
+    if (!ONLY && cmp.n) picks.push(t("c_dif") + sep + (cmp.diff > 0 ? "+" : cmp.diff < 0 ? "−" : "±") + t("r_ms", { ms: fmtMs(Math.abs(cmp.diff)) }));
+    if (R.ds && R.ds.ok) picks.push(t("t_ds") + sep + t("r_picked", { fam: R.ds.fam === 6 ? "IPv6" : "IPv4" }));
+    const fams = [6, 4].filter(f => MTU[f]);
+    if (!ONLY && fams.length) picks.push(t("mtu_line", { list: fams.map(f => "IPv" + f + " " + MTU[f].mtu + (MTU[f].stalled ? " ✕" : "")).join(" · ") }));
+    if (ONLY && HEW) picks.push(HEW.k === "he_wait" ? t("he_ms", { ms: fmtMs(HEW.ms) }) : t(HEW.k));
+    // the JSON: the same result a shared link carries, plus the readings above (no country, no full address)
+    const full = SHOWN ? null : LAST;
+    const data = {
+      tool: "ipv6", page: ONLY ? "slow" : "home", lang: D.lang, at: LAST.ts || Date.now(), shared: SHOWN,
+      link: full ? location.origin + D.paths[D.lang] + "r/" + encodeShare({ ...full, cc: "" }) : location.origin + location.pathname,
+      v4: v4 || null, v6: v6 || null, v6kind: kindOf(R.v6) || null,
+      tests: Object.fromEntries(IDS.filter(id => R[id]).map(id => [id, testJson(R[id])])),
+      pairs: Object.fromEntries(PAIRS.map(p => [p.id, { 4: testJson(C[p.id + "4"]), 6: testJson(C[p.id + "6"]) }])),
+      compare: { key: cmp.key, n: cmp.n, v4: r1(cmp.v4), v6: r1(cmp.v6), diff: r1(cmp.diff) },
+      mtu: Object.fromEntries([4, 6].filter(f => MTU[f]).map(f => [f, { mss: MTU[f].mss, mtu: MTU[f].mtu, ptb: !!MTU[f].ptb, stalled: !!MTU[f].stalled }])),
+    };
+    if (!ONLY) { data.score = v.score; data.verdict = v.head; data.problems = v.probs; data.problemsText = v.probs.map(k => t(k)); }
+    if (ONLY) data.he = HEW ? { key: HEW.k, wait: r1(HEW.ms) } : null;
+    return { summary, data, picks: picks.map(p => p.slice(0, 60)).slice(0, 8) };
+  };
+  // The shell's dialog is on the live site only: its entry then sits under the result, and a click starts the text box
+  // with what the visitor would say anyway, so the dialog can offer the picks above as one-tap answers. A copy without
+  // the shell (self-hosted, or the checkup frame) gets no dead button.
+  if (typeof window.msOpenReport === "function" && !CHECK) {
+    $("#rpRow").hidden = false;
+    $("#rpBtn").setAttribute("data-ms-report", t("rp_pre"));
   }
 
   $("#rerun").onclick = start;

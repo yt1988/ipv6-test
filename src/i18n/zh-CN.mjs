@@ -10,6 +10,7 @@ export default {
   lang_label: "语言", faq_h: "帮助", a_logo: "1ms.dog", a_theme: "主题", a_close: "关闭", a_prev: "上一条", a_next: "下一条",
   th_system: "主题：跟随系统", th_light: "主题：浅色", th_dark: "主题：深色",
   rerun: "重新测试", copy: "复制", copied: "已复制",
+  rp_btn: "结果不对？", rp_pre: "检测结果不对：",
   score_k: "IPv6 得分",
   score_tip: "满分 10 分：\n4  能打开只有 IPv6 的网站\n2  IPv6 大数据包不丢\n2  双栈网站打开不用等\n1  不靠 DNS 也能连 IPv6\n1  浏览器优先走 IPv6\n−1 IPv6 响应超过 3 秒",
   progress: "{n} / {of}", done: "用时 {s} 秒",
