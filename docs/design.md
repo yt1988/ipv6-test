@@ -21,6 +21,21 @@ Why the test works the way it does, and what was measured to settle it. How to b
 - **A shared link never holds an address**, only which tests passed, their times and the IPv6 kind. A result
   comes from the visitor's own browser; addresses are personal and the link is meant to be posted.
 
+## Checking the hosts
+
+`scripts/verify.mjs` (weekly in GitHub Actions and by hand with `npm run verify`) checks that every host in
+`src/probe.mjs` is still what its test needs: A/AAAA records over DNS over HTTPS, CORS, and an answer.
+
+- **The IPv6 checks are skipped where there is no IPv6, and said to be skipped.** A machine without IPv6 can't
+  check IPv6 hosts, and GitHub's hosted runners have none: before this, every v6 line was `ENETUNREACH` and the
+  whole run was red for a reason that had nothing to do with the hosts (issue #104, 6). The script looks for a
+  global unicast address (2000::/3, not 6to4 or Teredo) on the machine and one answer over IPv6 from Cloudflare,
+  Google or DNSPod; without both, the IPv6 checks are skipped and counted as skipped, never as failures, and the
+  summary says why. The v4 and dual-stack checks still run, and **every host's A/AAAA records are still looked up**,
+  so a host that gains or loses an address family is still caught where it can be seen.
+- **`--require-v6` where IPv6 is the point.** On a dual-stack machine it turns "no IPv6 here" into a failure, so a
+  machine that was meant to check the IPv6 side can't go green after losing it.
+
 ## The server
 
 The browser can't see its own TCP: the MSS its SYN offered, whether a Packet Too Big came back, how long it waited

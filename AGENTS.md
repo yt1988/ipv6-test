@@ -42,7 +42,7 @@ without testing, open a shared link (`/zh-cn/r/<code>`, from the share dialog of
 | Anything | `npm test`: `public/` is up to date with `src/` (rebuild first), every string in all 10 languages with the same placeholders, the unit tests (score, verdict, shared links, the Worker). CI runs it on every push |
 | Strings, layout, styles | the above, plus the page at 375 px wide in zh-CN, ru, de and fr (the longest): nothing cut off, no sideways scroll |
 | The share card | open it in en, de, ru and fr with the longest real result; `window.__msShareClips` must stay empty (the share component logs every word it had to cut) |
-| The tests' hosts (`src/probe.mjs`) | `npm run verify`: every host's A/AAAA records, CORS and answer (also weekly in GitHub Actions). A host that gains or loses an address family breaks a test silently |
+| The tests' hosts (`src/probe.mjs`) | `npm run verify`: every host's A/AAAA records, CORS and answer (also weekly in GitHub Actions). A host that gains or loses an address family breaks a test silently. GitHub's runners have no IPv6, so the IPv6 checks are skipped there and the summary says so; run `node scripts/verify.mjs --require-v6` on a dual-stack machine to check them, which also fails if that machine has lost IPv6 |
 | `server/` | `go vet ./... && go test ./...` and a build (below; CI does all three), then the checks under "Run the server" |
 
 Don't change how a test measures to make the page look faster (preconnecting to the test hosts, starting them

@@ -58,7 +58,7 @@ src/worker.js       分享链接 /r/<code>：把分数写进标题
 src/i18n/*.mjs      10 种语言
 scripts/build.mjs   生成 public/（页面、资源、CSP）
 scripts/assets.mjs  生成 public/og/*.png 预览图
-scripts/verify.mjs  核实每个测试地址：A/AAAA 记录、CORS、返回内容
+scripts/verify.mjs  核实每个测试地址：A/AAAA 记录、CORS、返回内容（IPv6 项需要本机有 IPv6）
 server/            可选的服务端：路径 MTU、PMTU 黑洞、Happy Eyeballs 回退等待（见 AGENTS.md）
 docs/design.md      为什么这样设计，以及实测结论
 ```
@@ -69,7 +69,7 @@ docs/design.md      为什么这样设计，以及实测结论
 npm install
 npm run build      # 生成 public/
 npm test           # public/ 是否最新、约定、文案、单元测试
-npm run verify     # 从当前网络核实每个测试地址
+npm run verify     # 从当前网络核实每个测试地址；本机没有 IPv6 时跳过 IPv6 项
 npm run dev        # http://localhost:8797
 npx wrangler deploy
 ```

@@ -58,7 +58,7 @@ src/worker.js       shared links, /r/<code>: the score in the title
 src/i18n/*.mjs      10 languages
 scripts/build.mjs   builds public/ (pages, assets, CSP)
 scripts/assets.mjs  renders the preview images, public/og/*.png
-scripts/verify.mjs  checks every test host: A/AAAA records, CORS, the answer
+scripts/verify.mjs  checks every test host: A/AAAA records, CORS, the answer (the IPv6 checks need a machine with IPv6)
 server/            the optional server: path MTU, PMTU black holes, the Happy Eyeballs wait (AGENTS.md)
 docs/design.md      why it works this way, and what was measured
 ```
@@ -69,7 +69,7 @@ docs/design.md      why it works this way, and what was measured
 npm install
 npm run build      # builds public/
 npm test           # public/ up to date, contract, strings, unit tests
-npm run verify     # checks every test host from your network
+npm run verify     # checks every test host from your network; IPv6 checks are skipped without IPv6
 npm run dev        # http://localhost:8797
 npx wrangler deploy
 ```

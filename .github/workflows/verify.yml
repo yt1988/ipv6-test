@@ -1,5 +1,9 @@
 # Every Monday (and by hand): check every test host from GitHub's US data centers. A failure means a host gained or
 # lost an address family, dropped CORS, or stopped answering: the list in src/probe.mjs needs a look.
+# GitHub's hosted runners have no IPv6, so the script skips the IPv6 checks here (v6, big, lit6 and the v6 side of
+# every pair) and says so in its summary; they are skipped, not failed. The v4 and dual-stack checks still run, and
+# every host's A/AAAA records are still looked up, so a host that loses an address family is still caught. For the
+# IPv6 side run it on a dual-stack machine: `node scripts/verify.mjs --require-v6`.
 name: verify
 on:
   schedule:
