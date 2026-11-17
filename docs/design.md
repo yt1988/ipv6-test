@@ -95,3 +95,26 @@ scripts arriving and running. They don't wait for the stylesheet (it arrives fir
 styles wouldn't start them sooner. Placeholders sized like the result, or a larger first-screen element, only change
 which element the metric counts; preconnecting to the test hosts or starting the tests earlier changes what they
 measure. None of these was done.
+
+### Drawing the result card first (2026-11-17)
+
+The audit of 2026-11-17 (#128, item 1.4) asked whether drawing the result card's box before its numbers arrive would
+lower the largest paint. The box is already drawn, and drawing it does not lower the metric:
+
+- **Nothing waits for a test to be laid out.** The served HTML carries the score ring, the verdict's line, the
+  problems line and both address rows at their final height, with a `.skl` bar where a value will come, and the IPv6
+  row keeps two lines on phones (`curl https://ipv6.1ms.dog/zh-cn/ | grep -c 'class="skl"'` answers 2).
+- **An empty placeholder is not a paint the metric counts.** Measured on the live page on 2026-11-17 with a Pixel 7
+  profile (150 ms RTT, 1.6 Mbps down, 4× CPU), three runs: the only candidates were the h1 (5,460–5,880 px²,
+  0.9–1.3 s) and the IPv6 address (11,096 px², 1.6–3.5 s). The address is the largest paint because it is the widest
+  text on a phone, and it is the result.
+- **On desktop the largest paint is the h1** (9,214 px², 0.54–0.62 s here; 2,072 ms at p75 in the field, on slower
+  devices and networks). The address is smaller there and never a candidate, so the result card is not what holds
+  desktop back.
+
+Making the placeholder large enough to be counted, or shrinking the address under the h1, would only change which
+element the metric counts; showing a value before its test answers would change what the test measures. Both are
+refused above, and neither is done. The address's own test answering is the floor.
+
+The shifts that remain on the same profile (CLS about 0.048) are the verdict and the problems line wrapping to a
+second line, not the address filling in.
