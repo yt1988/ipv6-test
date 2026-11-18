@@ -107,3 +107,8 @@ memory for a minute at most. About 6 MB of memory. What each endpoint does is at
    curl "https://he.<your-domain>:8446/he?t=test0001"     # curl falls back after 200 ms: "wait" ≈ 200, "tries" 1
    curl -6 -m 4 https://he.<your-domain>:8446/he          # times out: the drop works
    ```
+
+## 提交说明
+
+- 用英文，一句话说清改了什么。
+- 引用站内 issue 时只写 `#<数字>`，不要写 `yt1988/<私有仓库>#<数字>`，也不要写出私有仓库的名字；公开仓库的历史里不该出现内部仓库。
