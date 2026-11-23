@@ -163,6 +163,10 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   // with no Packet Too Big coming back (a PMTU black hole: the TLS handshake to the server never finishes). A family
   // that can't get through is asked about over the other one, by the address the tests above found.
   const API = { 4: "https://v4.ipv6.1ms.dog:8445", 6: "https://v6.ipv6.1ms.dog:8445" }, HE = "https://he.ipv6.1ms.dog:8446";
+  // The same server in mainland China (Shanghai), so "IPv6 works" splits into "at home" and "abroad": each family's
+  // name says whether that family reaches a Chinese host, the dual-stack one which family the browser picks for a
+  // Chinese site. A copy deployed without this server shows "the server in China didn't answer" and nothing else moves.
+  const CN = { 4: "https://v4ipv6-cn.dog.1msapp.com:9444", 6: "https://v6ipv6-cn.dog.1msapp.com:9444", pick: "https://ipv6-cn.dog.1msapp.com:9444" };
   function getJSON(url, ms, signal) {
     const c = new AbortController(), stop = () => c.abort(), tm = setTimeout(stop, ms);
     signal.addEventListener("abort", stop);
@@ -192,6 +196,58 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     s.dataset.why = t("mtu_why", { list: fams.map(f => `IPv${f} MSS ${MTU[f].mss}`).join(" · ") });
   }
 
+  // The mainland-China view: a 1ms.dog server in China, asked over each family, answers with its own view of this
+  // connection (CORS for any origin, nothing kept). Reaching it over IPv6 says the visitor's IPv6 works to China;
+  // the dual-stack name says which family the browser picked for a Chinese site. Each row fills when its answer
+  // comes in; the conclusion waits for both families and for Tokyo's tests, since only they say whether the visitor
+  // has IPv6 at all. Without an answer from the China server nothing is claimed about the visitor: the row is red,
+  // the conclusion says the endpoint didn't answer, and Tokyo's result stands as it is.
+  const CNR = {}, CNROW = Object.fromEntries($$("#cnRows .tr").map(r => [r.dataset.c, r])), CNVIEW = $("#cnView");
+  let TOKYO_DONE = false;
+  function cnRow(k, r) {
+    const row = CNROW[k]; if (!row) return;
+    const b = row.querySelector(".tv b"), s = row.querySelector(".tv span");
+    if (!r) { row.className = "tr bad"; b.textContent = t("r_fail"); s.innerHTML = "&nbsp;"; return; }
+    row.className = "tr ok";
+    b.textContent = k === "pick" ? "IPv" + (r.fam === 6 ? 6 : 4) : t("r_ok");
+    s.textContent = r.mtu ? "MTU " + r.mtu : "";
+  }
+  function fillCN() {
+    if (!CNVIEW || !TOKYO_DONE || CNR[4] === undefined || CNR[6] === undefined) return;
+    const r4 = CNR[4], r6 = CNR[6], pick = CNR.pick, head = $("#cnHead"), hint = $("#cnHint");
+    const tokyo6 = !!(R.v6 && R.v6.ok), lit6 = !!(R.lit6 && R.lit6.ok), has6 = tokyo6 || lit6;
+    // the next step for a Chinese visitor: IPv6 that works at home but not abroad is the common case, and one no
+    // single server can tell alone — it takes this one and Tokyo's. lit6 (abroad by address, not by name) is DNS
+    // hiding AAAA, which the main verdict explains already, so that case is not called "China only" here.
+    const [k, tone, h] = !r4 && !r6 ? ["cn_down", "", "cn_down_h"]
+      : !r6 ? (has6 ? ["cn_v6bad", "warn", "cn_v6bad_h"] : ["v_none", "warn", "ok_v4"])
+      : !r4 ? ["cn_v4bad", "warn", "cn_v4bad_h"]
+      : tokyo6 ? ["cn_both", "t1", "cn_both_h"]
+      : lit6 ? ["v_nodns", "warn", "p_nodns"] : ["cn_home_only", "warn", "cn_home_only_h"];
+    head.textContent = t(k);
+    head.className = tone;
+    hint.textContent = t(h) + (r6 && pick && pick.fam === 4 ? " " + t("cn_pick4h") : "");
+    // the China view can change the hero's verdict (IPv6 that stops at the border is not "no IPv6") and the IPv6
+    // line (there is IPv6, no address to show); when it lands after the tests, both are written again with it
+    if (TOKYO_DONE) { hero(true); holeNote(); fillAddr(6); }
+  }
+  async function china(signal) {
+    for (const k of Object.keys(CNROW)) {
+      CNR[k] = undefined;
+      const row = CNROW[k];
+      row.className = "tr wait";
+      row.querySelector(".tv b").textContent = "…";
+      row.querySelector(".tv span").innerHTML = "&nbsp;";
+    }
+    $("#cnHead").textContent = t("cn_wait"); $("#cnHead").className = ""; $("#cnHint").innerHTML = "&nbsp;";
+    // all three at once, first answer first: a slow family doesn't hold up the others
+    const one = (k, url) => getJSON(url + "/mss", 6000, signal).then(r => {
+      if (signal.aborted) return;
+      CNR[k] = r || null; cnRow(k, r); fillCN();
+    });
+    await Promise.all([one("4", CN[4]), one("6", CN[6]), one("pick", CN.pick)]);
+  }
+
   // How long the browser makes you wait when IPv6 is broken (the slow page): he.ipv6.1ms.dog has both addresses and the
   // server drops every IPv6 SYN to it, so the browser falls back to IPv4; the server times its first IPv6 SYN to its
   // IPv4 one. The token ties the two: its /mss over IPv6 says which /64 the IPv6 SYNs come from.
@@ -219,11 +275,14 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   // an address line in the hero: the address, then what kind it is, its network, country and round trip
   function fillAddr(fam) {
     const x = fam === 6 ? R.v6 : R.v4, ip = $("#ip" + fam), m = $("#m" + fam);
+    // the China view can know there is IPv6 without an address to show: the international test never answered, so no
+    // host ever told the page the address, but the connection to Shanghai did carry IPv6
+    const noneK = fam === 6 && CNR[6] ? "none6cn" : fam === 6 ? "none6" : "none4";
     if (SHOWN) {
       // a shared result has no address: what the test said about it instead
       ip.innerHTML = x && x.ok ? `<span class="no">${esc(t("r_ok"))}</span>` : x ? `<span class="no">${esc(t(fam === 6 ? "none6" : "none4"))}</span>` : "";
     } else if (!x) { ip.innerHTML = '<i class="skl"></i>'; m.innerHTML = "&nbsp;"; return; }
-    else setHTML(ip, x.ok && x.ip ? ipHTML(x.ip) : `<span class="no">${esc(t(fam === 6 ? "none6" : "none4"))}</span>`);
+    else setHTML(ip, x.ok && x.ip ? ipHTML(x.ip) : `<span class="no">${esc(t(noneK))}</span>`);
     const bits = [];
     if (x && x.ok) {
       const k = fam === 6 ? x.kind || kind6(x.ip) : "";
@@ -238,9 +297,24 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     } else m.innerHTML = "&nbsp;";
   }
 
+  // The verdict as the page shows it. Tokyo's tests can't tell a network with no IPv6 from one whose IPv6 only
+  // reaches China, and to them (and to the score) both are "no IPv6". The China view can: when it reaches the server
+  // in Shanghai over IPv6 and Tokyo's tests don't reach the world, the visitor has IPv6, it just stops at the border.
+  function viewVerdict() {
+    const v = verdict(R);
+    if (!CNVIEW || !CNR[6]) return v;
+    if (R.v6 && R.v6.ok || R.lit6 && R.lit6.ok) return v;
+    return { ...v, head: "cn_home_only", probs: ["cn_home_only_h", ...v.probs] };
+  }
+  // a PMTU black hole on IPv4 is outside this test's score, so it is said under the verdict instead
+  function holeNote() {
+    const p = $("#probs");
+    if (MTU[4] && MTU[4].stalled) { p.textContent = (viewVerdict().probs.length ? p.textContent + " " : "") + t("p_hole", { fam: 4 }); p.title = p.textContent; }
+  }
+
   // The hero: the score and verdict as the tests come in (a test not in yet counts as failed, so the score only rises)
   function hero(final) {
-    const v = verdict(R), box = $("#scoreBox");
+    const v = viewVerdict(), box = $("#scoreBox");
     box.classList.toggle("wait", !final);
     $("#score").textContent = final || Object.keys(R).length ? v.score : "–";
     box.style.color = `var(--${tierOf(v.score)})`;
@@ -326,6 +400,8 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     $("#verdict").textContent = t("v_wait"); $("#verdict").className = "verdict"; $("#probs").innerHTML = "&nbsp;";
     if (!ONLY) { IDS.forEach(fillRow); fillAddr(6); fillAddr(4); links(false); hero(false); }
     fillCmp(); progress();
+    TOKYO_DONE = false;
+    if (CNVIEW) { CNVIEW.hidden = !!CHECK; if (!ONLY && !CHECK) china(ctl.signal); }
     // each network's two sides at the same moment, so they meet the same conditions
     const sides = SIDES.map(async side => {
       const x = await runTest(side, { signal: ctl.signal });
@@ -353,7 +429,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       hero(false);
     })]);
     if (ctl.signal.aborted) return;
-    if (!ONLY) { hero(true); links(true); }
+    if (!ONLY) { hero(true); links(true); TOKYO_DONE = true; fillCN(); }
     // the 1ms.dog server's view, once the tests are in (it needs their addresses, and has the line to itself); the
     // Happy Eyeballs wait not inside the checkup, the path MTU there too (its facts carry it)
     if (ONLY) { if (!CHECK) await heWait(ctl.signal); }
@@ -364,8 +440,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       // (and its hint is p_mtu's); one on IPv4 is outside this test's score, so only said
       if (MTU[6] && MTU[6].stalled && R.big && R.big.ok) { R.big = { ok: false, err: "fail" }; hero(true); }
       fillRow("big");
-      const p = $("#probs");
-      if (MTU[4] && MTU[4].stalled) { p.textContent = (verdict(R).probs.length ? p.textContent + " " : "") + t("p_hole", { fam: 4 }); p.title = p.textContent; }
+      holeNote();
     }
     if (ctl.signal.aborted) return;
     RUN = null;
@@ -382,7 +457,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   // as the share dialog does until the visitor ticks it.
   const FBAD = new Set(["p_nodns", "p_mtu"]), FORDER = { bad: 0, warn: 1, ok: 2 };
   function checkupResult(S) {
-    const v = verdict(R), c = compare(C), ok = id => !!(R[id] && R[id].ok);
+    const v = viewVerdict(), c = compare(C), ok = id => !!(R[id] && R[id].ok);
     const has6 = ok("v6") || ok("lit6"), k = ok("v6") ? R.v6.kind || kind6(R.v6.ip) : null;
     const stats = [
       { label: "IPv6", value: k ? t("k_" + k) : t(has6 ? "r_ok" : "none6") },
@@ -419,6 +494,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     C = Object.fromEntries(SIDES.filter(x => x.id in S.r).map(x => [x.id, S.r[x.id]]));
     SHOWN = true;
     if (!ONLY) { IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(true); links(true); }
+    if (CNVIEW) CNVIEW.hidden = true;   // the China view is the visitor's own connection, not the sharer's
     else $("#he").hidden = true;   // not part of a shared result
     fillCmp();
     // the shared banner (1ms-shell assets/share/): whose result this is, and the visitor's own test

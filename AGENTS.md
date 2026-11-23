@@ -16,8 +16,10 @@ An IPv6 readiness test that runs in the browser:
   tests only that.
 - **A small server of its own** (`server/`, one Go process, optional): the path MTU the visitor's connection carries
   and whether it has a PMTU black hole (home page), and how long the browser waits for a broken IPv6 before it falls
-  back to IPv4 (Happy Eyeballs, `/ipv6-slow/`). A copy without it shows no path-MTU line, and "couldn't measure" for
-  the wait.
+  back to IPv4 (Happy Eyeballs, `/ipv6-slow/`). A second copy in mainland China gives the home page's "To mainland
+  China" card: whether IPv6, IPv4 or both reach a Chinese host, and which one the browser picks there, so "IPv6 works"
+  splits into "at home" and "abroad". A copy without either shows no path-MTU line, "couldn't measure" for the wait,
+  and "the server in China didn't answer" for that card.
 - 10 languages, shared results in links (`/<lang>/r/<code>`, never an address), an embed mode for a checkup page.
 
 The page is static files on a Cloudflare Worker (`src/worker.js` only answers `/r/<code>` and 404s). What each file
@@ -83,8 +85,8 @@ memory for a minute at most. About 6 MB of memory. What each endpoint does is at
 2. **Three DNS names, pointing straight at the server** (not through a proxy or CDN: the server must see the
    visitor's own TCP connection): `v4.<your-domain>` with only an A record, `v6.<your-domain>` with only an AAAA
    record, `he.<your-domain>` with both.
-3. **Point the page at them**: `API` and `HE` in `src/app.js`. The CSP's `connect-src` is `https:`, so no change
-   there.
+3. **Point the page at them**: `API` and `HE` in `src/app.js`, and `CN` if you run a second copy elsewhere (the
+   three names of the mainland-China server, on one port). The CSP's `connect-src` is `https:`, so no change there.
 4. **Install**: a system user for it, a directory such as `/opt/<app>/` holding `ipv6-server` (mode 755) and
    `he.nft`, and the unit.
 5. **nftables**: `he.nft` is the server's own table; the unit loads it before start (`nft -f`) and deletes it on

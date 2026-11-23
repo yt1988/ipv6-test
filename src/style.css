@@ -162,6 +162,10 @@ svg.ext[viewBox] { width: .95em; height: .95em; flex: none; }
 
 /* IPv4 against IPv6: one row per network, each side's round trip with a bar, and the difference */
 .cmp { padding: 18px 22px 14px; display: flex; flex-direction: column; gap: 8px; }
+/* the mainland-China view: the same card, one row per family and one for the family the browser picks there */
+.cnview { padding: 18px 22px 14px; display: flex; flex-direction: column; gap: 8px; }
+.cnview .tr { min-height: 54px; }
+.cnview .tl { padding-bottom: 2px; }
 /* the title and what it measures on the left, what it says on the right */
 .cmp-top { display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr); gap: 8px 32px; align-items: start; padding-bottom: 4px; }
 .cmp-h { display: flex; flex-direction: column; gap: 3px; }

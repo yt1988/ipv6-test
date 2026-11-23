@@ -118,3 +118,31 @@ refused above, and neither is done. The address's own test answering is the floo
 
 The shifts that remain on the same profile (CLS about 0.048) are the verdict and the problems line wrapping to a
 second line, not the address filling in.
+
+## The mainland-China view
+
+The six tests ask hosts abroad, so a network whose IPv6 works in China and nowhere else looks to them — and to the
+score — exactly like a network with no IPv6 at all. That is a common case on Chinese networks, and it is the one a
+Chinese visitor acts on: Chinese sites open, sites abroad don't. A second copy of the same server, in Shanghai, is
+what tells the two apart.
+
+- **Three names, one port.** `v4…` (A only) and `v6…` (AAAA only) say whether each family reaches a host in China;
+  the dual-stack name says which family the browser actually picks for a Chinese site (the answer's `fam`), which is
+  the consequence the visitor sees. The same `/mss` as in Tokyo answers all three, so it also gives each family's
+  path MTU to China (PPPoE there often carries 1492, and this is where a wrong MTU shows up first).
+- **No Happy Eyeballs drop there.** That test is a deliberate fault — the server drops IPv6 SYNs — and its point is
+  how long the browser waits. On a node whose whole purpose is real reachability it would mix "we dropped your IPv6"
+  into "your IPv6 doesn't reach China", so it stays in Tokyo. Without it the China node needs no nftables table, no
+  packet socket and no capabilities.
+- **The verdict follows what the pair shows.** When the China server answers over IPv6 and Tokyo's tests don't reach
+  the world, the hero says IPv6 stops at the border instead of "no IPv6"; the IPv6 line says there is IPv6 with no
+  address to show (no international host ever reported one). The score stays the six international checks — it is an
+  international-readiness score, and a domestic-only network scores 0 on it — and the China card carries the
+  explanation next to it.
+- **It degrades on its own.** Each of the three rows fills when its answer comes in (6 s timeout, in parallel with
+  everything else); if none answers, the card says the server in China didn't answer and Tokyo's verdict stands
+  unchanged. Nothing about the visitor is inferred from a failure to reach the endpoint.
+
+Measured when it went live (2026-11-23, from Tokyo): all three names answer in about 0.1 s with CORS for any origin,
+`{"seen":true,"fam":4|6,"mss":…,"mtu":1464,…}`; and with Tokyo's international IPv6 tests blocked, the page shows
+"IPv6 works in China, not abroad" in the hero and in the card, with the browser picking IPv4 for the dual-stack name.

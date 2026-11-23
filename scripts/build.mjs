@@ -65,6 +65,11 @@ const BAR = '<i class="cb"><i></i></i>';
 const pairsHTML = T => PAIRS.map(p =>
   `        <div class="cr wait" data-p="${p.id}"><span class="cn"><b>${esc(p.name)}</b><span>${esc(T("cw_" + p.where))}</span></span><span class="cv" data-f="4"><b>…</b>${BAR}</span><span class="cv" data-f="6"><b>…</b>${BAR}</span><span class="cd"><b>…</b></span></div>`).join("\n");
 
+// the mainland-China view: one row per family to the 1ms.dog server there, and one for the family the browser picks at
+// a dual-stack name there; like the tests, drawn before any answer
+const cnRowsHTML = T => [["4", "cn_v4", "cn_d4"], ["6", "cn_v6", "cn_d6"], ["pick", "cn_pick", "cn_dp"]].map(([k, h, d]) =>
+  `        <li class="tr wait" data-c="${k}"><span class="st">${MARKS}</span><span class="tn"><b>${esc(T(h))}</b><span>${esc(T(d))}</span></span><span class="tv"><b>…</b><span>&nbsp;</span></span></li>`).join("\n");
+
 // An article section: paragraphs, and a list where a paragraph ends with a colon (each item's lead, up to its own colon,
 // in bold)
 function sectionHTML([h, body]) {
@@ -151,7 +156,7 @@ export async function build({ check = false } = {}) {
         .replace("{{prepaint}}", PREPAINT).replace("{{head}}", head).replace("{{css}}", cssName).replace("{{js}}", jsName).replace("{{strings}}", sName)
         .replace(pg.dir ? ` aria-current="page"` : "{{none}}", "").split("{{homeHref}}").join(pathOf(slug)).replace("{{langOpts}}", langOpts).replace("{{h1}}", esc(T(pg.h1)))
         .replace("{{intro}}", pg.intro ? `<p class="intro">${esc(T(pg.intro))}</p>` : "")
-        .replace("{{pairs}}", pairsHTML(T))
+        .replace("{{pairs}}", pairsHTML(T)).replace("{{cnRows}}", cnRowsHTML(T))
         .replace("{{slowMore}}", pg.id === "slow" ? "" : `<p class="cmp-more"><a href="${pathOf(slug, "ipv6-slow/")}#why">${esc(T("slow_link"))}</a></p>`)
         .replace("{{allLink}}", pg.id === "home" ? "" : `<p class="all"><a class="btn out" href="${pathOf(slug)}">${esc(T("all_link"))}</a></p>`)
         .replace("{{article}}", pg.art ? `<article class="art card" id="why">${T(pg.art).map(sectionHTML).join("")}</article>` : "")
