@@ -85,7 +85,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   // every link to another tool ends with the external-link mark (1ms-shell docs/tool-contract.md, section 4)
   const EXT = '<svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
   const tool = n => { const m = document.querySelector(`meta[name="${n}"]`); return m ? m.content.replace(/\/+$/, "") + D.home : null; };
-  const IPQS = tool("ipqs"), EGRESS = tool("egress"), ASN = tool("asn"), WHO = tool("who"), SPEED = tool("speed"), FULL = tool("check"), DNS = tool("dns");
+  const IPQS = tool("ipqs"), EGRESS = tool("egress"), ASN = tool("asn"), WHO = tool("who"), SPEED = tool("speed"), FULL = tool("check"), DNS = tool("dns"), LAG = tool("lag");
   // the Connection Checkup runs this test among the others; not inside its own report
   if (!ONLY) {
     if (FULL && !CHECK) { $("#checkLink").href = FULL; $("#checkLink").hidden = false; }
@@ -93,14 +93,27 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     if (WHO) $("#whoLink").href = WHO;
     if (SPEED) $("#speedLink").href = SPEED;
   }
-  // Under the addresses, once the test is over: Who Are You when IPv4 and IPv6 leave from different networks (often a
-  // proxy or VPN that carries only one of them, so the other leaks), the speed test when IPv6 works
+  // Under the addresses, once the test is over: the next step the verdict asks for, then Who Are You when IPv4 and
+  // IPv6 leave from different networks (often a proxy or VPN that carries only one of them, so the other leaks), the
+  // speed test when IPv6 works. Every one of them is the shell's <meta> address in the visitor's language, and none
+  // shows on a copy without the shell (self-hosted) or on a shared result, whose problems are somebody else's.
   function links(final) {
     const v4 = R.v4, v6 = R.v6, split = !SHOWN && v4 && v6 && v4.ok && v6.ok && v4.asn && v6.asn && v4.asn !== v6.asn;
+    const v = verdict(R), dnsBad = v.head === "v_nodns" || v.probs.indexOf("p_nodns") >= 0;
+    // large packets lost (the test, or the server's black hole): the network diagnosis finds the hop that loses them.
+    // It takes the speed test's place rather than joining it: one next step, and the row of links keeps its size.
+    const lost = final && !SHOWN && (v.probs.indexOf("p_mtu") >= 0 || !!(MTU[4] && MTU[4].stalled));
     $("#whoLink").hidden = !(WHO && final && split);
-    $("#speedLink").hidden = !(SPEED && final && v6 && v6.ok && !split);
-    // whether your DNS resolvers can work over IPv6 is the DNS test's to find out (its own authoritative servers)
-    if (DNS) { $("#dnsLink").href = DNS; $("#dnsLink").hidden = !(final && !SHOWN); }
+    $("#speedLink").hidden = !(SPEED && final && v6 && v6.ok && !split && !lost);
+    if (LAG) { $("#lagLink").href = LAG; $("#lagLink").hidden = !lost; }
+    // whether your DNS resolvers can work over IPv6 is the DNS test's to find out (its own authoritative servers);
+    // when DNS is what hides IPv6, the link says so and stands with the others that matter for this result
+    if (DNS) {
+      const hide = !(final && !SHOWN);
+      $("#dnsLink").href = DNS; $("#dnsLink").hidden = hide;
+      $("#dnsLink span").textContent = t(dnsBad ? "dns_link_fix" : "dns_link");
+      $("#dnsLink").classList.toggle("hot", !hide && dnsBad);
+    }
   }
 
   /* ---------- numbers ---------- */

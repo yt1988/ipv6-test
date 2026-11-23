@@ -148,7 +148,7 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
 .addr-m .q0 { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
 .addr-m .q0:hover { color: var(--ink); }
 /* the links that matter for this result stand out from the standing one */
-.links #whoLink, .links #speedLink { color: var(--ink); font-weight: 600; }
+.links #whoLink, .links #speedLink, .links #lagLink, .links #dnsLink.hot { color: var(--ink); font-weight: 600; }
 /* links to the other tools: text, then the external-link mark */
 .links a, .addr-m .q { display: inline-flex; align-items: center; gap: 3px; }
 /* fingers: the standalone links get a 32px target; on the address lines without moving anything, in the row of links with room between rows */

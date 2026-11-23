@@ -44,6 +44,7 @@ export default {
   ipqs_link: "Is it clean?",
   who_link: "IPv4 and IPv6 leave from different networks: see what sites see",
   speed_link: "IPv6 works: test your speed too",
+  lag_link: "Large packets failing? Find the hop that loses them",
   check_link: "Run a full checkup",
   egress_link: "Which IP does each site see?",
 
@@ -87,6 +88,7 @@ export default {
   all_link: "Run the full IPv6 test (6 checks, scored out of 10)",
   slow_share_text: "My connection: {verdict}. Is IPv6 slower on yours?",
   dns_link: "Can your DNS resolvers work over IPv6?",
+  dns_link_fix: "Your DNS hides IPv6: test your resolvers",
   r_hole: "Black hole",
   mtu_line: "Path MTU: {list}",
   mtu_ptb: "(lowered by a Packet Too Big)",

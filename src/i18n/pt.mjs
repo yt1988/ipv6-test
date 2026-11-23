@@ -43,6 +43,7 @@ export default {
   ipqs_link: "Está limpo?",
   who_link: "IPv4 e IPv6 saem por redes diferentes: veja o que os sites veem",
   speed_link: "IPv6 funciona: teste também sua velocidade",
+  lag_link: "Pacotes grandes não passam? Veja em qual salto eles se perdem",
   check_link: "Fazer uma checagem completa",
   egress_link: "Qual IP cada site vê?",
 
@@ -86,6 +87,7 @@ export default {
   all_link: "Fazer o teste IPv6 completo (6 testes, nota de 0 a 10)",
   slow_share_text: "Minha internet: {verdict}. O IPv6 da sua é mais lento?",
   dns_link: "Seus resolvedores DNS funcionam por IPv6?",
+  dns_link_fix: "Seu DNS esconde o IPv6: teste seus resolvedores",
   r_hole: "Buraco negro",
   mtu_line: "MTU do caminho: {list}",
   mtu_ptb: "(reduzida por um Packet Too Big)",

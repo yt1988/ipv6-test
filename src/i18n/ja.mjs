@@ -43,6 +43,7 @@ export default {
   ipqs_link: "クリーンか確認",
   who_link: "IPv4 と IPv6 で出口のネットワークが違います：サイトからどう見えるか確認",
   speed_link: "IPv6 は正常です。速度も測ってみる",
+  lag_link: "大きなパケットが通らない？どの区間で落ちるか調べる",
   check_link: "まとめて診断する",
   egress_link: "サイトごとにどの IP が見えている？",
 
@@ -86,6 +87,7 @@ export default {
   all_link: "IPv6 テストをすべて受ける（6 項目・10 点満点）",
   slow_share_text: "うちの回線：{verdict}。あなたの IPv6 は遅くない？",
   dns_link: "DNS リゾルバーは IPv6 で使える？",
+  dns_link_fix: "DNS が IPv6 アドレスを返さない：DNS リゾルバーを調べる",
   r_hole: "ブラックホール",
   mtu_line: "経路 MTU：{list}",
   mtu_ptb: "（Packet Too Big で縮小）",

@@ -43,6 +43,7 @@ export default {
   ipqs_link: "깨끗한 IP인지 확인",
   who_link: "IPv4와 IPv6가 서로 다른 네트워크로 나가요: 사이트에 내가 어떻게 보이는지 확인",
   speed_link: "IPv6 정상이에요. 속도도 측정해 보기",
+  lag_link: "큰 패킷이 통하지 않나요? 어느 구간에서 끊기는지 확인",
   check_link: "전체 점검하기",
   egress_link: "사이트마다 어떤 IP가 보일까?",
 
@@ -86,6 +87,7 @@ export default {
   all_link: "IPv6 전체 테스트하기 (6개 항목, 10점 만점)",
   slow_share_text: "내 인터넷: {verdict}. 당신의 IPv6는 느리지 않나요?",
   dns_link: "DNS 리졸버가 IPv6로 동작할까?",
+  dns_link_fix: "DNS가 IPv6 주소를 주지 않아요: DNS 리졸버 확인",
   r_hole: "블랙홀",
   mtu_line: "경로 MTU: {list}",
   mtu_ptb: "(Packet Too Big으로 줄어듦)",

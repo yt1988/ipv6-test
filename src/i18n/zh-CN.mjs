@@ -43,6 +43,7 @@ export default {
   ipqs_link: "查纯净度",
   who_link: "IPv4 和 IPv6 从不同的网络出去：看看网站眼中的你",
   speed_link: "IPv6 正常，顺便测个网速",
+  lag_link: "大数据包不通？逐跳查清是哪一段",
   check_link: "做一次完整体检",
   egress_link: "每个网站看到的是你哪个 IP？",
 
@@ -86,6 +87,7 @@ export default {
   all_link: "做完整的 IPv6 测试（6 项，10 分制）",
   slow_share_text: "我的网络：{verdict}。你的 IPv6 慢不慢？",
   dns_link: "你的 DNS 解析器能不能走 IPv6",
+  dns_link_fix: "DNS 不给 IPv6 地址：测测你的 DNS 解析器",
   r_hole: "黑洞",
   mtu_line: "路径 MTU：{list}",
   mtu_ptb: "（收到 Packet Too Big，已调小）",
