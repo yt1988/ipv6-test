@@ -157,6 +157,7 @@ export async function build({ check = false } = {}) {
         .replace(pg.dir ? ` aria-current="page"` : "{{none}}", "").split("{{homeHref}}").join(pathOf(slug)).replace("{{langOpts}}", langOpts).replace("{{h1}}", esc(T(pg.h1)))
         .replace("{{intro}}", pg.intro ? `<p class="intro">${esc(T(pg.intro))}</p>` : "")
         .replace("{{pairs}}", pairsHTML(T)).replace("{{cnRows}}", cnRowsHTML(T))
+        .replace("{{cnState}}", esc(T("cn_state").split("{v}").join("…")))
         .replace("{{slowMore}}", pg.id === "slow" ? "" : `<p class="cmp-more"><a href="${pathOf(slug, "ipv6-slow/")}#why">${esc(T("slow_link"))}</a></p>`)
         .replace("{{allLink}}", pg.id === "home" ? "" : `<p class="all"><a class="btn out" href="${pathOf(slug)}">${esc(T("all_link"))}</a></p>`)
         .replace("{{article}}", pg.art ? `<article class="art card" id="why">${T(pg.art).map(sectionHTML).join("")}</article>` : "")

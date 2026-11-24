@@ -227,6 +227,14 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     head.textContent = t(k);
     head.className = tone;
     hint.textContent = t(h) + (r6 && pick && pick.fam === 4 ? " " + t("cn_pick4h") : "");
+    // the same conclusion one line up, in the hero, so it is read before the detailed readings: short on purpose
+    const st = $("#cnState");
+    if (st) {
+      const [sk, sc] = { cn_both: ["cn_s_both", "t1"], cn_home_only: ["cn_s_home", "warn"], v_none: ["cn_s_none", "warn"],
+        cn_v6bad: ["cn_s_bad", "warn"], cn_v4bad: ["cn_s_v4", "warn"], cn_down: ["cn_s_na", ""], v_nodns: ["cn_s_both", ""] }[k] || ["cn_s_na", ""];
+      st.textContent = t("cn_state", { v: t(sk) });
+      st.className = "cn-state " + sc;
+    }
     // the China view can change the hero's verdict (IPv6 that stops at the border is not "no IPv6") and the IPv6
     // line (there is IPv6, no address to show); when it lands after the tests, both are written again with it
     if (TOKYO_DONE) { hero(true); holeNote(); fillAddr(6); }
@@ -402,6 +410,8 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     if (!ONLY) { IDS.forEach(fillRow); fillAddr(6); fillAddr(4); links(false); hero(false); }
     fillCmp(); progress();
     TOKYO_DONE = false;
+    const st = $("#cnState");
+    if (st) { st.hidden = !!CHECK; st.textContent = t("cn_state", { v: "…" }); st.className = "cn-state"; }
     if (CNVIEW) { CNVIEW.hidden = !!CHECK; if (!ONLY && !CHECK) china(ctl.signal); }
     // each network's two sides at the same moment, so they meet the same conditions
     const sides = SIDES.map(async side => {
@@ -496,6 +506,7 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     SHOWN = true;
     if (!ONLY) { IDS.forEach(fillRow); fillAddr(6); fillAddr(4); hero(true); links(true); }
     if (CNVIEW) CNVIEW.hidden = true;   // the China view is the visitor's own connection, not the sharer's
+    const st = $("#cnState"); if (st) st.hidden = true;
     else $("#he").hidden = true;   // not part of a shared result
     fillCmp();
     // the shared banner (1ms-shell assets/share/): whose result this is, and the visitor's own test
