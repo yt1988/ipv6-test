@@ -38,7 +38,7 @@ export default {
 
   none6: "沒有 IPv6 位址", none4: "沒有 IPv4 位址",
 
-  none6cn: "只通中國大陸，看不到位址",
+  none6cn: "只通到中國大陸，看不到位址",
   k_native: "原生", k_6to4: "6to4 通道", k_teredo: "Teredo 通道",
   m_rtt: "延遲 {ms} ms",
   asn_t: "查詢這個 AS",

@@ -38,7 +38,7 @@ export default {
 
   none6: "没有 IPv6 地址", none4: "没有 IPv4 地址",
 
-  none6cn: "只通国内，看不到地址",
+  none6cn: "只通到中国大陆，看不到地址",
   k_native: "原生", k_6to4: "6to4 隧道", k_teredo: "Teredo 隧道",
   m_rtt: "延迟 {ms} ms",
   asn_t: "查询这个 AS",
