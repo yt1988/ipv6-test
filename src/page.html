@@ -46,10 +46,12 @@
           <div class="vrow"><p class="verdict" id="verdict" data-i="v_wait"></p><button class="btn out" id="shareBtn" type="button" aria-haspopup="dialog" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9"/></svg><span data-i="share"></span></button></div>
           <p class="probs" id="probs">&nbsp;</p>
           <!--full--><p class="cn-state" id="cnState">{{cnState}}</p><!--/full-->
-          <!--full--><div class="addrs">
+          <!--full--><p class="view" data-i="view_test"></p>
+          <div class="addrs">
             <div class="addr" data-a="6"><span class="addr-k">IPv6</span><span class="addr-ip" id="ip6"><i class="skl"></i></span><span class="addr-m" id="m6">&nbsp;</span></div>
             <div class="addr" data-a="4"><span class="addr-k">IPv4</span><span class="addr-ip" id="ip4"><i class="skl"></i></span><span class="addr-m" id="m4">&nbsp;</span></div>
           </div>
+          <p class="exits"><a id="exitsLink" hidden target="_blank" rel="noopener"><span id="exitsText"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a></p>
           <p class="links"><a id="lagLink" hidden target="_blank" rel="noopener"><span data-i="lag_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="checkLink" hidden target="_blank" rel="noopener"><span data-i="check_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="egressLink" hidden target="_blank" rel="noopener"><span data-i="egress_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="whoLink" hidden target="_blank" rel="noopener"><span data-i="who_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="speedLink" hidden target="_blank" rel="noopener"><span data-i="speed_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a><a id="dnsLink" hidden target="_blank" rel="noopener"><span data-i="dns_link"></span><svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg></a></p><!--/full-->
           {{allLink}}
         </div>
@@ -77,7 +79,7 @@
 
     <!--full--><section class="cnview card" id="cnView" aria-labelledby="cnT">
       <div class="cmp-top">
-        <div class="cmp-h"><h2 id="cnT" data-i="h_cn"></h2><span class="cmp-sub" data-i="cn_sub"></span></div>
+        <div class="cmp-h"><h2 id="cnT" data-i="h_cn"></h2><span class="view" data-i="view_cn"></span><span class="cmp-sub" data-i="cn_sub"></span></div>
         <p class="cmp-v"><b id="cnHead" data-i="cn_wait"></b><span id="cnHint">&nbsp;</span></p>
       </div>
       <ol class="tl" id="cnRows">

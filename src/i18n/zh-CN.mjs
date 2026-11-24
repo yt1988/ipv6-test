@@ -39,6 +39,11 @@ export default {
   none6: "没有 IPv6 地址", none4: "没有 IPv4 地址",
 
   none6cn: "只通到中国大陆，看不到地址",
+  view_test: "测试站点看到的地址",
+  view_cn: "中国大陆的服务器看到的",
+  view_abroad: "境外服务器",
+  exit_more: "你还有 {n} 条出口",
+  egress_name: "出口照妖镜",
   k_native: "原生", k_6to4: "6to4 隧道", k_teredo: "Teredo 隧道",
   m_rtt: "延迟 {ms} ms",
   asn_t: "查询这个 AS",

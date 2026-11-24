@@ -39,6 +39,11 @@ export default {
   none6: "IPv6 주소 없음", none4: "IPv4 주소 없음",
 
   none6cn: "중국 본토만, 주소는 확인 안 됨",
+  view_test: "테스트 사이트가 본 주소",
+  view_cn: "중국 본토 서버가 본 것",
+  view_abroad: "중국 본토 외",
+  exit_more: "다른 출구: {n}개",
+  egress_name: "출구 IP 돋보기",
   k_native: "네이티브", k_6to4: "6to4 터널", k_teredo: "Teredo 터널",
   m_rtt: "지연 시간 {ms} ms",
   asn_t: "이 AS 조회",

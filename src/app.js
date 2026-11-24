@@ -1,7 +1,7 @@
 // IPv6 Test page. Every test's row is in the HTML from the start; the tests (src/probe.mjs) run at once and fill
 // their rows as they answer, and the hero follows: the score and the verdict so far, the two addresses as soon as
 // they are known. IPv4 against IPv6 runs alongside, one row per network. Strings: window.L1MS.
-import { TESTS, IDS, SIDES, PAIRS, SLOW, runTest, network, sameIp, verdict, compare, kind6, tierOf } from "./probe.mjs";
+import { TESTS, IDS, SIDES, PAIRS, SLOW, runTest, network, sameIp, famOf, verdict, compare, kind6, tierOf } from "./probe.mjs";
 import { encode as encodeShare, decode as decodeShare, sharePath } from "./share.mjs";
 
 (function () {
@@ -97,6 +97,16 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   // IPv6 leave from different networks (often a proxy or VPN that carries only one of them, so the other leaks), the
   // speed test when IPv6 works. Every one of them is the shell's <meta> address in the visitor's language, and none
   // shows on a copy without the shell (self-hosted) or on a shared result, whose problems are somebody else's.
+  // How many exits this page saw: the addresses that answered, grouped by network (the ASN when one was looked up, the
+  // address itself otherwise). The site's own Cloudflare view counts too, since a proxy can split it from the test
+  // hosts. This does not decide which exit the visitor uses — it only counts what the page itself was told.
+  function exits() {
+    const ips = new Map();
+    for (const x of [R.v4, R.v6, R.ds]) if (x && x.ok && x.ip) ips.set(x.ip, x.asn || 0);
+    const groups = new Set();
+    for (const [ip, asn] of ips) groups.add(asn ? "AS" + asn : "ip:" + ip);
+    return groups.size;
+  }
   function links(final) {
     const v4 = R.v4, v6 = R.v6, split = !SHOWN && v4 && v6 && v4.ok && v6.ok && v4.asn && v6.asn && v4.asn !== v6.asn;
     const v = verdict(R), dnsBad = v.head === "v_nodns" || v.probs.indexOf("p_nodns") >= 0;
@@ -106,6 +116,13 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     $("#whoLink").hidden = !(WHO && final && split);
     $("#speedLink").hidden = !(SPEED && final && v6 && v6.ok && !split && !lost);
     if (LAG) { $("#lagLink").href = LAG; $("#lagLink").hidden = !lost; }
+    // more than one exit: say how many more there are than the one in use, and where to see them all; the standing
+    // egress link gives way to it, so there is one pointer to that tool either way
+    const ex = exits(), more = !!(EGRESS && final && !SHOWN && ex >= 2);
+    $("#exitsText").textContent = more ? t("exit_more", { n: ex - 1 }) + " · " + t("egress_name") : "";
+    $("#exitsLink").href = EGRESS || "";
+    $("#exitsLink").hidden = !more;
+    if (EGRESS) { $("#egressLink").href = EGRESS; $("#egressLink").hidden = more; }
     // whether your DNS resolvers can work over IPv6 is the DNS test's to find out (its own authoritative servers);
     // when DNS is what hides IPv6, the link says so and stands with the others that matter for this result
     if (DNS) {
@@ -189,10 +206,11 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     const fams = [6, 4].filter(f => MTU[f]);
     if (!fams.length) { s.removeAttribute("data-why"); return; }
     const hole = fams.find(f => MTU[f].stalled);
+    // the reading is the server outside mainland China's, and the line says which destination saw it
     if (hole) {
       row.className = "tr bad"; b.textContent = t("r_hole");
-      s.textContent = t("mtu_hole", { fam: hole, mtu: MTU[hole].mtu });
-    } else s.textContent = t("mtu_line", { list: fams.map(f => `IPv${f} ${MTU[f].mtu}` + (MTU[f].ptb ? " " + t("mtu_ptb") : "")).join(" · ") });
+      s.textContent = t("view_abroad") + " · " + t("mtu_hole", { fam: hole, mtu: MTU[hole].mtu });
+    } else s.textContent = t("view_abroad") + " · " + t("mtu_line", { list: fams.map(f => `IPv${f} ${MTU[f].mtu}` + (MTU[f].ptb ? " " + t("mtu_ptb") : "")).join(" · ") });
     s.dataset.why = t("mtu_why", { list: fams.map(f => `IPv${f} MSS ${MTU[f].mss}`).join(" · ") });
   }
 
@@ -425,9 +443,11 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
       const x = await runTest(test, { signal: ctl.signal });
       if (ctl.signal.aborted) return;
       if ((test.id === "v4" || test.id === "v6") && x.ok && x.ip) setHTML($("#ip" + test.fam), ipHTML(x.ip));
-      if ((test.id === "v4" || test.id === "v6") && x.ok && !x.asn) {
+      // the network behind each address the page shows, ds (Cloudflare's own view) included: two addresses on the same
+      // network are one exit, which is what the exit count under the addresses needs
+      if ((test.id === "v4" || test.id === "v6" || test.id === "ds") && x.ok && x.ip && !x.asn) {
         const m = await ME;
-        const n = m && m.asn && sameIp(m.ip, x.ip) ? { asn: m.asn, cc: m.country || "" } : await network(test.fam, x.ip, ctl.signal);
+        const n = m && m.asn && sameIp(m.ip, x.ip) ? { asn: m.asn, cc: m.country || "" } : await network(test.fam || famOf(x.ip), x.ip, ctl.signal);
         if (ctl.signal.aborted) return;
         if (n) { x.asn = n.asn; x.cc = x.cc || n.cc; }
       }

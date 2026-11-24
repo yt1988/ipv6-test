@@ -45,6 +45,12 @@ code.copied { background: var(--ink-soft); color: var(--ink); }
 .cn-state { font-size: 13.5px; line-height: 1.5; min-height: 1.5em; color: var(--muted); }
 .cn-state.t1 { color: var(--t1); }
 .cn-state.warn { color: var(--warn); }
+/* which destination saw a reading: the address rows, the path-MTU line and the China card each say it */
+.view { font-size: 12px; line-height: 1.4; color: var(--muted); }
+/* "you have more exits": reserved from the first paint, filled only when the page saw more than one */
+.exits { font-size: 12.5px; line-height: 1.5; min-height: 1.5em; }
+.exits a { color: var(--ink); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; }
+.exits a:hover { text-decoration: underline; }
 .addrs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; margin-top: 6px; }
 .addr { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 10px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--line); }
 .addr-k { font: 600 12px var(--f-num); color: var(--muted); }

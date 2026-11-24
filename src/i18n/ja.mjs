@@ -39,6 +39,11 @@ export default {
   none6: "IPv6 アドレスなし", none4: "IPv4 アドレスなし",
 
   none6cn: "中国本土のみ、アドレスは不明",
+  view_test: "テストサイトから見たアドレス",
+  view_cn: "中国本土のサーバーから見て",
+  view_abroad: "中国本土以外",
+  exit_more: "ほかの出口：{n} 本",
+  egress_name: "出口照魔鏡",
   k_native: "ネイティブ", k_6to4: "6to4 トンネル", k_teredo: "Teredo トンネル",
   m_rtt: "遅延 {ms} ms",
   asn_t: "この AS を調べる",

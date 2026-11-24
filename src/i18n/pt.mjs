@@ -39,6 +39,11 @@ export default {
   none6: "Sem endereço IPv6", none4: "Sem endereço IPv4",
 
   none6cn: "Só China; endereço não visto",
+  view_test: "Endereço visto pelos sites de teste",
+  view_cn: "visto pelo servidor na China continental",
+  view_abroad: "fora da China",
+  exit_more: "Mais saídas: {n}",
+  egress_name: "Lupa de IP",
   k_native: "Nativo", k_6to4: "Túnel 6to4", k_teredo: "Túnel Teredo",
   m_rtt: "latência {ms} ms",
   asn_t: "Consultar este AS",

@@ -40,6 +40,11 @@ export default {
   none6: "No IPv6 address", none4: "No IPv4 address",
 
   none6cn: "China only; address not seen",
+  view_test: "Address as seen by the test sites",
+  view_cn: "as seen by the server in mainland China",
+  view_abroad: "outside China",
+  exit_more: "More exits: {n}",
+  egress_name: "EgressLens",
   k_native: "Native", k_6to4: "6to4 tunnel", k_teredo: "Teredo tunnel",
   m_rtt: "{ms} ms latency",
   asn_t: "Look up this AS",
