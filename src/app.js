@@ -248,10 +248,11 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     await Promise.all([one("4", CN[4]), one("6", CN[6]), one("pick", CN.pick)]);
   }
 
-  // How long the browser makes you wait when IPv6 is broken (the slow page): he.ipv6.1ms.dog has both addresses and the
-  // server drops every IPv6 SYN to it, so the browser falls back to IPv4; the server times its first IPv6 SYN to its
-  // IPv4 one. The token ties the two: its /mss over IPv6 says which /64 the IPv6 SYNs come from.
-  const HE_TONE = ms => ms <= 400 ? "t1" : ms <= 1000 ? "warn" : "bad";
+  // A demonstration of the browser's fallback, not a reading of the visitor's line (the slow page): the server has both
+  // addresses and drops every IPv6 SYN to its own port, so the browser falls back to IPv4; the server times its first
+  // IPv6 SYN to its IPv4 one. What comes back is the browser's own timer — about a quarter second for every browser
+  // that tries IPv6 — and nothing at all when a proxy makes the connection instead. So the number is never graded:
+  // there is one right answer per browser, not per network, and the note under it says so (measured 2026-11-24).
   async function heWait(signal) {
     const tok = Array.from(crypto.getRandomValues(new Uint8Array(12)), x => (x % 36).toString(36)).join("");
     $("#heV").textContent = "…"; $("#heV").className = ""; $("#heH").textContent = "";
@@ -263,8 +264,8 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
     else if (r && r.fam === 4 && r.v6) { k = r.tries ? "he_wait" : "he_direct"; ms = r.wait; }
     HEW = { k, ms };
     $("#heV").textContent = t(k === "he_wait" ? "he_ms" : k, { ms: fmtMs(ms) });
-    $("#heV").className = k === "he_wait" ? HE_TONE(ms) : "";
-    $("#heH").textContent = k === "he_wait" ? t("he_" + HE_TONE(ms)) : k === "he_direct" ? t("he_direct_h") : "";
+    $("#heV").className = "";
+    $("#heH").textContent = k === "he_direct" ? t("he_direct_h") : "";
   }
 
   // The address goes up the moment its test answers (its network and country follow when looked up, on the line under

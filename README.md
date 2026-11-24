@@ -61,7 +61,7 @@ src/i18n/*.mjs      10 languages
 scripts/build.mjs   builds public/ (pages, assets, CSP)
 scripts/assets.mjs  renders the preview images, public/og/*.png
 scripts/verify.mjs  checks every test host: A/AAAA records, CORS, the answer (the IPv6 checks need a machine with IPv6)
-server/            the optional server: path MTU, PMTU black holes, the Happy Eyeballs wait (AGENTS.md)
+server/            the optional server: path MTU, PMTU black holes, the Happy Eyeballs fallback demo (AGENTS.md)
 docs/design.md      why it works this way, and what was measured
 ```
 

@@ -57,6 +57,14 @@ before giving up on IPv6. The server sees those from the other end.
   the wait is the time from the first IPv6 SYN to the IPv4 one, both stamped on arrival at the server. The SYNs are
   matched to the visitor by the /64 its `/mss?t=<token>` came from over IPv6 just before: browsers use temporary
   addresses, but within one /64.
+- **That wait is a demonstration, not a reading of the visitor's line** (measured 2026-11-24). Because the drop is
+  ours, every client that tries IPv6 reports its own fallback timer: curl 185.7–202.3 ms over three runs from a
+  mainland host with working IPv6 to Tokyo, its 200 ms default, regardless of the path. Behind a fake-IP tunnel it
+  reports 2.9 ms or 0 ms, because the proxy opens the connection and the browser's fallback never runs. And for a
+  visitor whose IPv6 dies before it reaches Tokyo — the common "IPv6 works at home only" case — the SYN never
+  arrives, so the server reads 0 and cannot tell that the browser waited. The page therefore calls it a demo, says
+  the number is the browser's own timer (about a quarter second), and does not grade it; the actionable facts are
+  the reachability tests and the family the browser picks at the dual-stack name.
 - **One request per connection**, HTTP/1.1 only: each test needs a new connection (a new SYN, a new handshake), and a
   connection reused from an earlier run would read the old one.
 - **Nothing on disk, no access log**, every reading in memory for a minute at most: the readings exist to answer the

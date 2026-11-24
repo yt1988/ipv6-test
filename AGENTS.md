@@ -15,8 +15,9 @@ An IPv6 readiness test that runs in the browser:
 - **IPv4 against IPv6**: the same four networks over each, side by side; on its own page too (`/ipv6-slow/`), which
   tests only that.
 - **A small server of its own** (`server/`, one Go process, optional): the path MTU the visitor's connection carries
-  and whether it has a PMTU black hole (home page), and how long the browser waits for a broken IPv6 before it falls
-  back to IPv4 (Happy Eyeballs, `/ipv6-slow/`). A second copy in mainland China gives the home page's "To mainland
+  and whether it has a PMTU black hole (home page), and a demo of how long the browser waits for a broken IPv6 before
+  it falls back to IPv4 (Happy Eyeballs, `/ipv6-slow/`; the number is the browser's own timer, not the visitor's line —
+  see docs/design.md). A second copy in mainland China gives the home page's "To mainland
   China" card: whether IPv6, IPv4 or both reach a Chinese host, and which one the browser picks there, so "IPv6 works"
   splits into "at home" and "abroad". A copy without either shows no path-MTU line, "couldn't measure" for the wait,
   and "the server in China didn't answer" for that card.

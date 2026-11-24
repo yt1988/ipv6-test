@@ -179,6 +179,8 @@ svg.ext[viewBox] { width: .95em; height: .95em; flex: none; }
 .he[hidden] { display: none; }
 .he-k { font-size: 12.5px; color: var(--muted); }
 .he p { margin: 0; font-size: 13px; color: var(--muted); }
+/* the demonstration's own note: it measures the browser's timer, not the visitor's line */
+.he-n { font-size: 12px; line-height: 1.5; color: var(--muted); opacity: .85; }
 .he b { font-size: 15px; font-weight: 650; color: var(--fg); }
 .he b.t1 { color: var(--t1); } .he b.warn { color: var(--warn); } .he b.bad { color: var(--bad); }
 .tv span[data-why] { cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; }
