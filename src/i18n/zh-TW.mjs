@@ -81,7 +81,7 @@ export default {
 
   // the mainland-China view: the same readings against a 1ms.dog server in Shanghai, next to the one in Tokyo
   h_cn: "到中國大陸",
-  cn_sub: "中國大陸專用的檢查，和上面的東京伺服器對照：你的 IPv6 只通到中國大陸，還是也能到其他地區",
+  cn_sub: "中國大陸專用的檢查：IPv6 到這裡、到其他地區各通不通，瀏覽器又選了哪個",
   cn_v4: "IPv4 到中國大陸",
   cn_d4: "用 IPv4 能不能連上上海伺服器",
   cn_v6: "IPv6 到中國大陸",

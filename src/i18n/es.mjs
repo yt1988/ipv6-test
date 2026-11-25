@@ -81,7 +81,7 @@ export default {
 
   // the mainland-China view: the same readings against a 1ms.dog server in Shanghai, next to the one in Tokyo
   h_cn: "Hacia China continental",
-  cn_sub: "Una prueba solo para China continental, junto al servidor de Tokio de arriba: ¿tu IPv6 llega a China continental, a otras regiones o a ambas?",
+  cn_sub: "Una prueba solo para China continental: si el IPv6 llega allí y a otras regiones, y qué elige el navegador",
   cn_v4: "IPv4 a China",
   cn_d4: "Si el IPv4 llega al servidor de Shanghái",
   cn_v6: "IPv6 a China",

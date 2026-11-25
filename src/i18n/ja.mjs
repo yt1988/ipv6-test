@@ -81,7 +81,7 @@ export default {
 
   // the mainland-China view: the same readings against a 1ms.dog server in Shanghai, next to the one in Tokyo
   h_cn: "中国本土まで",
-  cn_sub: "中国本土だけのチェックです。上の東京のサーバーと比べます：IPv6 は中国本土にもその他の地域にも届くか",
+  cn_sub: "中国本土だけのチェックです：IPv6 が中国本土とその他の地域に通じるか、ブラウザーがどちらを選ぶか",
   cn_v4: "中国本土への IPv4",
   cn_d4: "IPv4 で上海のサーバーに届くか",
   cn_v6: "中国本土への IPv6",

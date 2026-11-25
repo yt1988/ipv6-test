@@ -36,4 +36,7 @@ test("the China view names its destinations, not the visitor's home", async () =
   assert.match(zh.view_cn, /上海/);
   assert.match(en.view_abroad, /Tokyo/);
   assert.match(en.view_cn, /Shanghai/);
+  // the card sits under the public-network comparison, not under the Tokyo server's reading (that is further down)
+  assert.doesNotMatch(zh.cn_sub, /上面的东京服务器/);
+  assert.doesNotMatch(en.cn_sub, /Tokyo server above/i);
 });

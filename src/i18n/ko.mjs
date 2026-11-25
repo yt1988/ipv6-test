@@ -81,7 +81,7 @@ export default {
 
   // the mainland-China view: the same readings against a 1ms.dog server in Shanghai, next to the one in Tokyo
   h_cn: "중국 본토까지",
-  cn_sub: "중국 본토 전용 확인입니다. 위의 도쿄 서버와 비교합니다: IPv6가 중국 본토와 그 외 지역에 모두 통하는지",
+  cn_sub: "중국 본토 전용 확인입니다: IPv6가 중국 본토와 그 외 지역에 통하는지, 브라우저가 무엇을 고르는지",
   cn_v4: "중국 본토까지 IPv4",
   cn_d4: "IPv4로 상하이 서버에 닿는지",
   cn_v6: "중국 본토까지 IPv6",
