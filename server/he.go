@@ -1,9 +1,9 @@
 package main
 
-// Happy Eyeballs: he.ipv6.1ms.dog has both an A and an AAAA record, and every IPv6 SYN to port 8446 is dropped
+// Happy Eyeballs: the dual-stack endpoint has both an A and an AAAA record, and every IPv6 SYN to port 8446 is dropped
 // (he.nft). A browser tries IPv6 first, hears nothing back, and after a while tries IPv4 as well. A packet socket sees
 // the SYNs before the drop (packet taps come before netfilter), so the wait is the time from the first IPv6 SYN to the
-// IPv4 one. The IPv6 SYNs are matched to the visitor by the /64 their /mss on v6.ipv6.1ms.dog came from (the token).
+// IPv4 one. The IPv6 SYNs are matched to the visitor by the /64 their /mss on the IPv6-only endpoint came from (the token).
 // Kept for 30 seconds, in memory.
 
 import (
