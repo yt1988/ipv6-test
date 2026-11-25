@@ -86,8 +86,11 @@ memory for a minute at most. About 6 MB of memory. What each endpoint does is at
 2. **Three DNS names, pointing straight at the server** (not through a proxy or CDN: the server must see the
    visitor's own TCP connection): `v4.<your-domain>` with only an A record, `v6.<your-domain>` with only an AAAA
    record, `he.<your-domain>` with both.
-3. **Point the page at them**: `API` and `HE` in `src/app.js`, and `CN` if you run a second copy elsewhere (the
-   three names of the mainland-China server, on one port). The CSP's `connect-src` is `https:`, so no change there.
+3. **Point the page at them**: the page reads no address of its own. The shell that serves it writes
+   `<meta name="ms-ipv6" content="4=https://<v4>:8445;6=https://<v6>:8445;he=https://<he>:8446">` into the head, and a
+   copy without that meta shows no path-MTU line and "unavailable" for the fallback demo (that is the CI/local path).
+   The mainland-China server's three names are still `CN` in `src/app.js`. The CSP's `connect-src` is `https:`, so no
+   change there.
 4. **Install**: a system user for it, a directory such as `/opt/<app>/` holding `ipv6-server` (mode 755) and
    `he.nft`, and the unit.
 5. **nftables**: `he.nft` is the server's own table; the unit loads it before start (`nft -f`) and deletes it on

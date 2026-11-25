@@ -3,6 +3,7 @@
 // they are known. IPv4 against IPv6 runs alongside, one row per network. Strings: window.L1MS.
 import { TESTS, IDS, SIDES, PAIRS, SLOW, runTest, network, sameIp, famOf, verdict, compare, kind6, tierOf } from "./probe.mjs";
 import { encode as encodeShare, decode as decodeShare, sharePath } from "./share.mjs";
+import { endpoints } from "./egress.js";
 
 (function () {
   "use strict";
@@ -179,7 +180,11 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   // What the browser can't see: the MSS each family's SYN offered, the path MTU, and whether full-size packets vanish
   // with no Packet Too Big coming back (a PMTU black hole: the TLS handshake to the server never finishes). A family
   // that can't get through is asked about over the other one, by the address the tests above found.
-  const API = { 4: "https://v4.ipv6.1ms.dog:8445", 6: "https://v6.ipv6.1ms.dog:8445" }, HE = "https://he.ipv6.1ms.dog:8446";
+  // Which server answers is the deployment's, not the repository's: the shell that serves the page writes it into
+  // <meta name="ms-ipv6" content="4=…;6=…;he=…">. A missing key is that reading unavailable — a self-hosted copy, a
+  // local build and CI have no meta at all, and show no path MTU and "unavailable" for the fallback demo, not an error.
+  const EP = endpoints("ms-ipv6");
+  const API = { 4: EP["4"] || "", 6: EP["6"] || "" }, HE = EP.he || "";
   // The same server in mainland China (Shanghai), so "IPv6 works" splits into "at home" and "abroad": each family's
   // name says whether that family reaches a Chinese host, the dual-stack one which family the browser picks for a
   // Chinese site. A copy deployed without this server shows "the server in China didn't answer" and nothing else moves.
@@ -193,10 +198,10 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   async function pathMtu(signal) {
     const ip = { 4: R.v4 && R.v4.ok && R.v4.ip, 6: R.v6 && R.v6.ok && R.v6.ip };
     await Promise.all([6, 4].map(async fam => {
-      if (!ip[fam]) return;
+      if (!ip[fam] || !API[fam]) return;
       let r = await getJSON(API[fam] + "/mss", 7000, signal);
       const o = fam === 6 ? 4 : 6;
-      if (!r && ip[o]) r = await getJSON(API[o] + "/seen?ip=" + encodeURIComponent(ip[fam]), 5000, signal);
+      if (!r && ip[o] && API[o]) r = await getJSON(API[o] + "/seen?ip=" + encodeURIComponent(ip[fam]), 5000, signal);
       if (!signal.aborted && r && r.seen && r.mtu) MTU[fam] = r;
     }));
   }
@@ -282,6 +287,12 @@ import { encode as encodeShare, decode as decodeShare, sharePath } from "./share
   async function heWait(signal) {
     const tok = Array.from(crypto.getRandomValues(new Uint8Array(12)), x => (x % 36).toString(36)).join("");
     $("#heV").textContent = "…"; $("#heV").className = ""; $("#heH").textContent = "";
+    // no endpoint injected (self-hosted, local build): say it is unavailable rather than "couldn't measure"
+    if (!API[6] || !HE) {
+      HEW = { k: "he_off", ms: 0 };
+      $("#heV").textContent = t("he_off");
+      return;
+    }
     const v6 = await getJSON(API[6] + "/mss?t=" + tok, 6000, signal);
     const r = v6 && await getJSON(HE + "/he?t=" + tok, 15000, signal);
     if (signal.aborted) return;

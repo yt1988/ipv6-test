@@ -138,6 +138,7 @@ export default {
   he_direct_h: "The browser's fallback never happens, so there is no number to measure.",
   he_no6: "No IPv6 to this test server",
   he_fail: "Couldn't measure it (the 1ms.dog test server didn't answer)",
+  he_off: "Unavailable (this site has no endpoint configured)",
   slow_title: "Is IPv6 slower than IPv4? Why IPv6 is slow or laggy, and how to fix it · IPv6 Test",
   slow_desc: "Compare IPv4 and IPv6 on your connection: the same networks timed over both at once. See whether IPv6 is slower, why (routing, MTU, tunnels, the router) and how to fix it without turning IPv6 off.",
   slow_kw: "IPv6 slow, IPv6 slower than IPv4, IPv6 vs IPv4 speed, IPv6 lag, IPv6 latency, disable IPv6, prefer IPv4",
