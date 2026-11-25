@@ -3,7 +3,7 @@ package main
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"encoding/hex"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -15,11 +15,12 @@ import (
 
 const testSecret = "s3cret"
 
-// tok builds the token the shell is meant to sign: v1.<exp>.<nonce>.<hmac>, HMAC over "v1|exp|nonce|scope".
+// signedToken builds the token the shell is meant to sign:
+// v1.<exp>.<nonce>.<scope>.<hmac>, HMAC-SHA256 over "v1|exp|nonce|scope", base64url without padding.
 func signedToken(secret, scope string, exp int64, nonce string) string {
 	m := hmac.New(sha256.New, []byte(secret))
 	m.Write([]byte("v1|" + strconv.FormatInt(exp, 10) + "|" + nonce + "|" + scope))
-	return "v1." + strconv.FormatInt(exp, 10) + "." + nonce + "." + hex.EncodeToString(m.Sum(nil))
+	return "v1." + strconv.FormatInt(exp, 10) + "." + nonce + "." + scope + "." + base64.RawURLEncoding.EncodeToString(m.Sum(nil))
 }
 
 func reachable() http.Handler {
@@ -50,7 +51,6 @@ func TestAuthOffAllowsEverything(t *testing.T) {
 	if rec := send(h, "", http.MethodGet); rec.Code != http.StatusOK {
 		t.Fatalf("no secret: status %d, want 200", rec.Code)
 	}
-	// a token is ignored when nothing is configured
 	if rec := send(h, "Bearer nonsense", http.MethodGet); rec.Code != http.StatusOK {
 		t.Fatalf("no secret, junk token: status %d, want 200", rec.Code)
 	}
@@ -73,30 +73,42 @@ func TestAuthExpired(t *testing.T) {
 	past := time.Now().Add(-5 * time.Second).Unix()
 	rec := send(auth(reachable(), testSecret), "Bearer "+signedToken(testSecret, "ipv6", past, "nonce1"), http.MethodGet)
 	if rec.Code != http.StatusUnauthorized || errCode(t, rec) != "bad_token" {
-		t.Fatalf("expired: status %d, error %q", rec.Code, rec.Body.String())
+		t.Fatalf("expired: status %d, body %q", rec.Code, rec.Body.String())
 	}
 }
 
-func TestAuthWrongScope(t *testing.T) {
+func TestAuthScopeMustContainCapability(t *testing.T) {
 	future := time.Now().Add(5 * time.Minute).Unix()
-	rec := send(auth(reachable(), testSecret), "Bearer "+signedToken(testSecret, "rtc", future, "nonce2"), http.MethodGet)
-	if rec.Code != http.StatusUnauthorized || errCode(t, rec) != "bad_token" {
-		t.Fatalf("scope rtc: status %d, error %q", rec.Code, errCode(t, rec))
+	for _, scope := range []string{"rtc", "probe,rtc", "ipv6x"} {
+		rec := send(auth(reachable(), testSecret), "Bearer "+signedToken(testSecret, scope, future, "nonce2"), http.MethodGet)
+		if rec.Code != http.StatusUnauthorized || errCode(t, rec) != "bad_token" {
+			t.Fatalf("scope %q: status %d, body %q", scope, rec.Code, rec.Body.String())
+		}
+	}
+	// the scope field is signed: a valid signature for "ipv6" does not carry over to another scope in the token
+	good := signedToken(testSecret, "ipv6", future, "nonce3")
+	tampered := strings.Replace(good, ".ipv6.", ".rtc.", 1)
+	if rec := send(auth(reachable(), testSecret), "Bearer "+tampered, http.MethodGet); rec.Code != http.StatusUnauthorized {
+		t.Fatalf("tampered scope: status %d, want 401", rec.Code)
 	}
 }
 
-func TestAuthAcceptsItsScopeAndTheSiteList(t *testing.T) {
+func TestAuthAcceptsItsScope(t *testing.T) {
 	future := time.Now().Add(5 * time.Minute).Unix()
-	for _, scope := range []string{"ipv6", "probe,reach,ping,rtc,ipv6,seg,dns,data"} {
-		rec := send(auth(reachable(), testSecret), "Bearer "+signedToken(testSecret, scope, future, "nonce3"), http.MethodGet)
+	for _, scope := range []string{"ipv6", "probe,ipv6", "rtc,ipv6,probe", "probe,reach,ping,rtc,ipv6,seg,dns,data", "*"} {
+		rec := send(auth(reachable(), testSecret), "Bearer "+signedToken(testSecret, scope, future, "nonce4"), http.MethodGet)
 		if rec.Code != http.StatusOK {
 			t.Fatalf("scope %q: status %d, want 200", scope, rec.Code)
 		}
 	}
-	// another secret's signature is not accepted
-	rec := send(auth(reachable(), testSecret), "Bearer "+signedToken("other", "ipv6", future, "nonce4"), http.MethodGet)
+	rec := send(auth(reachable(), testSecret), "Bearer "+signedToken("other", "ipv6", future, "nonce5"), http.MethodGet)
 	if rec.Code != http.StatusUnauthorized {
 		t.Fatalf("foreign secret: status %d, want 401", rec.Code)
+	}
+	// the old four-part shape is not a token any more
+	old := "v1." + strconv.FormatInt(future, 10) + ".nonce6." + base64.RawURLEncoding.EncodeToString([]byte("x"))
+	if rec := send(auth(reachable(), testSecret), "Bearer "+old, http.MethodGet); rec.Code != http.StatusUnauthorized {
+		t.Fatalf("four-part token: status %d, want 401", rec.Code)
 	}
 }
 

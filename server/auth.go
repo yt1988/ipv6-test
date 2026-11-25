@@ -1,9 +1,8 @@
 // Endpoint auth (docs/tool-contract.md, "端点鉴权"): the shell that serves the tool pages signs a short-lived token
-// into the page, and the page sends it as "Authorization: Bearer v1.<exp>.<nonce>.<hmac>". The HMAC-SHA256 covers
-// "v1|exp|nonce|scope". With MS_AUTH_SECRET unset — the default, and how a self-hosted copy runs — nothing is checked.
+// into the page, and the page sends it as "Authorization: Bearer v1.<exp>.<nonce>.<scope>.<hmac>". The scope is in
+// the token; the HMAC-SHA256 covers "v1|exp|nonce|scope" exactly as the scope is written there, base64url without
+// padding. With MS_AUTH_SECRET unset — the default, and how a self-hosted copy runs — nothing is checked.
 //
-// The token carries no scope field, so the server must know the string that was signed. Two are accepted: this
-// service's own capability, and the site-wide list of capabilities; the issuer is expected to sign one of them.
 // This is a gate against casual use, not a hard boundary: a token that is valid for any page of the site is valid
 // here, which is what "one token serves a page's endpoints" means.
 package main
@@ -11,7 +10,7 @@ package main
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"encoding/hex"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"os"
@@ -23,11 +22,8 @@ import (
 
 const tokenVersion = "v1"
 
-// the scope strings a token may have been signed over
-var authScopes = []string{
-	"ipv6", // this service's capability
-	"probe,reach,ping,rtc,ipv6,seg,dns,data", // the site-wide list the shell may sign for a page
-}
+// this service's capability name, as it appears in a token's scope
+const capability = "ipv6"
 
 const (
 	whyNoToken  = "no_token"
@@ -70,7 +66,8 @@ func auth(h http.Handler, secret string) http.Handler {
 	})
 }
 
-// tokenOK checks "Bearer v1.<exp>.<nonce>.<hmac>": version, not expired, and a signature over one of authScopes.
+// tokenOK checks "Bearer v1.<exp>.<nonce>.<scope>.<hmac>": five parts, not expired, a signature over the scope exactly
+// as the token writes it, and this service's capability in that scope.
 func tokenOK(secret, header string, now time.Time) (bool, string) {
 	s := strings.TrimSpace(header)
 	if s == "" {
@@ -80,23 +77,39 @@ func tokenOK(secret, header string, now time.Time) (bool, string) {
 		return false, whyNoToken
 	}
 	parts := strings.Split(strings.TrimSpace(s[7:]), ".")
-	if len(parts) != 4 || parts[0] != tokenVersion || parts[2] == "" || parts[3] == "" {
+	if len(parts) != 5 || parts[0] != tokenVersion {
 		return false, whyBadToken
 	}
-	exp, err := strconv.ParseInt(parts[1], 10, 64)
-	if err != nil || now.Unix() >= exp {
+	exp, nonce, scope, mac64 := parts[1], parts[2], parts[3], parts[4]
+	if nonce == "" || scope == "" || mac64 == "" {
 		return false, whyBadToken
 	}
-	mac, err := hex.DecodeString(parts[3])
+	expires, err := strconv.ParseInt(exp, 10, 64)
+	if err != nil || now.Unix() >= expires {
+		return false, whyBadToken
+	}
+	mac, err := base64.RawURLEncoding.DecodeString(mac64)
 	if err != nil || len(mac) != sha256.Size {
 		return false, whyBadToken
 	}
-	for _, scope := range authScopes {
-		if hmac.Equal(mac, sign(secret, parts[1], parts[2], scope)) {
-			return true, ""
+	if !hmac.Equal(mac, sign(secret, exp, nonce, scope)) {
+		return false, whyBadToken
+	}
+	if !scopeHas(scope, capability) {
+		return false, whyBadToken
+	}
+	return true, ""
+}
+
+// scopeHas reports whether name is one of the comma-separated capabilities; "*" is the long-lived service token
+// (scope *), which the contract says every endpoint accepts.
+func scopeHas(scope, name string) bool {
+	for _, s := range strings.Split(scope, ",") {
+		if s = strings.TrimSpace(s); s == name || s == "*" {
+			return true
 		}
 	}
-	return false, whyBadToken
+	return false
 }
 
 func sign(secret, exp, nonce, scope string) []byte {
