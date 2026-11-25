@@ -76,9 +76,10 @@ func main() {
 	mux.HandleFunc("/seen", handleSeen)
 	hm := http.NewServeMux()
 	hm.HandleFunc("/he", handleHE)
-	log.Printf("1ms-ipv6: %s (mtu), %s (he)", *mtuAddr, *heAddr)
-	go serve(*heAddr, cors(hm), false)
-	serve(*mtuAddr, cors(mux), true)
+	secret := authSecret()
+	log.Printf("1ms-ipv6: %s (mtu), %s (he), auth: %s", *mtuAddr, *heAddr, map[bool]string{true: "on", false: "off"}[secret != ""])
+	go serve(*heAddr, cors(auth(hm, secret)), false)
+	serve(*mtuAddr, cors(auth(mux, secret)), true)
 }
 
 type discard struct{}
@@ -90,6 +91,15 @@ func cors(h http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Cache-Control", "no-store")
 		w.Header().Set("Connection", "close")
+		// with endpoint auth on, the page sends Authorization, which makes the request preflighted: answer that here,
+		// before auth() sees it (a preflight carries no token)
+		if r.Method == http.MethodOptions {
+			w.Header().Set("Access-Control-Allow-Headers", "Authorization")
+			w.Header().Set("Access-Control-Allow-Methods", "GET")
+			w.Header().Set("Access-Control-Max-Age", "600")
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
 		if r.Method != http.MethodGet {
 			http.Error(w, "GET only", http.StatusMethodNotAllowed)
 			return
