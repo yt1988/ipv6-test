@@ -31,7 +31,7 @@ Does your network support IPv6? [IPv6 Test](https://ipv6.1ms.dog/) runs six chec
 
 Each test asks two or three providers at once (DNSPod, icanhazip, Cloudflare, Cloudflare Radar, ipify) and takes the first answer: DNSPod answers in mainland China, icanhazip and Cloudflare elsewhere, so one being blocked or slow doesn't fail a test. The first answer includes DNS, TCP and TLS; three more requests on the same connection give the round trip (the smallest).
 
-**To mainland China** (on 1ms.dog): a second copy of the server runs in Shanghai, and the home page asks it over IPv4, over IPv6, and once at a dual-stack name to see which protocol the browser picks for a Chinese site. Chinese networks often carry IPv6 at home but not abroad, which the six tests alone cannot tell — to them such a network is simply "no IPv6". With both measurement points the page says which it is; if the China server doesn't answer, that card says so and nothing else changes.
+**To mainland China** (on 1ms.dog): a second copy of the server runs in Shanghai, and the home page asks it over IPv4, over IPv6, and once at a dual-stack name to see which protocol the browser picks for a Chinese site. Chinese networks often carry IPv6 to mainland China but not to the rest of the world, which the six tests alone cannot tell — to them such a network is simply "no IPv6". With both measurement points the page says which it is; if the China server doesn't answer, that card says so and nothing else changes.
 
 ### The score
 

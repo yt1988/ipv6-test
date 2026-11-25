@@ -19,7 +19,7 @@ An IPv6 readiness test that runs in the browser:
   it falls back to IPv4 (Happy Eyeballs, `/ipv6-slow/`; the number is the browser's own timer, not the visitor's line —
   see docs/design.md). A second copy in mainland China gives the home page's "To mainland
   China" card: whether IPv6, IPv4 or both reach a Chinese host, and which one the browser picks there, so "IPv6 works"
-  splits into "at home" and "abroad". A copy without either shows no path-MTU line, "couldn't measure" for the wait,
+  splits into mainland China and the rest of the world. A copy without either shows no path-MTU line, "couldn't measure" for the wait,
   and "the server in China didn't answer" for that card.
 - 10 languages, shared results in links (`/<lang>/r/<code>`, never an address), an embed mode for a checkup page.
 

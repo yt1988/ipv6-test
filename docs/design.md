@@ -61,7 +61,7 @@ before giving up on IPv6. The server sees those from the other end.
   ours, every client that tries IPv6 reports its own fallback timer: curl 185.7–202.3 ms over three runs from a
   mainland host with working IPv6 to Tokyo, its 200 ms default, regardless of the path. Behind a fake-IP tunnel it
   reports 2.9 ms or 0 ms, because the proxy opens the connection and the browser's fallback never runs. And for a
-  visitor whose IPv6 dies before it reaches Tokyo — the common "IPv6 works at home only" case — the SYN never
+  visitor whose IPv6 dies before it reaches Tokyo — the common "IPv6 reaches mainland China only" case — the SYN never
   arrives, so the server reads 0 and cannot tell that the browser waited. The page therefore calls it a demo, says
   the number is the browser's own timer (about a quarter second), and does not grade it; the actionable facts are
   the reachability tests and the family the browser picks at the dual-stack name.
@@ -131,7 +131,7 @@ second line, not the address filling in.
 
 The six tests ask hosts abroad, so a network whose IPv6 works in China and nowhere else looks to them — and to the
 score — exactly like a network with no IPv6 at all. That is a common case on Chinese networks, and it is the one a
-Chinese visitor acts on: Chinese sites open, sites abroad don't. A second copy of the same server, in Shanghai, is
+Chinese visitor acts on: sites in mainland China open, sites elsewhere don't. A second copy of the same server, in Shanghai, is
 what tells the two apart.
 
 - **Three names, one port.** `v4…` (A only) and `v6…` (AAAA only) say whether each family reaches a host in China;
@@ -153,4 +153,4 @@ what tells the two apart.
 
 Measured when it went live (2026-11-23, from Tokyo): all three names answer in about 0.1 s with CORS for any origin,
 `{"seen":true,"fam":4|6,"mss":…,"mtu":1464,…}`; and with Tokyo's international IPv6 tests blocked, the page shows
-"IPv6 works in China, not abroad" in the hero and in the card, with the browser picking IPv4 for the dual-stack name.
+"IPv6 reaches mainland China only" in the hero and in the card, with the browser picking IPv4 for the dual-stack name.

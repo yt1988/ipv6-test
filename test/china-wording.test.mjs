@@ -8,8 +8,8 @@ import assert from "node:assert/strict";
 import { LANGS } from "../scripts/build.mjs";
 
 const HOME_ABROAD = {
-  "zh-CN": /国内|国外/,
-  "zh-TW": /國內|國外/,
+  "zh-CN": /国内|国外|境外/,
+  "zh-TW": /國內|國外|境外/,
   en: /\babroad\b|\bat home\b|\bhome and\b/i,
   ja: /海外/,
   ko: /해외/,
@@ -30,4 +30,10 @@ test("the China view names its destinations, not the visitor's home", async () =
     assert.match(d.cn_state, /\{v\}/, `${lang}: the line keeps its {v} placeholder`);
     assert.match(d.cn_state, /IPv6/, `${lang}: the line says it is about IPv6`);
   }
+  // T0: our own machines are named by their city, and the China comparison is against other regions, not "abroad"
+  const zh = (await import("../src/i18n/zh-CN.mjs")).default, en = (await import("../src/i18n/en.mjs")).default;
+  assert.match(zh.view_abroad, /东京/);
+  assert.match(zh.view_cn, /上海/);
+  assert.match(en.view_abroad, /Tokyo/);
+  assert.match(en.view_cn, /Shanghai/);
 });
