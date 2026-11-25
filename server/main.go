@@ -88,7 +88,10 @@ func (discard) Write(p []byte) (int, error) { return len(p), nil }
 
 func cors(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// on every answer, the 401 included: without these the page sees a network error instead of the 401, and its
+		// renewal (401 → /_ms/token → one retry) never fires
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Vary", "Origin")
 		w.Header().Set("Cache-Control", "no-store")
 		w.Header().Set("Connection", "close")
 		// with endpoint auth on, the page sends Authorization, which makes the request preflighted: answer that here,

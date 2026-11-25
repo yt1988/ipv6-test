@@ -126,6 +126,13 @@ func TestAuthCoversAllRoutesAndPreflight(t *testing.T) {
 		if rec.Code != http.StatusUnauthorized {
 			t.Fatalf("%s without a token: status %d, want 401", path, rec.Code)
 		}
+		// the page must be able to read the 401: without CORS headers it only sees a network error and never renews
+		if got := rec.Header().Get("Access-Control-Allow-Origin"); got != "*" {
+			t.Fatalf("%s 401: Access-Control-Allow-Origin %q, want *", path, got)
+		}
+		if got := rec.Header().Get("Vary"); !strings.Contains(got, "Origin") {
+			t.Fatalf("%s 401: Vary %q must include Origin", path, got)
+		}
 	}
 	req := httptest.NewRequest(http.MethodOptions, "/mss", nil)
 	req.Header.Set("Origin", "https://ipv6.1ms.dog")
