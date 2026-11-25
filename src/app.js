@@ -4,6 +4,7 @@
 import { TESTS, IDS, SIDES, PAIRS, SLOW, runTest, network, sameIp, famOf, verdict, compare, kind6, tierOf } from "./probe.mjs";
 import { encode as encodeShare, decode as decodeShare, sharePath } from "./share.mjs";
 import { endpoints } from "./egress.js";
+import { authFetch } from "./auth.js";
 
 (function () {
   "use strict";
@@ -185,15 +186,17 @@ import { endpoints } from "./egress.js";
   // local build and CI have no meta at all, and show no path MTU and "unavailable" for the fallback demo, not an error.
   const EP = endpoints("ms-ipv6");
   const API = { 4: EP["4"] || "", 6: EP["6"] || "" }, HE = EP.he || "";
-  // The same server in mainland China (Shanghai), so "IPv6 works" splits into "at home" and "abroad": each family's
-  // name says whether that family reaches a Chinese host, the dual-stack one which family the browser picks for a
-  // Chinese site. A copy deployed without this server shows "the server in China didn't answer" and nothing else moves.
-  // the same meta carries the Shanghai server's three names (4cn, 6cn, cn); without all three the section says so
+  // The same meta carries the Shanghai server's three names (4cn, 6cn, cn); without all three the section says so.
+  // Its readings split "IPv6 works" into mainland China and other regions: each family's name says whether that
+  // family reaches the Shanghai host, the dual-stack one which family the browser picks for a site there.
   const CN = { 4: EP["4cn"] || "", 6: EP["6cn"] || "", pick: EP.cn || "" }, CN_OFF = !CN[4] || !CN[6] || !CN.pick;
+  // Requests to these hosts carry the shell's page token; nothing else does (see src/auth.js for the one-shot renewal)
+  const OURS = [API[4], API[6], HE, CN[4], CN[6], CN.pick].filter(Boolean);
+  const authed = authFetch({ isOurs: url => OURS.some(base => url.startsWith(base)) });
   function getJSON(url, ms, signal) {
     const c = new AbortController(), stop = () => c.abort(), tm = setTimeout(stop, ms);
     signal.addEventListener("abort", stop);
-    return fetch(url, { cache: "no-store", credentials: "omit", signal: c.signal }).then(r => r.ok ? r.json() : null).catch(() => null)
+    return authed(url, { cache: "no-store", credentials: "omit", signal: c.signal }).then(r => r.ok ? r.json() : null).catch(() => null)
       .finally(() => { clearTimeout(tm); signal.removeEventListener("abort", stop); });
   }
   async function pathMtu(signal) {
