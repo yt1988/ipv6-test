@@ -137,7 +137,7 @@ export default {
   he_direct_h: "瀏覽器的回退不會發生，所以這裡沒有可測的數字。",
   he_no6: "這個測試點沒有可用的 IPv6",
   he_fail: "沒測出來（連不上 1ms.dog 的測試伺服器）",
-  he_off: "不可用（本站沒有設定這個端點）",
+  ep_off: "不可用（本站沒有設定這個端點）",
   slow_title: "IPv6 比 IPv4 慢嗎？IPv6 很慢、卡頓的原因和解決方法 · IPv6 測試",
   slow_desc: "線上比較你的 IPv4 和 IPv6 速度：同一批網路，兩種協定同時測。看看 IPv6 是不是比較慢、為什麼慢（線路繞路、MTU、通道、路由器），以及不必關閉 IPv6 的解決方法。",
   slow_kw: "IPv6 慢, IPv6 卡, IPv6 比 IPv4 慢, IPv4 和 IPv6 哪個快, IPv6 延遲, 關閉 IPv6, IPv4 優先",

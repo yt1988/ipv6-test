@@ -137,7 +137,7 @@ export default {
   he_direct_h: "浏览器的回退不会发生，所以这里没有可测的数字。",
   he_no6: "这个测试点没有可用的 IPv6",
   he_fail: "没测出来（连不上 1ms.dog 的测试服务器）",
-  he_off: "不可用（本站没有配置这个端点）",
+  ep_off: "不可用（本站没有配置这个端点）",
   slow_title: "IPv6 比 IPv4 慢吗？IPv6 慢、卡顿的原因和解决办法 · IPv6 测试",
   slow_desc: "在线对比你的 IPv4 和 IPv6 速度：同一批网络，两种协议同时测。看看 IPv6 是不是更慢、为什么慢（线路绕路、MTU、隧道、路由器），以及不用关掉 IPv6 的解决办法。",
   slow_kw: "IPv6 慢, IPv6 卡, IPv6 比 IPv4 慢, IPv4 和 IPv6 哪个快, IPv6 延迟, 关闭 IPv6, IPv4 优先",

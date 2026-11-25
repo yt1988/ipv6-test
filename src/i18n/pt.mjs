@@ -137,7 +137,7 @@ export default {
   he_direct_h: "A troca do navegador não acontece, então não há número para medir.",
   he_no6: "Sem IPv6 até este servidor de teste",
   he_fail: "Não deu para medir (o servidor de teste da 1ms.dog não respondeu)",
-  he_off: "Indisponível (este site não tem o endpoint configurado)",
+  ep_off: "Indisponível (este site não tem o endpoint configurado)",
   slow_title: "IPv6 é mais lento que IPv4? Por que o IPv6 fica lento ou com lag, e como resolver · Teste de IPv6",
   slow_desc: "Compare IPv4 e IPv6 na sua conexão: as mesmas redes medidas pelos dois ao mesmo tempo. Veja se o IPv6 é mais lento, por quê (rotas, MTU, túneis, roteador) e como resolver sem desativar o IPv6.",
   slow_kw: "IPv6 lento, IPv6 mais lento que IPv4, velocidade IPv6 vs IPv4, latência IPv6, desativar IPv6, preferir IPv4, lag IPv6",

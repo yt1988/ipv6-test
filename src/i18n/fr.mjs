@@ -137,7 +137,7 @@ export default {
   he_direct_h: "Le repli du navigateur n’a pas lieu : il n’y a pas de chiffre à mesurer.",
   he_no6: "Pas d’IPv6 jusqu’à ce serveur de test",
   he_fail: "Mesure impossible (le serveur de test 1ms.dog n’a pas répondu)",
-  he_off: "Indisponible (aucun point d’accès configuré sur ce site)",
+  ep_off: "Indisponible (aucun point d’accès configuré sur ce site)",
   slow_title: "IPv6 est-il plus lent qu’IPv4 ? Pourquoi IPv6 rame, et comment y remédier · Test IPv6",
   slow_desc: "Comparez IPv4 et IPv6 sur votre connexion : les mêmes réseaux mesurés par les deux en même temps. Voyez si IPv6 est plus lent, pourquoi (routage, MTU, tunnels, routeur) et comment corriger sans désactiver IPv6.",
   slow_kw: "IPv6 lent, IPv6 plus lent qu’IPv4, vitesse IPv6 vs IPv4, latence IPv6, désactiver IPv6, préférer IPv4, IPv6 rame",

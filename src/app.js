@@ -188,7 +188,8 @@ import { endpoints } from "./egress.js";
   // The same server in mainland China (Shanghai), so "IPv6 works" splits into "at home" and "abroad": each family's
   // name says whether that family reaches a Chinese host, the dual-stack one which family the browser picks for a
   // Chinese site. A copy deployed without this server shows "the server in China didn't answer" and nothing else moves.
-  const CN = { 4: "https://v4ipv6-cn.dog.1msapp.com:9444", 6: "https://v6ipv6-cn.dog.1msapp.com:9444", pick: "https://ipv6-cn.dog.1msapp.com:9444" };
+  // the same meta carries the Shanghai server's three names (4cn, 6cn, cn); without all three the section says so
+  const CN = { 4: EP["4cn"] || "", 6: EP["6cn"] || "", pick: EP.cn || "" }, CN_OFF = !CN[4] || !CN[6] || !CN.pick;
   function getJSON(url, ms, signal) {
     const c = new AbortController(), stop = () => c.abort(), tm = setTimeout(stop, ms);
     signal.addEventListener("abort", stop);
@@ -230,13 +231,14 @@ import { endpoints } from "./egress.js";
   function cnRow(k, r) {
     const row = CNROW[k]; if (!row) return;
     const b = row.querySelector(".tv b"), s = row.querySelector(".tv span");
+    if (r === "off") { row.className = "tr"; b.textContent = "—"; s.innerHTML = "&nbsp;"; return; }
     if (!r) { row.className = "tr bad"; b.textContent = t("r_fail"); s.innerHTML = "&nbsp;"; return; }
     row.className = "tr ok";
     b.textContent = k === "pick" ? "IPv" + (r.fam === 6 ? 6 : 4) : t("r_ok");
     s.textContent = r.mtu ? "MTU " + r.mtu : "";
   }
   function fillCN() {
-    if (!CNVIEW || !TOKYO_DONE || CNR[4] === undefined || CNR[6] === undefined) return;
+    if (!CNVIEW || CN_OFF || !TOKYO_DONE || CNR[4] === undefined || CNR[6] === undefined) return;
     const r4 = CNR[4], r6 = CNR[6], pick = CNR.pick, head = $("#cnHead"), hint = $("#cnHint");
     const tokyo6 = !!(R.v6 && R.v6.ok), lit6 = !!(R.lit6 && R.lit6.ok), has6 = tokyo6 || lit6;
     // the next step for a Chinese visitor: IPv6 that works at home but not abroad is the common case, and one no
@@ -270,7 +272,14 @@ import { endpoints } from "./egress.js";
       row.querySelector(".tv b").textContent = "…";
       row.querySelector(".tv span").innerHTML = "&nbsp;";
     }
-    $("#cnHead").textContent = t("cn_wait"); $("#cnHead").className = ""; $("#cnHint").innerHTML = "&nbsp;";
+    $("#cnHead").textContent = CN_OFF ? t("ep_off") : t("cn_wait"); $("#cnHead").className = ""; $("#cnHint").innerHTML = "&nbsp;";
+    // no Shanghai endpoint injected (self-hosted, local build, or the value not set yet): no request, "unavailable"
+    if (CN_OFF) {
+      for (const k of Object.keys(CNROW)) { CNR[k] = null; cnRow(k, "off"); }
+      const st = $("#cnState");
+      if (st) { st.textContent = t("cn_state", { v: t("cn_s_na") }); st.className = "cn-state"; }
+      return;
+    }
     // all three at once, first answer first: a slow family doesn't hold up the others
     const one = (k, url) => getJSON(url + "/mss", 6000, signal).then(r => {
       if (signal.aborted) return;
@@ -290,7 +299,7 @@ import { endpoints } from "./egress.js";
     // no endpoint injected (self-hosted, local build): say it is unavailable rather than "couldn't measure"
     if (!API[6] || !HE) {
       HEW = { k: "he_off", ms: 0 };
-      $("#heV").textContent = t("he_off");
+      $("#heV").textContent = t("ep_off");
       return;
     }
     const v6 = await getJSON(API[6] + "/mss?t=" + tok, 6000, signal);

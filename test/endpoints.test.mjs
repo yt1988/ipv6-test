@@ -19,11 +19,19 @@ test("no injected meta: no endpoints, and this page says so instead of failing",
   const app = await readFile(new URL("../src/app.js", import.meta.url), "utf8");
   assert.match(app, /endpoints\("ms-ipv6"\)/, "the page reads the server from the injected meta");
   assert.match(app, /!API\[6\] \|\| !HE/, "a missing Happy Eyeballs endpoint is reported, not fetch()ed");
+  // the Shanghai server rides in the same meta (4cn, 6cn, cn); without all three the section is unavailable, unfetched
+  assert.match(app, /EP\["4cn"\]/);
+  assert.match(app, /EP\["6cn"\]/);
+  assert.match(app, /EP\.cn/);
+  assert.match(app, /CN_OFF/, 'the China section has its own not-configured path');
   // the server's addresses live in the deployment, not here
   assert.doesNotMatch(app, /(?:^|[^\w.-])(?:v4|v6|he)\.ipv6\.1ms\.dog/, "no measurement hostname in the page script");
+  assert.doesNotMatch(app, /dog\.1msapp\.com/, "no mainland-China hostname in the page script");
   const assets = await readdir(new URL("../public/assets/", import.meta.url));
   for (const f of assets.filter(f => /^app\..*\.js$/.test(f))) {
-    assert.doesNotMatch(await readFile(new URL("../public/assets/" + f, import.meta.url), "utf8"), /(?:^|[^\w.-])(?:v4|v6|he)\.ipv6\.1ms\.dog/);
+    const bundle = await readFile(new URL("../public/assets/" + f, import.meta.url), "utf8");
+    assert.doesNotMatch(bundle, /(?:^|[^\w.-])(?:v4|v6|he)\.ipv6\.1ms\.dog/);
+    assert.doesNotMatch(bundle, /dog\.1msapp\.com/);
   }
 });
 
