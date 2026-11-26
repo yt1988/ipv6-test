@@ -567,7 +567,7 @@ import { authFetch } from "./auth.js";
     else $("#he").hidden = true;   // not part of a shared result
     fillCmp();
     // the shared banner (1ms-shell assets/share/): whose result this is, and the visitor's own test
-    RECV = import("/assets/share/share.js?v=10").then(m => m.received({ lang: D.lang, ts: S.ts, at: $(".hero"), test: start })).catch(() => null);
+    RECV = import("/assets/share/share.js?v=11").then(m => m.received({ lang: D.lang, ts: S.ts, at: $(".hero"), test: start })).catch(() => null);
     $("#prog").classList.add("end"); $("#progTxt").innerHTML = "&nbsp;";
     $("#rerun").disabled = false;
     LAST = S; $("#shareBtn").hidden = false;
@@ -576,7 +576,9 @@ import { authFetch } from "./auth.js";
   /* ---------- share: the 1ms.dog share dialog (1ms-shell assets/share/, copied verbatim to /assets/share/) ---------- */
   $("#shareBtn").onclick = async () => {
     if (!LAST) return;
-    const { share } = await import("/assets/share/share.js?v=10");
+    const mod = await import("/assets/share/share.js?v=11").catch(() => null);
+    if (!mod) { window.msShareDown && window.msShareDown(); return; }
+    const { share } = mod;
     if (ONLY) {
       // the slow page's result: IPv4 against IPv6 alone, its link on this page
       const S = { ...LAST, r: Object.fromEntries(SIDES.filter(z => z.id in LAST.r).map(z => [z.id, LAST.r[z.id]])) };
