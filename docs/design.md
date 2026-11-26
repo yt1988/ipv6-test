@@ -127,6 +127,40 @@ refused above, and neither is done. The address's own test answering is the floo
 The shifts that remain on the same profile (CLS about 0.048) are the verdict and the problems line wrapping to a
 second line, not the address filling in.
 
+### The tooltip bubble as the largest paint (2026-11-26)
+
+The audit of #146 (item 一.5) found that on desktop 13% of loads had the score box's tooltip bubble as the largest
+contentful paint, at p75 14,700 ms. It is a real candidate, and it is not about how long the page takes.
+
+- **A text is recorded at its first paint, and never reconsidered.** Chromium's `TextPaintTimingDetector` records a
+  text's visual rectangle the first time it is painted, marks it `kPainted`, and later paints are skipped as
+  previously reported; the largest-paint manager takes the record only if its mapped area is non-empty
+  (`TextPaintTimingDetector::RecordAggregatedText`, `LargestContentfulPaintManager::OnPaintFinished`).
+- **So the fix is to make the bubble's first paint an empty one.** A bubble that paints nothing until it is shown —
+  created on demand, empty, `opacity: 0`, `display: none`, `visibility: hidden`, `content-visibility: hidden` or off
+  the viewport — has no first paint until the reveal, and that paint is mapped to the whole 163×139 bubble
+  (18,018 px², bigger than the 9,214 px² h1 on desktop): the bubble becomes the largest paint at the moment of the
+  hover. Hiding it harder does not help; it is the missing paint that does.
+- **The bubble is now in the HTML** (`div.tip.pre` with the score-box text, shrunk by `transform: scale(0)`) and so
+  is painted with the page's first frame, at no area: its first paint is recorded as a non-candidate, and every
+  reveal afterwards is only a repaint. Building it from a script is not enough — the scripts arrive after the first
+  frame, so a visitor whose pointer is already on the score box when they run still gets the reveal as its first
+  paint (measured: 1 of 6 runs).
+
+Measured on the built page, Chromium 1255, 1280×800, 150 ms RTT, 1.6 Mbps down, 4× CPU, pointer moved onto the
+score box 1.2 s after navigation, 6 runs per variant; "largest paint" is the final entry, px²:
+
+| Bubble | Largest paint |
+|---|---|
+| created when first shown (before) | the bubble, 6/6 runs (1.4–1.8 s, 18,018 px²) |
+| in the page from the start, empty | the bubble, 6/6 runs |
+| hidden with `visibility` / `content-visibility` | the bubble, 6/6 runs |
+| built by app.js, shrunk to nothing | the bubble, 1/6 runs (the race above) |
+| in the HTML, shrunk to nothing (shipped) | the h1, 0/6 runs (9,214–10,101 px², 1.17–1.21 s) |
+
+The fade-in stays, as an animation on `.tip.on`: the bubble has to be opaque at load for its first paint to happen,
+so the transition cannot be on `opacity` any more.
+
 ## The mainland-China view
 
 The six tests ask hosts abroad, so a network whose IPv6 works in China and nowhere else looks to them — and to the

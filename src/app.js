@@ -64,23 +64,35 @@ import { authFetch } from "./auth.js";
   $$("[data-hstep]").forEach(b => { b.onclick = () => showHelp(helpIdx + +b.dataset.hstep); });
 
   /* ---------- tooltips (data-why) ---------- */
-  let tipEl;
+  // The bubble comes from the HTML (a div.tip.pre, holding its text) and is painted with the page's first frame,
+  // shrunk to nothing. The browser records a text at its first paint and never again, so a first paint of zero size
+  // keeps it out of the largest paint for good. A bubble that first paints when it is needed (created then, empty,
+  // transparent, display:none, visibility hidden) is that paint, mapped to the whole bubble, and becomes the largest
+  // element on the page: that is the 13% of desktop loads whose largest paint was this bubble, p75 14.7 s (#146
+  // 一.5). Scripts run after the first frame, so building it here would still race the reveal; shown later, it is
+  // only a repaint of a recorded text (docs/design.md, "Page speed").
+  const tipEl = document.getElementById("tip");
+  // painted at load (so its first paint is on record), but not read out then: only while it is shown it is not hidden
+  // from a screen reader
+  const hideTip = () => { tipEl.classList.remove("on"); tipEl.setAttribute("aria-hidden", "true"); };
+  addEventListener("scroll", hideTip, { passive: true });
   function showTip(el) {
-    if (!tipEl) { tipEl = document.body.appendChild(Object.assign(document.createElement("div"), { className: "tip" })); addEventListener("scroll", () => tipEl.classList.remove("on"), { passive: true }); }
     tipEl.textContent = el.dataset.why;
+    tipEl.classList.remove("pre");
+    tipEl.removeAttribute("aria-hidden");
     const b = el.getBoundingClientRect(), w = tipEl.offsetWidth;
     tipEl.style.left = Math.max(8, Math.min(innerWidth - w - 8, b.left + b.width / 2 - w / 2)) + "px";
     tipEl.style.top = b.bottom + 6 + "px"; tipEl.classList.add("on");
   }
-  document.addEventListener("mouseover", e => { const el = e.target.closest && e.target.closest("[data-why]"); if (el) showTip(el); else if (tipEl) tipEl.classList.remove("on"); });
+  document.addEventListener("mouseover", e => { const el = e.target.closest && e.target.closest("[data-why]"); if (el) showTip(el); else hideTip(); });
   document.addEventListener("focusin", e => { const el = e.target.closest && e.target.closest("[data-why]"); if (el) showTip(el); });
-  document.addEventListener("focusout", () => tipEl && tipEl.classList.remove("on"));
+  document.addEventListener("focusout", hideTip);
 
   // copy an address: click it
   document.addEventListener("click", e => {
     const c = e.target.closest && e.target.closest("code");
     if (!c || !navigator.clipboard) return;
-    navigator.clipboard.writeText(c.textContent).then(() => { c.classList.add("copied"); c.dataset.why = t("copied"); showTip(c); setTimeout(() => { c.classList.remove("copied"); delete c.dataset.why; tipEl && tipEl.classList.remove("on"); }, 1200); }, () => {});
+    navigator.clipboard.writeText(c.textContent).then(() => { c.classList.add("copied"); c.dataset.why = t("copied"); showTip(c); setTimeout(() => { c.classList.remove("copied"); delete c.dataset.why; hideTip(); }, 1200); }, () => {});
   });
 
   /* ---------- other 1ms.dog tools, with the addresses found here (on 1ms.dog only: the shell's <meta>) ---------- */
