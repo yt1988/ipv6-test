@@ -97,7 +97,9 @@ import { authFetch } from "./auth.js";
 
   /* ---------- other 1ms.dog tools, with the addresses found here (on 1ms.dog only: the shell's <meta>) ---------- */
   // every link to another tool ends with the external-link mark (1ms-shell docs/tool-contract.md, section 4)
-  const EXT = '<svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
+  // built into the DOM by a script, so the shell's HTMLRewriter never sees it: it says its namespace itself (Safari's
+  // Dark Reader reloads an outerHTML copy as an image; the namespace is not an attribute, so the copy needs it) (#146 一.3)
+  const EXT = '<svg xmlns="http://www.w3.org/2000/svg" class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
   const tool = n => { const m = document.querySelector(`meta[name="${n}"]`); return m ? m.content.replace(/\/+$/, "") + D.home : null; };
   const IPQS = tool("ipqs"), EGRESS = tool("egress"), ASN = tool("asn"), WHO = tool("who"), SPEED = tool("speed"), FULL = tool("check"), DNS = tool("dns"), LAG = tool("lag");
   // the Connection Checkup runs this test among the others; not inside its own report

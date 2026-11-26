@@ -36,6 +36,18 @@ test("every language page keeps the shell contract", async () => {
   }
 });
 
+test("every icon a script builds in JavaScript says it is SVG (#146 一.3)", async () => {
+  // Icons in the HTML get their xmlns from the shell's HTMLRewriter rule; one a script writes into the DOM is beyond it.
+  // Safari's Dark Reader serialises each <svg> with outerHTML and reloads it as an image, and the namespace is not an
+  // attribute, so `outerHTML` leaves it out and the copy fails to decode.
+  const files = ["../src/app.js", "../src/auth.js"];
+  for (const f of files) {
+    const code = (await readFile(new URL(f, import.meta.url), "utf8")).replace(/^\s*\/\/.*$/gm, "");
+    const bare = [...code.matchAll(/<svg\b[^>]*>/g)].map(m => m[0]).filter(t => !t.includes('xmlns="http://www.w3.org/2000/svg"'));
+    assert.deepEqual(bare, [], f + ": a runtime icon without xmlns");
+  }
+});
+
 test("the sitemap lists every page in every language", async () => {
   const sm = await readFile(new URL("../public/sitemap.xml", import.meta.url), "utf8");
   assert.equal((sm.match(/<loc>/g) || []).length, LANGS.length * 2);
