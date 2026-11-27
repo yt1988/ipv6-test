@@ -161,6 +161,35 @@ score box 1.2 s after navigation, 6 runs per variant; "largest paint" is the fin
 The fade-in stays, as an animation on `.tip.on`: the bubble has to be opaque at load for its first paint to happen,
 so the transition cannot be on `opacity` any more.
 
+The field still had the bubble as the largest paint in 2% of desktop loads on 2026-11-27 (p75 169 s). Those are page
+instances loaded before the fix reached the Worker — deployed 2026-11-26 15:54 +0800, while the report's window
+opens at 06:47 that day — and a tab that never reloads keeps its old bundle. Fresh loads measure 0/6, local and
+live; a hover minutes after the load is what p75 169 s describes. It falls away as those tabs close.
+
+### The result row as the largest paint (2026-11-27)
+
+The audit of #147 (item 一.3) found that on phones 41% of the tool's page loads have the visitor's address (`#ip6`)
+as the largest contentful paint, at p75 7,060 ms for that element against 3,364 ms for the tool's loads overall.
+
+- **That number is the answer's arrival, not a slow first paint.** Measured on the live page (Pixel 7 profile,
+  375×812, 150 ms RTT, 1.6 Mbps down, 4× CPU, four runs), the address's record is written in the same frame as the
+  script fills the row — the fill at 1,781–2,826 ms, the record at 1,812–2,856 ms — and it is the last entry: the
+  h1's 5,908 px² at 796–1,576 ms comes first, the address's 9,576 px² after. The address is 1.62× the h1's area, and
+  it is the result.
+- **An equal-height placeholder cannot make the first-screen text the largest paint.** The row already holds its
+  height (the `.skl` bar; two lines on phones), and a bar is neither text nor an image, so the metric never counts
+  it (2026-11-17, above). Made full-width and 1.5 em tall it changed nothing: the address was still the largest
+  paint in 3 of 3 runs.
+- **A painted placeholder is unreliable, and refused for the same reasons as before.** A word in the row at load
+  (`正在测试…`, the live page's HTML rewritten in the response, 3 runs) left the address the largest paint in 2 of 3:
+  the address arrives inside its own `<code>`, a separate text paint that is recorded again. Making it reliable
+  would mean writing the address into the same text node, so the first-screen paint counted for the result would be
+  something that is not it — the refusal of 2026-11-17. A word in the row would also hide it from the traffic
+  report's `filledByScript()` (shell, 2026-11-23), which reads an empty `#ip6` as a result row.
+- **The report already names the case.** `traffic.mjs` flags it as "the result row is the LCP on mobile (… filled
+  by a script, not the first paint)" (#141 item 4). Keeping the two numbers apart in the report — the h1's p75
+  beside the address's arrival — is a change to the report, not to the page.
+
 ## The mainland-China view
 
 The six tests ask hosts abroad, so a network whose IPv6 works in China and nowhere else looks to them — and to the
